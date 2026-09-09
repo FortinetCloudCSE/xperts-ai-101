@@ -10,6 +10,10 @@
   "marketingCode": "FortiHugo202",
   "videoHeaderSrc": "/videos/CloudsAnimated.mp4",
   "videoHeaderInterval": "60",
+  "deploymentPaths": [
+    { "key": "docker", "title": "Docker Compose" },
+    { "key": "k8s", "title": "Kubernetes / Helm" }
+  ],
   "shortcuts": [
   {
     "text": "Fortinet Cloud CSE GitHub Org",
