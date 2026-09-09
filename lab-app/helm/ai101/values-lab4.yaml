@@ -38,6 +38,6 @@ mcpServer:
 ui:
   enabled: true
   service:
-    type: NodePort
+    type: LoadBalancer
     port: 80
     nodePort: 30280
