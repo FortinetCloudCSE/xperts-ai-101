@@ -8,26 +8,6 @@ Ollama is already running from the setup step. You interact directly with the
 inference endpoint using two scripts in `lab-app/scripts/` — but read through
 the prompts below first so you know exactly what the model is being asked to do.
 
-{{< pathtabs title="Your path" >}}
-{{% pathtab path="docker" %}}
-**Docker Compose** — every command on this page runs on your own machine.
-
-Before you start, confirm the Ollama container from setup is still up:
-
-```bash
-cd ~/ai-101/lab-app/compose
-docker compose ps
-```
-
-Expect `ollama` with state `running`. If it is not, redo the setup deploy step.
-
-The lab scripts call `localhost:11434`, which the `ollama` container publishes
-directly — no port-forward needed on this path.
-
-*On Kubernetes instead? Click the **Kubernetes / Helm** tab — every lab page will
-follow your choice.*
-{{% /pathtab %}}
-{{% pathtab path="k8s" %}}
 **Kubernetes / Helm** — every command on this page runs in your Cloud Shell session
 against your cluster.
 
@@ -45,11 +25,6 @@ Expect the `ai101-ollama` pod `Running`, and the Ollama port-forward listed by
 ```bash
 kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &
 ```
-
-*Running locally with Docker instead? Click the **Docker Compose** tab — every lab
-page will follow your choice.*
-{{% /pathtab %}}
-{{< /pathtabs >}}
 
 ## What the model is protecting
 
@@ -70,17 +45,6 @@ specific keywords in the user's question.
 
 ## Step 1 — Verify Ollama is still running
 
-{{< pathtabs >}}
-{{% pathtab path="docker" %}}
-```bash
-curl -s http://localhost:11434/v1/models | jq -r '.data[].id'
-```
-Expected: `qwen2.5:3b`
-
-If the connection is refused, the `ollama` container is not running — bring it back
-up with `docker compose --profile lab1 up -d`.
-{{% /pathtab %}}
-{{% pathtab path="k8s" %}}
 ```bash
 curl -s http://localhost:11434/v1/models | jq -r '.data[].id'
 ```
@@ -92,8 +56,6 @@ it and run the check again:
 ```bash
 kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &
 ```
-{{% /pathtab %}}
-{{< /pathtabs >}}
 
 ## Step 2 — Baseline: direct ask is refused
 

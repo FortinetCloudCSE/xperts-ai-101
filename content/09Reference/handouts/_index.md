@@ -10,8 +10,7 @@ from the workshop pages by `scripts/gen_handouts.py` — do not edit the handout
 
 | Handout | Path |
 |---|---|
-| [Handout — Docker Compose](handout-docker/) | `docker` |
 | [Handout — Kubernetes / Helm](handout-k8s/) | `k8s` |
 
-Each handout also renders a print-optimised variant at `index.print.html`, which is
+Each handout also renders a print-optimized variant at `index.print.html`, which is
 what CI turns into a PDF artifact.

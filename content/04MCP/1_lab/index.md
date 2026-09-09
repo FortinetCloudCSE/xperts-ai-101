@@ -9,24 +9,6 @@ changing a line of agent code. You will see dynamic discovery in action, add
 a new tool to a running system without restarting the agent, and observe that
 the agent loop behaves identically regardless of which backend is active.
 
-{{< pathtabs title="Your path" >}}
-{{% pathtab path="docker" %}}
-**Docker Compose** — every command on this page runs on your own machine.
-
-Before you start, confirm Lab 2's stack is still up:
-
-```bash
-cd ~/ai-101/lab-app/compose
-docker compose ps
-```
-
-Expect `ollama`, `agent`, and `ui` with state `running`. If they are not, redo the
-Lab 2 deploy step.
-
-*On Kubernetes instead? Click the **Kubernetes / Helm** tab — every lab page will
-follow your choice.*
-{{% /pathtab %}}
-{{% pathtab path="k8s" %}}
 **Kubernetes / Helm** — every command on this page runs in your Cloud Shell session
 against your cluster.
 
@@ -44,32 +26,8 @@ agent port-forward from Lab 2 listed by `jobs`. If it is missing, restart it:
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
 ```
 
-*Running locally with Docker instead? Click the **Docker Compose** tab — every lab
-page will follow your choice.*
-{{% /pathtab %}}
-{{< /pathtabs >}}
-
 ## Deploy
 
-{{< pathtabs >}}
-{{% pathtab path="docker" %}}
-```bash
-cd ~/ai-101/lab-app/compose
-docker compose --profile lab2 down 2>/dev/null; true
-docker compose --profile lab3 up -d
-```
-
-Verify:
-```bash
-cd ~/ai-101/lab-app/compose
-docker compose ps
-curl -s http://localhost:8001/health | jq .
-# Expected: "tool_mode": "mcp"
-curl -s http://localhost:8001/tools | jq '.tools[].name'
-# Expected: "query_employees", "send_message"
-```
-{{% /pathtab %}}
-{{% pathtab path="k8s" %}}
 ```bash
 cd ~/ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml
@@ -95,8 +53,6 @@ curl -s http://localhost:8001/health | jq .
 curl -s http://localhost:8001/tools | jq '.tools[].name'
 # Expected: "query_employees", "send_message"
 ```
-{{% /pathtab %}}
-{{< /pathtabs >}}
 
 ---
 
@@ -104,17 +60,9 @@ curl -s http://localhost:8001/tools | jq '.tools[].name'
 
 Open the UI, then ask the question below.
 
-{{< pathtabs >}}
-{{% pathtab path="docker" %}}
-Open [http://localhost:8080](http://localhost:8080).
-{{% /pathtab %}}
-{{% pathtab path="k8s" %}}
-
 Open the FQDN link printed by the `echo` command in the Deploy step above
 (NodePort `30280`).
 
-{{% /pathtab %}}
-{{< /pathtabs >}}
 
 > Who is in the Engineering department?
 
@@ -179,16 +127,6 @@ itself never calls this function differently.
 
 ## Step 3 — Add a tool without restarting the agent
 
-{{< pathtabs >}}
-{{% pathtab path="docker" %}}
-```bash
-cd ~/ai-101/lab-app/compose
-ENABLE_EXTRA_TOOL=true docker compose --profile lab3 up -d mcp-server
-```
-
-Expected: only the `mcp-server` container is recreated.
-{{% /pathtab %}}
-{{% pathtab path="k8s" %}}
 ```bash
 cd ~/ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab3.yaml \
@@ -207,8 +145,7 @@ REVISION: 8
 DESCRIPTION: Upgrade complete
 TEST SUITE: None
 ```
-{{% /pathtab %}}
-{{< /pathtabs >}}
+
 
 - Only the MCP server was restarted. The agent container is still running with
 its previous tool list. Trigger re-discovery without touching the agent:

@@ -3,7 +3,6 @@ title: "Handout — Kubernetes / Helm"
 linkTitle: "Handout — Kubernetes / Helm"
 weight: 30
 hidden: true
-deploymentPath: k8s
 outputs: ["html", "print"]
 ---
 

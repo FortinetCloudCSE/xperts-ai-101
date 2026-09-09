@@ -6,22 +6,7 @@ weight: 90
 
 ## Reference pages for your path
 
-{{< pathtabs title="Reference for your path" >}}
-{{% pathtab path="docker" %}}
-**Docker Compose** — the pages and sections below apply to you:
 
-| Page / section | What it covers |
-|---|---|
-| [Printable handout](handouts/handout-docker/) | Every Docker Compose step in one linear page, for printing |
-| [Docker Compose Setup](/01Intro/1_prereqs_docker) | Install, image pull, model pull, start/stop per lab, cleanup |
-| [Compose profiles](#compose-profiles) | Which services each `--profile labN` brings up |
-| [Environment variables](#environment-variables) | Every variable the lab app reads |
-| [Day 2 swap](#day-2-swap--one-line-change) | Point the agent at FortiAIGate |
-| [Known issues](#known-issues-and-workarounds) | Including `docker compose` command not found |
-
-There is no Azure Cloud Shell page for this path — the UI runs on your own machine.
-{{% /pathtab %}}
-{{% pathtab path="k8s" %}}
 **Kubernetes / Helm** — the pages and sections below apply to you:
 
 | Page / section | What it covers |
@@ -34,8 +19,7 @@ There is no Azure Cloud Shell page for this path — the UI runs on your own mac
 | [Known issues](#known-issues-and-workarounds) | Including Web Preview `Unauthorized` |
 
 Per-lab configuration lives in that lab's `values-labN.yaml` file.
-{{% /pathtab %}}
-{{< /pathtabs >}}
+
 
 ## Environment variables
 
@@ -50,16 +34,6 @@ Per-lab configuration lives in that lab's `values-labN.yaml` file.
 | `POISON_DESC` | `false` | Activates the poisoned `search_web` description for the Lab 4 advanced demo. Requires `ENABLE_EXTRA_TOOL=true`. |
 | `OLLAMA_MODEL` | `qwen2.5:3b` | Model pulled by the Ollama entrypoint at startup. |
 
-{{% pathonly path="docker" %}}
-## Compose profiles
-
-| Profile | Services | Used in |
-|---------|----------|---------|
-| `lab1` | ollama | Lab 1 |
-| `lab2` | ollama + agent (hardcoded) + ui | Lab 2 |
-| `lab3` | ollama + agent-mcp + mcp-server + ui-mcp | Lab 3 |
-| `lab4` | same as lab3 | Lab 4 |
-{{% /pathonly %}}
 
 ## API endpoints (agent)
 
@@ -95,22 +69,14 @@ to match what the target endpoint serves.
 
 ## Day 2 swap — one-line change
 
-{{< pathtabs >}}
-{{% pathtab path="docker" %}}
-```bash
-cd ~/ai-101/lab-app/compose
-OPENAI_BASE_URL=https://your-fortiaigate-host/v1 \
-  docker compose --profile lab4 up -d
-```
-{{% /pathtab %}}
-{{% pathtab path="k8s" %}}
+
+
 ```bash
 cd ~/ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab4.yaml \
     --set agent.openaiBaseUrl=https://your-fortiaigate-host/v1
 ```
-{{% /pathtab %}}
-{{< /pathtabs >}}
+
 
 No image changes. No code changes. The agent, MCP server, and UI are identical
 to Day 1.
@@ -119,19 +85,7 @@ to Day 1.
 
 ### Path-specific issues
 
-{{< pathtabs >}}
-{{% pathtab path="docker" %}}
-**`docker compose` command not found**
 
-Ensure you have Docker Compose v2 (`docker compose` with a space, not
-`docker-compose`). Install via Docker Desktop or the Compose plugin.
-
-**A lab step says connection refused on `localhost:8001` or `localhost:11434`**
-
-The container for that service is not running. Check with `docker compose ps` and
-bring the lab's profile back up.
-{{% /pathtab %}}
-{{% pathtab path="k8s" %}}
 **Azure Cloud Shell Web Preview returns Unauthorized**
 
 See [Troubleshooting Azure Cloud Shell Web Preview](cloud-shell-web-preview/).
@@ -141,8 +95,7 @@ See [Troubleshooting Azure Cloud Shell Web Preview](cloud-shell-web-preview/).
 The port-forward has died, usually because the pod behind it was replaced by a
 `helm upgrade`. List background jobs with `jobs` and restart the missing forward —
 each lab page's preflight block has the exact command.
-{{% /pathtab %}}
-{{< /pathtabs >}}
+
 
 ### First token takes 30+ seconds
 
