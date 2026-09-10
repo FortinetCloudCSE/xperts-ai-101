@@ -3,7 +3,6 @@ title: "Troubleshooting Azure Cloud Shell Web Preview"
 linkTitle: "Cloud Shell Web Preview"
 hidden: true
 weight: 10
-deploymentPath: k8s
 ---
 
 {{% notice style="note" title="Kubernetes / Helm path only" %}}
