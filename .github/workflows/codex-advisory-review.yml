@@ -221,20 +221,40 @@ jobs:
           from pathlib import Path
 
           response = json.loads(Path("openai-responses-result.json").read_text())
-          output_text = response.get("output_text")
 
-          if not output_text:
+          def extract_text(resp):
+              # 1) Preferred top-level helper field
+              t = resp.get("output_text")
+              if isinstance(t, str) and t.strip():
+                  return t.strip()
+
+              # 2) Walk output/content blocks defensively
               chunks = []
-              for item in response.get("output", []):
-                  for content in item.get("content", []):
-                      if content.get("type") == "output_text":
-                          text = content.get("text", "")
-                          if text:
-                              chunks.append(text)
-              output_text = "\n".join(chunks).strip()
+              for item in resp.get("output", []) or []:
+                  for content in item.get("content", []) or []:
+                      ctype = content.get("type")
+                      if ctype in ("output_text", "text"):
+                          txt = content.get("text")
+                          if isinstance(txt, str) and txt.strip():
+                              chunks.append(txt.strip())
+                      elif ctype == "message":
+                          # Some responses may nest text deeper
+                          for part in content.get("message", {}).get("content", []) or []:
+                              if part.get("type") in ("output_text", "text"):
+                                  txt = part.get("text")
+                                  if isinstance(txt, str) and txt.strip():
+                                      chunks.append(txt.strip())
+              return "\n\n".join(chunks).strip()
+
+          output_text = extract_text(response)
 
           if not output_text:
-              raise SystemExit("OpenAI response did not contain output text.")
+              # Emit useful diagnostics instead of opaque failure
+              Path("openai-response-debug.json").write_text(json.dumps(response, indent=2))
+              raise SystemExit(
+                  "OpenAI response did not contain extractable text. "
+                  "See openai-response-debug.json for payload shape."
+              )
 
           Path("codex-security-report.md").write_text(output_text.rstrip() + "\n")
           PY
