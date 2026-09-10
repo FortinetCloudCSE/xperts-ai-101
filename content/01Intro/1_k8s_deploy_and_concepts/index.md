@@ -365,8 +365,8 @@ kubectl get node
 {{% tab title="Expected Output" style="info" %}}
 
 ```bash
-NAME                             STATUS   ROLES   AGE     VERSION
-aks-worker-20494901-vmss000000   Ready    agent   2m56s   v1.27.9
+NAME                             STATUS   ROLES    AGE   VERSION
+aks-worker-35394522-vmss000000   Ready    <none>   17h   v1.35.7
 ```
 
 {{% /tab %}}
@@ -389,7 +389,7 @@ To create a Pod:
 {{< tabs title="kubectl run" >}}
 {{% tab title="Create Pod" %}}
 
-Create a Pod with `kubectl run`
+Create a Pod
 
 ```bash
 kubectl run juiceshop --image=bkimminich/juice-shop
@@ -412,12 +412,12 @@ kubectl get pod
 ```bash
 kubectl get pod
 NAME        READY   STATUS    RESTARTS   AGE
-juiceshop   1/1     Running   0          7s
+juiceshop   1/1     Running   0          27s
 ```
 
 The **STATUS** of Pod may be **ContainerCreating** , but eventually, it will become **Running**.
 
-use `kubectl logs po/juiceshop` to check the terminal log from Pod. you are expected see logs like **info: Server listening on port 3000**
+Use `kubectl logs po/juiceshop` to check logs.
 
 {{% /tab %}}
 {{< /tabs >}}
@@ -427,7 +427,7 @@ use `kubectl logs po/juiceshop` to check the terminal log from Pod. you are expe
 {{< tabs title="kubectl logs" >}}
 {{% tab title="Check Container Log" %}}
 
-Check container logs with `kubectl logs`
+Check container logs
 
 ```bash
 kubectl logs po/juiceshop
@@ -437,22 +437,30 @@ kubectl logs po/juiceshop
 {{% tab title="Expected Output" style="info" %}}
 
 ```bash
-info: All dependencies in ./package.json are satisfied (OK)
-info: Detected Node.js version v20.10.0 (OK)
-info: Detected OS linux (OK)
-info: Detected CPU x64 (OK)
-info: Configuration default validated (OK)
-info: Entity models 19 of 19 are initialized (OK)
-info: Required file server.js is present (OK)
-info: Required file index.html is present (OK)
-info: Required file styles.css is present (OK)
-info: Required file polyfills.js is present (OK)
-info: Required file main.js is present (OK)
-info: Required file runtime.js is present (OK)
-info: Required file vendor.js is present (OK)
-info: Port 3000 is available (OK)
-info: Domain https://www.alchemy.com/ is reachable (OK)
-info: Chatbot training data botDefaultTrainingData.json validated (OK)
+info: Detected Node.js version v24.19.0 (SUCCESS)
+info: Detected OS linux (SUCCESS)
+info: Detected CPU x64 (SUCCESS)
+info: Configuration default validated (SUCCESS)
+info: Entity models 21 of 21 are initialized (SUCCESS)
+info: All dependencies in ./package.json are satisfied (SUCCESS)
+info: Required file server.js is present (SUCCESS)
+info: Required file index.html is present (SUCCESS)
+info: Required file styles.css is present (SUCCESS)
+info: Required file polyfills.js is present (SUCCESS)
+info: Required file main.js is present (SUCCESS)
+info: Required file matching /^hacking-instructor-.+\.js$/ is present (SUCCESS)
+info: Port 3000 is available (SUCCESS)
+info: Domain https://www.alchemy.com/ is reachable (SUCCESS)
+warn: Environment variable ALCHEMY_API_KEY is not present (WARNING)
+warn: "Mint the Honey Pot" challenge will not work as intended without a valid ALCHEMY_API_KEY
+warn: "Wallet Depletion" challenge will not work as intended without a valid ALCHEMY_API_KEY
+info: Check https://howto-web3.owasp-juice.shop for instructions on how to set up and configure the Alchemy API
+warn: Domain http://localhost:11434/v1 is not reachable (WARNING)
+warn: "Chatbot Prompt Injection" challenge will not work as intended without access to http://localhost:11434/v1
+warn: "Greedy Chatbot Manipulation" challenge will not work as intended without access to http://localhost:11434/v1
+warn: "AI Debugging" challenge will not work as intended without access to http://localhost:11434/v1
+warn: "System Prompt Extraction" challenge will not work as intended without access to http://localhost:11434/v1
+info: Check https://howto-llm.owasp-juice.shop for instructions on how to set up and configure the LLM API
 info: Server listening on port 3000
 ```
 
@@ -499,8 +507,8 @@ Two Pods should be running
 
 ```bash
 NAME         READY   STATUS    RESTARTS   AGE
-juiceshop    1/1     Running   0          35s
-juiceshop2   1/1     Running   0          4s
+juiceshop    1/1     Running   0          4m29s
+juiceshop2   1/1     Running   0          22s
 ```
 
 {{% /tab %}}
@@ -536,13 +544,13 @@ juiceshop   1/1     Running   0          63s
 
 Labels in Kubernetes are key/value pairs attached to objects, such as Pods, Services, and Deployments. They serve to organize, select, and group objects in ways meaningful to users, allowing the mapping of organizational structures onto system objects in a loosely coupled fashion without necessitating clients to store these mappings.
 
-1. Labels can be utilized to filter resources when using kubectl commands. For example, executing the command below will retrieves all Pods labeled with run=juiceshop.
+1. Labels can be utilized to filter resources when using kubectl commands. Execute the command below to retrieve all Pods labeled with run=juiceshop.
 
     ```bash
     kubectl get pods -l run=juiceshop
     ```
 
-1. Labels can be added to an object using the `kubectl label` command. For instance, executing below will add the key:value pair "purpose=debug" to the Pod named juiceshop.
+1. Labels can be added to an object using the `kubectl label` command. Execute the command below to add the key:value pair "purpose=debug" to the Pod named juiceshop.
 
     ```bash
     kubectl label pod juiceshop purpose=debug
@@ -562,8 +570,8 @@ kubectl get pod --show-labels
 {{% tab title="Expected Output" style="info" %}}
 
 ```bash
-NAME                  READY   UP-TO-DATE   AVAILABLE   AGE   LABELS
-juiceshop   1/1     Running   0          4m7s   purpose=debug,run=juiceshop
+juiceshop    1/1     Running   0          8m3s    purpose=debug,run=juiceshop,topology.kubernetes.io/region=eastus,topology.kubernetes.io/zone=0
+juiceshop2   1/1     Running   0          3m56s   run=juiceshop2,topology.kubernetes.io/region=eastus,topology.kubernetes.io/zone=0
 ```
 
 {{% /tab %}}
@@ -626,7 +634,7 @@ There should be a single deployment running a single Pod of the app container(s)
 
 ```bash
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
-kubernetes-bootcamp   1/1     1            1           20m
+kubernetes-bootcamp   1/1     1            1           24s
 ```
 
 In the output:
@@ -670,13 +678,16 @@ kubectl describe rs kubernetes-bootcamp
 {{% tab title="Expected Output" style="info" %}}
 
 ```bash
+~$ kubectl get rs -l app=kubernetes-bootcamp
 NAME                             DESIRED   CURRENT   READY   AGE
-kubernetes-bootcamp-5485cc6795   1         1         1       18m
-Name:           kubernetes-bootcamp-5485cc6795
+kubernetes-bootcamp-67fbdd6b79   1         1         1       111s
+
+~$ kubectl describe rs kubernetes-bootcamp
+Name:           kubernetes-bootcamp-67fbdd6b79
 Namespace:      default
-Selector:       app=kubernetes-bootcamp,pod-template-hash=5485cc6795
+Selector:       app=kubernetes-bootcamp,pod-template-hash=67fbdd6b79
 Labels:         app=kubernetes-bootcamp
-                pod-template-hash=5485cc6795
+                pod-template-hash=67fbdd6b79
 Annotations:    deployment.kubernetes.io/desired-replicas: 1
                 deployment.kubernetes.io/max-replicas: 2
                 deployment.kubernetes.io/revision: 1
@@ -685,19 +696,17 @@ Replicas:       1 current / 1 desired
 Pods Status:    1 Running / 0 Waiting / 0 Succeeded / 0 Failed
 Pod Template:
   Labels:  app=kubernetes-bootcamp
-           pod-template-hash=5485cc6795
+           pod-template-hash=67fbdd6b79
   Containers:
    kubernetes-bootcamp:
-    Image:        gcr.io/google-samples/kubernetes-bootcamp:v1
-    Port:         <none>
-    Host Port:    <none>
-    Environment:  <none>
-    Mounts:       <none>
-  Volumes:        <none>
-Events:
-  Type    Reason            Age   From                   Message
-  ----    ------            ----  ----                   -------
-  Normal  SuccessfulCreate  18m   replicaset-controller  Created pod: kubernetes-bootcamp-5485cc6795-cdwz7
+    Image:         gcr.io/google-samples/kubernetes-bootcamp:v1
+    Port:          <none>
+    Host Port:     <none>
+    Environment:   <none>
+    Mounts:        <none>
+  Volumes:         <none>
+  Node-Selectors:  <none>
+  Tolerations:     <none>
 ```
 
 In the output, the line **Controlled By:  Deployment/kubernetes-bootcamp** indicates that ReplicaSet is controlled by Deployment/kubernetes-bootcamp.
@@ -707,7 +716,7 @@ In the output, the line **Controlled By:  Deployment/kubernetes-bootcamp** indic
 
 ## Manage your Deployment
 
-### Scale you Application
+### Scale the Application
 
 {{< tabs title="kubectl scale">}}
 {{% tab title="Scale Out" %}}
@@ -732,7 +741,7 @@ kubectl get deployment kubernetes-bootcamp
 
 ```bash
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
-kubernetes-bootcamp   10/10   10           10          26m
+kubernetes-bootcamp   10/10   10           10          4m11s
 ```
 
 The **READY** status will eventually show 10/10, indicating that 10 replicas were expected and all 10 are now available.
@@ -751,6 +760,20 @@ kubectl get pod -l app=kubernetes-bootcamp
 ```
 
 10 Pod will be created.
+
+```bash
+NAME                                   READY   STATUS    RESTARTS   AGE
+kubernetes-bootcamp-67fbdd6b79-2k5r9   1/1     Running   0          53s
+kubernetes-bootcamp-67fbdd6b79-6hxbn   1/1     Running   0          53s
+kubernetes-bootcamp-67fbdd6b79-77qm7   1/1     Running   0          53s
+kubernetes-bootcamp-67fbdd6b79-b4h8m   1/1     Running   0          53s
+kubernetes-bootcamp-67fbdd6b79-ccwb8   1/1     Running   0          53s
+kubernetes-bootcamp-67fbdd6b79-grrcw   1/1     Running   0          4m54s
+kubernetes-bootcamp-67fbdd6b79-jswkp   1/1     Running   0          53s
+kubernetes-bootcamp-67fbdd6b79-wb6xw   1/1     Running   0          53s
+kubernetes-bootcamp-67fbdd6b79-wv29h   1/1     Running   0          52s
+kubernetes-bootcamp-67fbdd6b79-z4bm2   1/1     Running   0          52s
+```
 
 {{% /tab %}}
 {{% tab title="Scale In" %}}
@@ -778,11 +801,11 @@ kubectl get pod -l app=kubernetes-bootcamp -o wide
 Some Pods will be in the **Terminating** state, and eventually, only 1 Pod will remain active.
 
 ```bash
-NAME                                  READY   STATUS    RESTARTS   AGE   IP              NODE         
-kubernetes-bootcamp-bcbb7fc75-5r649   1/1     Running   0          73s   10.244.222.16   worker001    
+NAME                                   READY   STATUS    RESTARTS   AGE     IP            NODE                             NOMINATED NODE   READINESS GATES
+kubernetes-bootcamp-67fbdd6b79-grrcw   1/1     Running   0          7m29s   10.224.0.14   aks-worker-35394522-vmss000000   <none>           <none>
 ```
 
-Above output is from the `kubectl get Pod -o wide -l app=kubernetes-bootcamp` command, which requests Kubernetes to list Pods with additional information (wide output) that match the label app=kubernetes-bootcamp. Here's a breakdown of the output:
+Above output is from the `kubectl get pod -l app=kubernetes-bootcamp -o wide` command, which requests Kubernetes to list Pods with additional information (wide output) that match the label app=kubernetes-bootcamp. Here's a breakdown of the output:
 
 - **NAME**: kubernetes-bootcamp-bcbb7fc75-5r649 - This is the name of the Pod. Kubernetes generates Pod names automatically based on the deployment name and a unique identifier to ensure each Pod within a namespace has a unique name with an appended hash value bcbb7fc75-5r649, this is created by **deployment** automatically for each replica. Pods created with `kubectl run pod` or `kubectl create -f <pod.yaml>` does not have this hash appended in Pod name.
 
@@ -819,7 +842,7 @@ By default, a Kubernetes cluster will instantiate a default namespace when provi
 
 - by default, all operation is under default namespace, for example `kubectl get deployment kubernetes-bootcamp -n default` is same as `kubectl get deployment kubernetes-bootcamp`.
 
-Let's imagine a scenario where an organization is using a shared Kubernetes cluster for development and production use cases.
+Imagine a scenario where an organization is using a shared Kubernetes cluster for development and production use cases.
 
 The development team would like to maintain a space in the cluster where they can get a view on the list of Pods, Services, and Deployments they use to build and run their application. In this space, Kubernetes resources come and go, and the restrictions on who can or cannot modify resources are relaxed to enable agile development.
 
