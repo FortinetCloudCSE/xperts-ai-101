@@ -29,7 +29,7 @@ kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.l
 ## Deploy
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml
 kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
 ```
@@ -128,7 +128,7 @@ itself never calls this function differently.
 ## Step 3 — Add a tool without restarting the agent
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab3.yaml \
     --set mcpServer.enableExtraTool=true
 ```

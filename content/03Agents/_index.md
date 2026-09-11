@@ -10,6 +10,7 @@ structured, and why the agent in this workshop is deliberately simple. The
 hands-on portion is in [Lab 2](1_lab/).
 
 By the end of this page you should be able to explain:
+
 - What an agent is at the code level (a loop, nothing more)
 - How `finish_reason: tool_calls` drives the loop
 - What a tool schema is and why the description field matters
@@ -25,6 +26,7 @@ path. It is a single-page vanilla JS application that talks to the agent API
 (proxied through nginx as `/api/`).
 
 It has three panels:
+
 - **Chat** — sends messages to `/chat`, displays the agent's final answer.
 - **Trace** — shows each tool call in real time: function name, arguments, and
   result. Populated from the `trace` array in the `/chat` response.
