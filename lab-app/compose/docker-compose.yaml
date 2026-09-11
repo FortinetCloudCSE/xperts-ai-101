@@ -29,7 +29,7 @@ services:
 
   # ── Ollama (all labs) ─────────────────────────────────────────────────────
   ollama:
-    image: ghcr.io/fortinetcloudcse/ai-101/ollama:latest
+    image: ghcr.io/fortinetcloudcse/xperts-ai-101/ollama:latest
     build:
       context: ../images/ollama
     environment:
@@ -49,7 +49,7 @@ services:
 
   # ── Agent — hardcoded tools (Lab 2) ───────────────────────────────────────
   agent:
-    image: ghcr.io/fortinetcloudcse/ai-101/agent:latest
+    image: ghcr.io/fortinetcloudcse/xperts-ai-101/agent:latest
     build:
       context: ../images/agent
     environment:
@@ -78,7 +78,7 @@ services:
   # The network alias 'agent' lets the UI resolve it regardless of which
   # agent service is active.
   agent-mcp:
-    image: ghcr.io/fortinetcloudcse/ai-101/agent:latest
+    image: ghcr.io/fortinetcloudcse/xperts-ai-101/agent:latest
     build:
       context: ../images/agent
     environment:
@@ -107,7 +107,7 @@ services:
 
   # ── MCP server (Labs 3 & 4) ───────────────────────────────────────────────
   mcp-server:
-    image: ghcr.io/fortinetcloudcse/ai-101/mcp-server:latest
+    image: ghcr.io/fortinetcloudcse/xperts-ai-101/mcp-server:latest
     build:
       context: ../images/mcp-server
     environment:
@@ -119,7 +119,7 @@ services:
 
   # ── UI (Labs 2–4) ─────────────────────────────────────────────────────────
   ui:
-    image: ghcr.io/fortinetcloudcse/ai-101/ui:latest
+    image: ghcr.io/fortinetcloudcse/xperts-ai-101/ui:latest
     build:
       context: ../images/ui
     ports:
@@ -129,7 +129,7 @@ services:
     profiles: ["lab2"]
 
   ui-mcp:
-    image: ghcr.io/fortinetcloudcse/ai-101/ui:latest
+    image: ghcr.io/fortinetcloudcse/xperts-ai-101/ui:latest
     build:
       context: ../images/ui
     ports:

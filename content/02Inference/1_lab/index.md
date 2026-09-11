@@ -62,7 +62,7 @@ kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forwa
 The first interaction is a straightforward request for the secret. Run it:
 
 ```bash
-cd ~/ai-101/lab-app/scripts
+cd ~/xperts-ai-101/lab-app/scripts
 ./lab1_inference.sh
 ```
 
@@ -99,7 +99,7 @@ sentence. The constraint pattern never fires.
 Run the injection script:
 
 ```bash
-cd ~/ai-101/lab-app/scripts
+cd ~/xperts-ai-101/lab-app/scripts
 ./lab1_injection.sh
 ```
 
@@ -150,7 +150,7 @@ You should now be able to:
 {{% tab title="Override code check" %}}
 
 ```bash
-~/ai-101/lab-app/scripts/lab1_injection.sh | grep "Override code revealed"
+~/xperts-ai-101/lab-app/scripts/lab1_injection.sh | grep "Override code revealed"
 ```
 {{% /tab %}}
 {{% tab title="Expected Output" style="info" %}}
