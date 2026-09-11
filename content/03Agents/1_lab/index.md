@@ -65,7 +65,7 @@ curl -s http://localhost:8001/health | jq .
 Open the Kubernetes UI using the NodePort URL.
 
 ```bash
-echo "UI: http://$(whoami)-worker.$(az group show -n $(whoami)-k8s101-workshop --query location -o tsv).cloudapp.azure.com:30280"
+ az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
 ```
 
 Click the printed link to open the chatbot in the browser.
