@@ -138,7 +138,7 @@ The `kubectl port-forward` command creates a temporary connection from `localhos
 ## 5. Reference — upgrade per lab
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 
 # Lab 1 — Ollama only
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml
@@ -166,7 +166,7 @@ The two sections below are **not part of the lab flow** — they are reference m
 To route the agent through FortiAIGate instead of the local Ollama:
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab4.yaml \
     --set agent.openaiBaseUrl=https://your-fortiaigate-host/v1
 ```

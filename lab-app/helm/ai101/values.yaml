@@ -15,7 +15,7 @@
 # The agent image, the MCP server, and the UI all stay exactly the same.
 
 image:
-  registry: ghcr.io/fortinetcloudcse/ai-101
+  registry: ghcr.io/fortinetcloudcse/xperts-ai-101
   tag: latest
   pullPolicy: Always
 

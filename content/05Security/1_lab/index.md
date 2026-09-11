@@ -204,7 +204,7 @@ Reset the agent to verbose mode, then restart the MCP server with the poisoned
 description:
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab4.yaml \
     --set mcpServer.enableExtraTool=true \
     --set mcpServer.poisonDesc=true

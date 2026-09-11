@@ -86,7 +86,7 @@ kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}'; echo
 
 ```bash
 cd ~
-git clone https://github.com/FortinetCloudCSE/ai-101.git
+git clone https://github.com/FortinetCloudCSE/xperts-ai-101.git
 cd ai-101
 ```
 
@@ -98,7 +98,7 @@ automatically by the cluster — no manual image pull required.
 **Install Chart**
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml
 ```
 
@@ -144,7 +144,7 @@ To open a new terminal in Azure Cloud Shell, click on the New Session tab
 In the session lab paste the below: 
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 ```
 
 **Follow the logs**
@@ -193,7 +193,7 @@ The `kubectl port-forward` command creates a temporary connection from `localhos
 ### 5. Reference — upgrade per lab
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 
 # Lab 1 — Ollama only
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml
@@ -221,7 +221,7 @@ The two sections below are **not part of the lab flow** — they are reference m
 To route the agent through FortiAIGate instead of the local Ollama:
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab4.yaml \
     --set agent.openaiBaseUrl=https://your-fortiaigate-host/v1
 ```
@@ -299,7 +299,7 @@ kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forwa
 The first interaction is a straightforward request for the secret. Run it:
 
 ```bash
-cd ~/ai-101/lab-app/scripts
+cd ~/xperts-ai-101/lab-app/scripts
 ./lab1_inference.sh
 ```
 
@@ -336,7 +336,7 @@ sentence. The constraint pattern never fires.
 Run the injection script:
 
 ```bash
-cd ~/ai-101/lab-app/scripts
+cd ~/xperts-ai-101/lab-app/scripts
 ./lab1_injection.sh
 ```
 
@@ -387,7 +387,7 @@ You should now be able to:
 
 
 ```bash
-~/ai-101/lab-app/scripts/lab1_injection.sh | grep "Override code revealed"
+~/xperts-ai-101/lab-app/scripts/lab1_injection.sh | grep "Override code revealed"
 ```
 
 **Expected Output**
@@ -434,7 +434,7 @@ kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forwa
 ### Deploy
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml
 kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
@@ -676,7 +676,7 @@ kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.l
 ### Deploy
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml
 kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
 ```
@@ -773,7 +773,7 @@ itself never calls this function differently.
 ### Step 3 — Add a tool without restarting the agent
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab3.yaml \
     --set mcpServer.enableExtraTool=true
 ```
@@ -917,7 +917,7 @@ kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.l
 ### Deploy
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml
 kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
@@ -1014,7 +1014,7 @@ to any caller is already the breach — exfiltration is one hop away.
 ### Step 2 — The same attack, no visible audit trail
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab4.yaml \
     --set agent.transparency=quiet
 kubectl rollout status deployment/ai101-agent
@@ -1080,7 +1080,7 @@ Reset the agent to verbose mode, then restart the MCP server with the poisoned
 description:
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab4.yaml \
     --set mcpServer.enableExtraTool=true \
     --set mcpServer.poisonDesc=true
@@ -1230,7 +1230,7 @@ to match what the target endpoint serves.
 ### Day 2 swap — one-line change
 
 ```bash
-cd ~/ai-101/lab-app/helm
+cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab4.yaml \
     --set agent.openaiBaseUrl=https://your-fortiaigate-host/v1
 ```
