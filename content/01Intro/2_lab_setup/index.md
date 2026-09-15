@@ -28,7 +28,7 @@ If kubectl get nodes works, you are connected to the cluster and continue to the
 ```bash
 cd ~
 git clone https://github.com/FortinetCloudCSE/xperts-ai-101.git
-cd ai-101
+cd xperts-ai-101
 ```
 
 ## 3. Install the chart for Lab 1

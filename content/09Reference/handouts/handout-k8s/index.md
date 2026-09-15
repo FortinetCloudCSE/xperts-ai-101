@@ -462,7 +462,8 @@ curl -s http://localhost:8001/health | jq .
 Open the Kubernetes UI using the NodePort URL.
 
 ```bash
-echo "UI: http://$(whoami)-worker.$(az group show -n $(whoami)-k8s101-workshop --query location -o tsv).cloudapp.azure.com:30280"
+az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -
+n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress'
 ```
 
 Click the printed link to open the chatbot in the browser.
@@ -690,7 +691,8 @@ kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.l
 The UI is reachable directly via NodePort:
 
 ```bash
-echo "UI: http://$(whoami)-worker.$(az group show -n $(whoami)-k8s101-workshop --query location -o tsv).cloudapp.azure.com:30280"
+az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -
+n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress'
 ```
 
 Verify:
@@ -921,7 +923,7 @@ cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml
 kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
-echo "UI: http://$(whoami)-worker.$(az group show -n $(whoami)-k8s101-workshop --query location -o tsv).cloudapp.azure.com:30280"
+az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress'
 ```
 
 Confirm agent is up in MCP mode with verbose transparency:

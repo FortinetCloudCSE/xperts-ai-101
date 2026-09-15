@@ -4,19 +4,21 @@ linkTitle: "Kubernetes Fundamentals"
 weight: 2
 ---
 
-All tasks for this session will be completed from the Linux VM and a browser.
+All tasks for this session will be completed from a provided Linux VM and a browser.
 
-We start this session with Kubernetes fundamentals using a managed Azure Kubernetes Service (AKS) cluster. Your environment credentials provide access to a Linux VM from which you will deploy an AKS cluster in Azure Cloud. Utilizing a prebuilt script, you will deploy the cluster in Azure Cloud without navigating through complex installation steps.
+This session starts with Kubernetes fundamentals using a managed Azure Kubernetes Service (AKS) cluster. Provided credentials allow for access to a Linux VM from which an AKS cluster is deployed in Azure Cloud. Utilizing a prebuilt script, you will deploy the cluster in Azure Cloud without navigating through complex installation steps.
 
-The focus areas include **Pods**, **Labels**, **Deployments**, **Replicas**, and **Namespaces**.
+The focus areas for teh Kubernetes fundamentals includes **Pods**, **Labels**, **Deployments**, **Replicas**, and **Namespaces**.
 
 ## AKS Cluster Deployment
 
 We'll start by deploying a Managed Azure Kubernetes Service (AKS). This hands-on approach introduces you to Kubernetes essentials efficiently, with the setup process completing in about 5 minutes."
 
-The script below will create a Managed Azure Kubernetes Service (AKS) with one worker node and also update `kubeconfig` for AKS access.
+The script below will create a Managed Azure Kubernetes Service (AKS) with one worker node and also update the local `kubeconfig` for AKS access. At no point is access to Azure required.
 
-Click the **'copy to clipboard'** icon at the top right corner to copy the command and paste it into the Linux VM terminal and press enter to execute.
+Hover over the gray code box, click the **'copy to clipboard'** icon at the top right corner to copy the command and paste it into the Linux VM terminal and press enter to execute. Navigate through the tabs to check output and to verify the AKS deployment.
+
+All commands used throughout this session are tailored to your session environment.
 
 {{< tabs title="AKS Create" >}}
 {{% tab title="Provision" %}}
@@ -325,7 +327,7 @@ kubectl relies on a configuration file found at **~/.kube/config** for authentic
 
 The common format of a kubectl command is: <kbd>kubectl</kbd> <kbd>ACTION</kbd> <kbd>RESOURCE</kbd>
 
-This performs the specified action (e.g., create, describe or delete) on the specified resource (e.g., node or deployment). Use --help after the subcommand to get additional info about possible parameters (e.g, kubectl get nodes --help).
+This performs the specified action (e.g., create, describe, delete) on the specified resource (e.g., node or deployment). Use --help after the subcommand to get additional info about possible parameters (e.g, kubectl get nodes --help).
 
 Check that kubectl is installed and configured to talk to your cluster, by running the `kubectl version` command.
 
@@ -378,9 +380,9 @@ A Pod in Kubernetes is like a single instance of an application. It can hold clo
 
 To create a Pod:
 
-- kubectl run: Quick way to create a single Pod for ad-hoc tasks or debugging.
-- kubectl create: Creates specific Kubernetes resources with more control. Use kubectl create -f to create from file.
-- kubectl apply: Creates or updates resources based on their configuration files. Use kubectl apply -f to create from file.
+- **kubectl run**: Quick way to create a single Pod for ad-hoc tasks or debugging.
+- **kubectl create**: Creates specific Kubernetes resources with more control. Use kubectl create -f to create from file.
+- **kubectl apply**: Creates or updates resources based on their configuration files. Use kubectl apply -f to create from file.
 
 ### Pod Management
 
@@ -416,8 +418,6 @@ juiceshop   1/1     Running   0          27s
 ```
 
 The **STATUS** of Pod may be **ContainerCreating** , but eventually, it will become **Running**.
-
-Use `kubectl logs po/juiceshop` to check logs.
 
 {{% /tab %}}
 {{< /tabs >}}
@@ -927,7 +927,7 @@ kubectl delete namespace development
 
 1. Explain the role of a Deployment in Kubernetes. How does it simplify the process of scaling and managing application within the cluster?
 {{% expand title="Click for Answer..." %}}
-  Deployments in Kubernetes simplify application management by providing a high-level abstraction for deploying, scaling, and updating applications. They handle the complexities of maintaining desired state, scaling, and rolling updates, allowing developers and operators to focus on the application rather than the infrastructure details.
+  Deployments in Kubernetes simplify application management by providing a high-level abstraction for deploying, scaling, and updating applications. Kubernetes handles the complexities of maintaining desired state, scaling, and rolling updates, allowing developers and operators to focus on the application rather than the infrastructure details.
 {{% /expand %}}
 
 1. How do namespaces contribute to resource management and isolation in a Kubernetes cluster? Provide an example scenario where separating resources into different namespaces would be beneficial.
@@ -935,7 +935,7 @@ kubectl delete namespace development
 Namespaces provide a clean separation between different clients, enhancing security, resource management, and operational efficiency. Namespaces allow the SaaS provider to manage a multi-tenant environment effectively within a single Kubernetes cluster.
 For example, Deploying a firewall container in a separate namespace within Kubernetes cluster offers several benefits:
 
-- Ensure that only authorized team members can modify firewall rules.
+- Ensures that only authorized team members can modify firewall rules.
 - Apply strict resource quotas to guarantee the firewall always has necessary resources.
 - Implement network policies that allow the firewall to interact with all namespaces while restricting other cross-namespace communication.
 - Perform updates to the firewall components without risking downtime for tenant applications.
@@ -952,9 +952,9 @@ For example, Deploying a firewall container in a separate namespace within Kuber
 
 - Storage Sharing:
   - Pods can have one or more volumes defined
-  - These volumes can be mounted into some or all containers in the Pod
+  - Volumes can be mounted into some or all containers in the Pod
   - Containers can read from and write to these shared volumes
-    - Example: A shared volume mounted at /data in two containers allows them to exchange files
+    - Example: A shared volume mounted at /data in two containers allows containers to exchange files
 
 This shared network and storage setup enables efficient inter-container communication and data exchange within the Pod, facilitating tight integration of related application components.
 {{% /expand %}}
