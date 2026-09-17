@@ -129,13 +129,15 @@ If the command returns a text response, Ollama is running successfully and the m
 {{% /tab %}}
 
 {{% tab title="Expected Output" style="info" %}}
-Pong! I received your message and responded to you in this way. How can I assist you further?
+Pong! Your ping request was successfully answered. How can I assist you further?
 {{% /tab %}}
 {{< /tabs >}}
 
 The `kubectl port-forward` command creates a temporary connection from `localhost:11434` to the Ollama service running inside the Kubernetes cluster. The `curl` command then sends a small test prompt to that local endpoint. Kubernetes forwards the request to Ollama, Ollama runs the model, and the model response is returned back to Cloud Shell.
 
 ## 5. Reference — upgrade per lab
+
+You will run one of these steps per lab to setup for the exercises in those labs. This is for reference only.
 
 ```bash
 cd ~/xperts-ai-101/lab-app/helm
@@ -159,11 +161,11 @@ Leave the release running as you work through the labs. Each lab section tells y
 
 ---
 
-The two sections below are **not part of the lab flow** — they are reference material for optional extensions and post-workshop teardown.
+## 6. FortiAIGate routing
 
-## 6. Optional — FortiAIGate routing
+FortiAIGate is not setup for this session, this is informational only.
 
-To route the agent through FortiAIGate instead of the local Ollama:
+To route the agent through FortiAIGate instead of the local Ollama, it would be a simple change to the agent URL:
 
 ```bash
 cd ~/xperts-ai-101/lab-app/helm

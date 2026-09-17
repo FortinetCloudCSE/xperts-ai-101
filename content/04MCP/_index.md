@@ -9,6 +9,7 @@ works at the wire level, and what dynamic tool discovery means for both
 capability and security. The hands-on portion is in [Lab 3](1_lab/).
 
 By the end of this page you should be able to explain:
+
 - What the M×N integration problem is and how MCP collapses it
 - The three MCP transports and which one this workshop uses
 - The two-phase interaction: discovery (list_tools) and execution (call_tool)
@@ -59,7 +60,7 @@ and tool vendors.
 MCP servers can expose three types of primitives:
 
 | Primitive | Description |
-|-----------|-------------|
+| ----------- | ------------- |
 | **Tools** | Functions the model can call. This is what the labs use. |
 | **Resources** | Data the model can read (files, database rows, API responses). The agent requests them explicitly rather than the model calling a function. |
 | **Prompts** | Reusable prompt templates the model can invoke by name. Useful for standardising common task patterns. |
@@ -76,7 +77,7 @@ MCP defines three transport options. The agent and server negotiate which one
 to use during the initialization handshake.
 
 | Transport | How it works | When to use |
-|-----------|-------------|-------------|
+| ----------- | ------------- | ------------- |
 | **stdio** | Agent spawns the server as a child process; they communicate over stdin/stdout | Local tools on the same machine |
 | **SSE** (deprecated) | Server-sent events over HTTP; older spec | Legacy deployments |
 | **Streamable HTTP** | HTTP POST for requests, streaming for responses; current spec | Remote servers, containers, production |
@@ -372,6 +373,7 @@ def query_employees(filter: str) -> str:
 ```
 
 Three things to note:
+
 - The **decorator** (`@mcp.tool()`) registers the function with the MCP server.
 - The **docstring** becomes the `description` field the model reads during discovery.
 - The **type annotations** (`filter: str`) are converted to the `inputSchema` automatically.
@@ -387,7 +389,7 @@ derives from the function signature.
 ### MCP primitives
 
 | Primitive | Used in this lab | Model interacts via |
-|-----------|-----------------|---------------------|
+| ----------- | ----------------- | --------------------- |
 | Tools | Yes | `finish_reason: tool_calls` |
 | Resources | No | Explicit resource-read request |
 | Prompts | No | Prompt-get request |
@@ -395,7 +397,7 @@ derives from the function signature.
 ### MCP vs hardcoded comparison
 
 | Aspect | Hardcoded (Lab 2) | MCP (Lab 3+) |
-|--------|------------------|--------------|
+| -------- | ------------------ | -------------- |
 | Tool source | `tools.py` in agent image | MCP server at runtime |
 | Add a new tool | Rebuild agent image | Restart MCP server only |
 | Tool execution | Direct function call | HTTP to MCP server |
@@ -405,7 +407,7 @@ derives from the function signature.
 ### Environment variables (MCP server)
 
 | Variable | Default | Effect |
-|----------|---------|--------|
+| ---------- | --------- | -------- |
 | `ENABLE_EXTRA_TOOL` | `false` | Adds `search_web` tool without agent restart |
 | `POISON_DESC` | `false` | Replaces `search_web` description with hidden instructions (Lab 4) |
 | `DB_PATH` | `/app/employees.db` | SQLite database path |

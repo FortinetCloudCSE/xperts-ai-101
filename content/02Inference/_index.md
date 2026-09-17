@@ -10,6 +10,7 @@ is not a bug that can be patched. It is also a reference you can return to
 during later modules when you need a reminder of how a specific piece works.
 
 By the end of this page you should be able to explain:
+
 - How a model produces output (token prediction, not retrieval or rule matching)
 - What the chat message structure looks like and what each role is for
 - Why the model is stateless and what that means for your application
@@ -50,13 +51,13 @@ them throughout the module.
 Before we can talk about context and message structure, we need to be clear
 about what the model actually reads — because it is not words.
 
-The model reads **tokens** — subword fragments produced by a vocabulary that was
+The model reads **tokens** — sub-word fragments produced by a vocabulary that was
 fixed during training using an algorithm called Byte-Pair Encoding (BPE). BPE
 starts with individual characters and repeatedly merges the most frequent pairs,
 building up a vocabulary of a few tens of thousands of common fragments. Common
 short words end up as single tokens. Longer or rarer words get split.
 
-```
+```bash
 Input:  "The emergency override code is ACME-RED-ALPHA-7"
 
 Approximate tokens:
@@ -108,7 +109,7 @@ constantly; the fourth — `tool` — is what makes the agent loop in Module 2
 work.
 
 | Role | Who sets it | Purpose |
-|------|-------------|---------|
+| ------ | ------------- | --------- |
 | `system` | Application developer | Persona, constraints, and context. Always the first message. Gets included in every request. |
 | `user` | Human or application | The current request. In agentic systems, this often contains external content the agent retrieved — which makes it an injection surface. |
 | `assistant` | The model (previous turns) | History of what the model already said. This is how the model "remembers" earlier turns — the application resends it each time. |
@@ -152,7 +153,7 @@ exchange — unless your application includes that history in the new request.
 
 It is the application's job to maintain the conversation and resend it:
 
-```
+```bash
 Turn 1 request:  [system] [user: "hello"]
                   ↓
                  model replies: "Hi there!"
@@ -167,7 +168,7 @@ Turn 3 request:  [system] [user: "hello"] [assistant: "Hi there!"] [user: "what 
 
 Each turn, the full history goes in. The context window shrinks with every
 exchange. For long conversations, the application eventually has to decide what
-to drop or summarise to stay within the limit.
+to drop or summarize to stay within the limit.
 
 The security angle: because the history is resent every turn, an injected
 instruction that the model followed in turn 3 is still sitting in the context
@@ -246,7 +247,7 @@ The fields you will access most often:
 ### finish_reason — the branch point
 
 | Value | Meaning |
-|-------|---------|
+| ------- | --------- |
 | `stop` | Model reached a natural stopping point. Normal completion. |
 | `length` | Hit the `max_tokens` limit. Response is cut off mid-generation. |
 | `tool_calls` | Model is requesting a function call instead of producing text. This is the branch that drives the entire agent loop in Module 2. |
@@ -283,7 +284,7 @@ A security note worth stating explicitly: at `temperature: 0.7`, the injection
 in Lab 1 will not succeed 100% of the time. The model occasionally samples
 toward the refusal. At higher temperatures, it becomes *more* reliable — because
 the "Access denied" pattern becomes a less consistently selected token sequence.
-Non-determinism is not a defence.
+Non-determinism is not a defense.
 
 ### top_p (nucleus sampling)
 
@@ -495,7 +496,7 @@ Modules 2 through 4 build toward exactly that design.
 ### Message roles
 
 | Role | Set by | Included when |
-|------|--------|---------------|
+| ------ | -------- | --------------- |
 | `system` | Developer | Every request, always first |
 | `user` | Human / application | Each user turn |
 | `assistant` | Model (replayed by app) | All previous model turns in the conversation |
@@ -504,7 +505,7 @@ Modules 2 through 4 build toward exactly that design.
 ### Sampling parameters
 
 | Parameter | Type | Effect |
-|-----------|------|--------|
+| ----------- | ------ | -------- |
 | `temperature` | float 0–2 | Higher = more random token selection |
 | `top_p` | float 0–1 | Nucleus sampling; filters low-probability tail tokens |
 | `max_tokens` | int | Hard cap on generated tokens; `length` finish_reason if hit |
@@ -513,7 +514,7 @@ Modules 2 through 4 build toward exactly that design.
 ### finish_reason values
 
 | Value | Means | What to do |
-|-------|-------|-----------|
+| ------- | ------- | ----------- |
 | `stop` | Normal completion | Use `choices[0].message.content` |
 | `length` | Response truncated at `max_tokens` | Increase limit or handle partial response |
 | `tool_calls` | Model requesting a function | Execute the function, add `tool` message, call API again |
@@ -521,7 +522,7 @@ Modules 2 through 4 build toward exactly that design.
 ### qwen2.5:3b quick facts
 
 | Property | Value |
-|----------|-------|
+| ---------- | ------- |
 | Context window | 32,768 tokens |
 | Parameters | 3 billion |
 | Architecture | Transformer decoder (causal LM) |
@@ -541,7 +542,7 @@ The format Ollama uses is **GGUF** (developed by the llama.cpp project). Inside
 GGUF, the precision level is encoded in the filename:
 
 | Suffix | Bits per weight | Approx size (3B model) | Notes |
-|--------|----------------|----------------------|-------|
+| -------- | ---------------- | ---------------------- | ------- |
 | Q2_K | ~2.6 | ~1.1 GB | Smallest; noticeable quality loss |
 | Q4_K_M | ~4.5 | ~2.0 GB | Good balance; default in this workshop |
 | Q8_0 | 8 | ~3.3 GB | Near full quality; still fits in CPU RAM |

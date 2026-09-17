@@ -1,9 +1,9 @@
 {
-  "repoName":"UserRepo",
-  "author":"Jeff Kopko",
-  "workshopTitle":"Hugo for Fortinet TECWorkshops",
+  "repoName":"xperts-ai-101",
+  "author":"Julian Petersohn adapted by John McDonough",
+  "workshopTitle":"XPERTS AI 101",
   "themeVariant":"CloudCSEMovie",
-  "logoBannerText":"FortiHugo",
+  "logoBannerText":"XPERTS AI-101",
   "logoBannerSubText":"",
   "errorLevel":"warning",
   "googleServicesID":"G-5RZBH288ST",

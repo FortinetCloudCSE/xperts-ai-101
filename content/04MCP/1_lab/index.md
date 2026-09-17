@@ -9,9 +9,6 @@ changing a line of agent code. You will see dynamic discovery in action, add
 a new tool to a running system without restarting the agent, and observe that
 the agent loop behaves identically regardless of which backend is active.
 
-**Kubernetes / Helm** — every command on this page runs in your Cloud Shell session
-against your cluster.
-
 Before you start, confirm the cluster and your agent port-forward:
 
 ```bash
@@ -40,18 +37,34 @@ Start the agent port-forward only if it is not already forwarded (check with `jo
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
 ```
 
-The UI is reachable directly via NodePort:
+Verify tool_mode:
 
-```bash
- az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
-```
-
-Verify:
 ```bash
 curl -s http://localhost:8001/health | jq .
-# Expected: "tool_mode": "mcp"
+```
+
+Expected output:
+
+```bash
+{
+  "status": "ok",
+  "tool_mode": "mcp",
+  "model": "qwen2.5:3b",
+  "transparency": "verbose"
+}
+```
+
+Verify tool names:
+
+```bash
 curl -s http://localhost:8001/tools | jq '.tools[].name'
-# Expected: "query_employees", "send_message"
+```
+
+Expected output:
+
+```bash
+"query_employees"
+"send_message"
 ```
 
 ---
@@ -60,9 +73,11 @@ curl -s http://localhost:8001/tools | jq '.tools[].name'
 
 Open the UI, then ask the question below.
 
-Open the FQDN link printed by the `echo` command in the Deploy step above
-(NodePort `30280`).
+The UI is reachable directly via URL printed by the command below:
 
+```bash
+az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
+```
 
 > Who is in the Engineering department?
 
@@ -74,12 +89,15 @@ Check how the agent currently sees its tools:
 
 {{< tabs >}}
 {{% tab title="Check tools"%}}
+
 ```bash
 curl -s http://localhost:8001/tools | jq '{mode: .mode, tools: [.tools[].name]}'
 ```
+
 {{% /tab %}}
 {{% tab title="Expected Output" style="info" %}}
-```
+
+```bash
 {
   "mode": "mcp",
   "tools": [
@@ -88,6 +106,7 @@ curl -s http://localhost:8001/tools | jq '{mode: .mode, tools: [.tools[].name]}'
   ]
 }
 ```
+
 {{% /tab %}}
 {{< /tabs >}}
 
@@ -135,10 +154,10 @@ helm upgrade ai101 ./ai101 -f ai101/values-lab3.yaml \
 
 Expected output:
 
-```
+```bash
 Release "ai101" has been upgraded. Happy Helming!
 NAME: ai101
-LAST DEPLOYED: Wed Jul 15 19:13:24 2026
+LAST DEPLOYED: Wed Sep 15 19:13:24 2026
 NAMESPACE: default
 STATUS: deployed
 REVISION: 8
@@ -146,23 +165,26 @@ DESCRIPTION: Upgrade complete
 TEST SUITE: None
 ```
 
-
 - Only the MCP server was restarted. The agent container is still running with
 its previous tool list. Trigger re-discovery without touching the agent:
 
 {{< tabs >}}
 {{% tab title="Discovery" %}}
+
 ```bash
 curl -s -X POST http://localhost:8001/tools/refresh | jq .
 ```
+
 {{% /tab %}}
 {{% tab title="Expected Output" style="info" %}}
-```
+
+```bash
 {
   "refreshed": true,
   "count": 3
 }
 ```
+
 {{% /tab %}}
 {{< /tabs >}}
 
@@ -175,16 +197,18 @@ curl -s -X POST http://localhost:8001/tools/refresh | jq .
 curl -s http://localhost:8001/tools | jq '.tools[].name'
 
 ```
+
 {{% /tab %}}
 {{% tab title="Expected Output" style="info" %}}
-```
+
+```bash
 "query_employees"
 "send_message"
 "search_web"
 ```
+
 {{% /tab %}}
 {{< /tabs >}}
-
 
 The agent now knows about `search_web`. The model can call it on the next
 request. No rebuild. No code change.
@@ -219,28 +243,32 @@ model will follow. Module 4 shows what that looks like.
 ## Recap
 
 You should now be able to:
+
 - Explain the two-phase MCP interaction: discovery and execution.
 - Describe what changes between Lab 2 and Lab 3 (only the tool backend).
 - Add a tool to a running system and confirm the agent picks it up.
 
 {{< tabs >}}
 {{% tab title="Check Tools Length" %}}
+
 ```bash
 curl -s http://localhost:8001/tools | jq '.tools | length'
 
 ```
+
 {{% /tab %}}
 {{% tab title="Expected Output" style="info" %}}
-```
+
+```bash
 3
 ```
+
 {{% /tab %}}
 {{< /tabs >}}
 
-{{% notice style="info" title="Optional: FortiAIGate extension" %}}
+{{% notice style="info" title="Where does FortiAIGate fit" %}}
 When the agent routes through FortiAIGate, the gateway sees every MCP
 tool-call request and response. AI Flow policies can inspect which tools are
 being called and with what arguments — visibility the MCP server itself does
-not provide. See the
-[FortiAIGate Workshop](https://fortinetcloudcse.github.io/faig-training-workshop/).
+not provide.
 {{% /notice %}}

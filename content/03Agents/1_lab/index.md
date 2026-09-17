@@ -9,9 +9,6 @@ loop execute in real time through the Trace panel, trigger both single and
 chained tool calls, and read the loop code to see exactly what the theory
 describes.
 
-**Kubernetes / Helm** — every command on this page runs in your Cloud Shell session
-against your cluster.
-
 Before you start, confirm the cluster and your Ollama port-forward:
 
 ```bash
@@ -26,12 +23,7 @@ listed by `jobs`. If it is missing, restart it:
 kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &
 ```
 
-*Running locally with Docker instead? Click the **Docker Compose** tab — every lab
-page will follow your choice.*
-
-
 ## Deploy
-
 
 ```bash
 cd ~/xperts-ai-101/lab-app/helm
@@ -40,16 +32,18 @@ kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
 ```
 
-
 Confirm the agent is up and in hardcoded mode:
 
 {{< tabs >}}
 {{% tab title="Agent Check" %}}
+
 ```bash
 curl -s http://localhost:8001/health | jq .
 ```
+
 {{% /tab %}}
 {{% tab title="Expected Output" style="info" %}}
+
 ```bash
 {
   "status": "ok",
@@ -58,33 +52,31 @@ curl -s http://localhost:8001/health | jq .
   "transparency": "verbose"
 }
 ```
+
 {{% /tab %}}
 {{< /tabs >}}
-
 
 Open the Kubernetes UI using the NodePort URL.
 
 ```bash
- az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
+az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
 ```
 
-Click the printed link to open the chatbot in the browser.
+Use the printed link to open the chatbot in the browser.
 
  ![chatbotui](browser.png)
-
-
 
 ---
 
 ## Step 1 — Single tool call
 
-In the chat box UI: 
+Enter in the chat box UI:
 
 > Who is in the Engineering department?
 
 Watch the **Trace** panel on the right. You should see:
 
-```
+```bash
 query_employees(filter="Engineering")
 → {"employees": [{"name": "Alice Chen", ...}, ...]}
 ```
@@ -97,16 +89,20 @@ Verify via the API:
 
 {{< tabs >}}
 {{% tab title="Verify"%}}
+
 ```bash
 curl -s http://localhost:8001/tools | jq '.tools[].name'
 ```
+
 {{% /tab %}}
 
 {{% tab title="Expected Output" style="info" %}}
-```
+
+```bash
 "query_employees"
 "send_message"
 ```
+
 {{% /tab %}}
 {{< /tabs >}}
 
@@ -114,9 +110,12 @@ curl -s http://localhost:8001/tools | jq '.tools[].name'
 
 ## Step 2 — Chained tool calls across two iterations
 
+Enter in the chat box UI:
+
 > Find Alice Chen's manager and send them a message saying Alice will be 15 minutes late today.
 
 This requires two tool calls the model cannot batch into one turn:
+
 1. `query_employees` to find Alice and her manager.
 2. `send_message` to notify the manager.
 
@@ -132,12 +131,15 @@ This requires two tool calls the model cannot batch into one turn:
 
 {{< tabs >}}
 {{% tab title="Verify message received"%}}
+
 ```bash
 curl -s http://localhost:8001/outbox | jq '.messages'
 ```
+
 {{% /tab %}}
 {{% tab title="Expected Output" style="info" %}}
-```
+
+```bash
 [
   {
     "to": "Carol Singh",
@@ -145,6 +147,7 @@ curl -s http://localhost:8001/outbox | jq '.messages'
   }
 ]
 ```
+
 {{% /tab %}}
 {{< /tabs >}}
 
@@ -153,21 +156,23 @@ LLM responses are non-deterministic, so exact wording and behavior can differ
 between runs — even with identical prompts and inputs.
 {{% /notice %}}
 
-
 {{% notice style="tip" title="If the model narrates instead of acting" %}}
 Small models occasionally describe what they *would* do ("I would send a message
 to Bob...") instead of calling the tool. If the outbox is empty, try the more
 explicit phrasing:
 
-```
+```bash
 Use the query_employees tool to find who manages Alice Chen,
 then use the send_message tool to tell them Alice will be 15 minutes late today.
 ```
+
 {{% /notice %}}
 
 ---
 
 ## Step 3 — No-tool response
+
+Enter in the chat box UI:
 
 > What is 2 + 2?
 
@@ -205,6 +210,7 @@ for iteration in range(MAX_ITERATIONS):          # hard cap at 5
 ```
 
 Identify in the actual file:
+
 - Where `finish_reason == "tool_calls"` branches.
 - Where tool results are appended to `messages` before the next LLM call.
 - What happens when `MAX_ITERATIONS` is reached.
@@ -229,28 +235,30 @@ Module 4 is the answer.
 ## Recap
 
 You should now be able to:
+
 - Describe the agent loop in terms of `finish_reason` and message accumulation.
 - Trigger a single tool call, a chained call, and a no-tool response.
 - Find the loop code and identify each branch.
 
-
 {{< tabs >}}
 {{% tab title="Verify"%}}
+
 ```bash
 curl -s http://localhost:8001/health | jq '.tool_mode'
 ```
+
 {{% /tab %}}
 {{% tab title="Expected Output" style="info" %}}
-```
+
+```bash
 "hardcoded"
 ```
+
 {{% /tab %}}
 {{< /tabs >}}
 
-
-{{% notice style="info" title="Optional: FortiAIGate extension" %}}
+{{% notice style="info" title="Where does FortiAIGate fit" %}}
 FortiAIGate sits between the agent and the LLM and sees every request,
 including tool schemas and the model's tool-call decisions. AI Flow policies
-can intercept or log specific tool invocations before they execute. See the
-[FortiAIGate Workshop](https://fortinetcloudcse.github.io/faig-training-workshop/).
+can intercept or log specific tool invocations before they execute.
 {{% /notice %}}
