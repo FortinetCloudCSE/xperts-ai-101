@@ -75,7 +75,7 @@ decisions and real-world actions — to any degree. An agent is always agentic.
 But many systems are agentic without being called agents:
 
 | System | Why it is agentic |
-|--------|------------------|
+| -------- | ------------------ |
 | GitHub Copilot Workspace | LLM decides which files to edit and what code to write |
 | An email assistant | LLM reads incoming mail and drafts or sends replies |
 | A RAG pipeline with write-back | LLM retrieves content and the result updates a record |
@@ -190,7 +190,7 @@ with all the fragility that implies.
 The agent loop adds messages to the conversation on every iteration. Starting
 from a single user message, a two-tool-call turn produces:
 
-```
+```bash
 [system]                          ← always present
 [user: "Who manages Engineering?"]
 [assistant: content=null, tool_calls=[call_1]]   ← model's tool request
@@ -200,7 +200,7 @@ from a single user message, a two-tool-call turn produces:
 
 If the model chains two tool calls across two iterations:
 
-```
+```bash
 [system]
 [user: "Find Alice's manager and email them"]
 [assistant: tool_calls=[call_1]]                  ← iteration 1 request
@@ -258,7 +258,7 @@ it can freely decide whether to call a tool or respond with text. The
 alternatives are:
 
 | Value | Behaviour |
-|-------|-----------|
+| ------- | ----------- |
 | `"auto"` | Model decides whether to call a tool or not |
 | `"none"` | Model must respond with text; tool calling disabled for this turn |
 | `{"type": "function", "function": {"name": "..."}}` | Model must call this specific function |
@@ -275,13 +275,13 @@ Both labs use the same two tools. The implementations are intentionally simple
 so the focus stays on the loop, not the tools themselves.
 
 | Tool | What it does |
-|------|-------------|
+| ------ | ------------- |
 | `query_employees` | Queries the SQLite HR database by department. **Intentionally vulnerable to SQL injection** — the vulnerability is the lesson in Module 4, not a mistake. |
 | `send_message` | Appends a message to an in-memory outbox. Nothing leaves the container. Inspect the outbox via `/outbox`. |
 
 The agent also has a system prompt — different from Lab 1's:
 
-```
+```text
 You are a helpful HR assistant for Acme Corp.
 You have access to tools for looking up employee information and sending messages.
 When a user asks you to perform an action, always use the appropriate tool —
@@ -301,7 +301,7 @@ The same agent binary runs in all labs. `TOOL_MODE` selects how tools are
 registered and dispatched:
 
 | `TOOL_MODE` | Tool source | Dispatch |
-|------------|------------|---------|
+| ------------ | ------------ | --------- |
 | `hardcoded` | Static Python list in `tools.py` | Direct function call in same process |
 | `mcp` | Discovered from MCP server at startup (and on `/tools/refresh`) | HTTP call to MCP server |
 
@@ -366,7 +366,7 @@ iteration has `answer` instead. If `MAX_ITERATIONS` is reached, `answer` is
 
 ### Agent loop state machine
 
-```
+```bash
 START → [LLM call] → finish_reason?
                        ├─ tool_calls → execute tools → append results → [LLM call again]
                        ├─ stop → return answer
@@ -376,7 +376,7 @@ START → [LLM call] → finish_reason?
 ### Key endpoints (agent)
 
 | Endpoint | Method | Returns |
-|----------|--------|---------|
+| ---------- | -------- | --------- |
 | `/health` | GET | `tool_mode`, `model`, `transparency` |
 | `/chat` | POST | Answer, trace, session_id |
 | `/tools` | GET | Current tool list (name, description, parameters) |
@@ -387,7 +387,7 @@ START → [LLM call] → finish_reason?
 ### Environment variables (agent)
 
 | Variable | Default | Effect |
-|----------|---------|--------|
+| ---------- | --------- | -------- |
 | `TOOL_MODE` | `hardcoded` | `hardcoded` or `mcp` |
 | `TRANSPARENCY` | `verbose` | Controls whether audit log is surfaced in UI |
 | `OPENAI_BASE_URL` | `http://ollama:11434/v1` | LLM endpoint — change for Day 2 |
