@@ -31,12 +31,6 @@ helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml
 kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
 ```
 
-Start the agent port-forward only if it is not already forwarded (check with `jobs`):
-
-```bash
-kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
-```
-
 Verify tool_mode:
 
 ```bash
@@ -71,15 +65,15 @@ Expected output:
 
 ## Step 1 — Same agent, different backend
 
-Open the UI, then ask the question below.
-
-The UI is reachable directly via URL printed by the command below:
+Open the Chatbot UI using the output URL.
 
 ```bash
 az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
 ```
 
-> Who is in the Engineering department?
+Ask this question.
+
+> `Who is in the Engineering department?`
 
 The response is identical to Lab 2. The Trace panel shows the same tool call.
 The only difference is how that call was dispatched: over HTTP to the MCP
@@ -114,7 +108,7 @@ curl -s http://localhost:8001/tools | jq '{mode: .mode, tools: [.tools[].name]}'
 
 ## Step 2 — Compare discovery vs hardcoded
 
-Open `lab-app/images/agent/main.py` and compare the two loader functions:
+Compare the two loader functions in `lab-app/images/agent/main.py`:
 
 ```python
 def _load_hardcoded() -> None:
@@ -137,10 +131,24 @@ async def _discover_mcp() -> None:
 ```
 
 Both functions produce the same `_schemas` format. Everything below them in
-`main.py` — the `_run_agent()` loop, the LLM call, the trace — is unchanged.
+`lab-app/images/agent/main.py` — the `_run_agent()` loop, the LLM call, the trace — is unchanged.
 
-Now find `_run_tool()` and see how the dispatch differs between modes. The loop
+From `_run_tool()` in `lab-app/images/agent/main.py` see how the dispatch differs between modes. The loop
 itself never calls this function differently.
+
+```python
+    if TOOL_MODE == "hardcoded":
+        fn = _dispatch.get(name)
+        if fn is None:
+            return json.dumps({"error": f"unknown tool: {name}"})
+        try:
+            return fn(args)
+        except Exception as exc:
+            return json.dumps({"error": str(exc)})
+
+    # MCP mode — forward the call to the MCP server
+    return await _call_mcp_tool(name, args)
+```
 
 ---
 
@@ -219,7 +227,7 @@ request. No rebuild. No code change.
 
 In the chat box:
 
-> Search the web for recent news about AI in enterprise security.
+> `Search the web for recent news about AI in enterprise security.`
 
 The Trace panel should show `search_web` being called. The result is stubbed
 (the server returns canned text), but the full discovery → schema registration

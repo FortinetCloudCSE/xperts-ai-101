@@ -1,6 +1,6 @@
 ---
 title: "Session Overview"
-linkTitle: "Overview"
+linkTitle: "Session Overview & Setup"
 weight: 10
 ---
 
@@ -26,7 +26,9 @@ flowchart TD
     L3 --> L4[Lab 4<br>same stack<br>different env vars]
 ```
 
+{{% notice style="info" title="Where does FortiAIGate fit" %}}
 The single configuration value that controls which LLM the agent talks to is
 `OPENAI_BASE_URL`. By default it points at the local Ollama container. If you
 want to route through FortiAIGate instead, that is the only value you change —
 the agent image, MCP server, and UI are identical.
+{{% /notice %}}

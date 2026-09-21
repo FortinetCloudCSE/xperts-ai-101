@@ -423,7 +423,7 @@ Which means: any text that lands in the context window from a source the
 application does not fully control is a potential injection vector.
 
 | Source | Attack name | Notes |
-|--------|------------|-------|
+| -------- | ------------ | ------- |
 | User message | Direct prompt injection | The attacker controls the input directly |
 | Tool result (database row, API response) | Indirect prompt injection | Attacker poisons data the agent will retrieve |
 | Retrieved document (RAG) | Indirect prompt injection | Attacker plants content in a knowledge base or search result |
@@ -471,7 +471,7 @@ prompt can enforce a security policy.
 It cannot. Here is the comparison:
 
 | Property | Real access control (e.g. RBAC) | System prompt |
-|----------|---------------------------------|---------------|
+| ---------- | --------------------------------- | --------------- |
 | Enforcement | Runtime — code checks permission *before* the action executes | Statistical — model *trained* to produce a refusal output |
 | Bypass method | Requires exploiting the enforcement code itself | Requires finding a token sequence the model predicts differently |
 | Patch | Update the code | Retrain the model or add external filtering — neither is fast |

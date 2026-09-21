@@ -56,13 +56,11 @@ curl -s http://localhost:8001/health | jq .
 {{% /tab %}}
 {{< /tabs >}}
 
-Open the Kubernetes UI using the NodePort URL.
+Open the Chatbot UI using the output URL.
 
 ```bash
 az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
 ```
-
-Use the printed link to open the chatbot in the browser.
 
  ![chatbotui](browser.png)
 
@@ -72,7 +70,7 @@ Use the printed link to open the chatbot in the browser.
 
 Enter in the chat box UI:
 
-> Who is in the Engineering department?
+> `Who is in the Engineering department?`
 
 Watch the **Trace** panel on the right. You should see:
 
@@ -112,7 +110,7 @@ curl -s http://localhost:8001/tools | jq '.tools[].name'
 
 Enter in the chat box UI:
 
-> Find Alice Chen's manager and send them a message saying Alice will be 15 minutes late today.
+> `Find Alice Chen's manager and send them a message saying Alice will be 15 minutes late today.`
 
 This requires two tool calls the model cannot batch into one turn:
 
@@ -174,7 +172,7 @@ then use the send_message tool to tell them Alice will be 15 minutes late today.
 
 Enter in the chat box UI:
 
-> What is 2 + 2?
+> `What is 2 + 2?`
 
 The model answers directly — `finish_reason` is `stop` on the first LLM call.
 The Trace panel will be empty for this turn. The loop exited at iteration 0.
@@ -187,32 +185,35 @@ not call anything.
 
 ## Step 4 — Read the loop
 
-Open `lab-app/images/agent/main.py` and find `_run_agent()`. The core of it:
+This is the core of the function `_run_agent()` in `lab-app/images/agent/main.py`
 
 ```python
-for iteration in range(MAX_ITERATIONS):          # hard cap at 5
-    response = await _llm(messages)
-    finish   = response["choices"][0]["finish_reason"]
-    msg      = response["choices"][0]["message"]
-
-    if finish == "tool_calls":
-        messages.append(msg)                      # add assistant's request to history
-        for tc in msg["tool_calls"]:
-            result = await _run_tool(tc["function"]["name"],
-                                     json.loads(tc["function"]["arguments"]))
-            messages.append({                     # add result to history
-                "role":         "tool",
-                "tool_call_id": tc["id"],
-                "content":      result,
-            })
-    else:
-        return msg["content"]                     # done
+01 for iteration in range(MAX_ITERATIONS):               # hard cap at 5
+02     response = await _llm(messages)
+03     finish = response["choices"][0]["finish_reason"]
+04     msg = response["choices"][0]["message"]
+05
+06     if finish == "tool_calls":
+07         messages.append(msg)                          # add assistant's request to history
+08         for tc in msg["tool_calls"]:
+09             result = await _run_tool(
+10                 tc["function"]["name"], json.loads(tc["function"]["arguments"])
+11             )
+12             messages.append(
+13                 {  # add result to history
+14                     "role": "tool",
+15                     "tool_call_id": tc["id"],
+16                     "content": result,
+17                 }
+18             )
+19     else:
+20         return msg["content"]                           # done
 ```
 
 Identify in the actual file:
 
-- Where `finish_reason == "tool_calls"` branches.
-- Where tool results are appended to `messages` before the next LLM call.
+- Where `finish_reason == "tool_calls"` branches. --> Line 06
+- Where tool results are appended to `messages` before the next LLM call. --> Lines 12-16
 - What happens when `MAX_ITERATIONS` is reached.
 - How `_run_tool()` hides whether the backend is hardcoded or MCP.
 

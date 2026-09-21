@@ -2,12 +2,12 @@
 
 Four-container stack for the AI-101 Day 1 workshop.
 
-| Container    | Purpose                                     | Port  |
-|-------------|---------------------------------------------|-------|
-| `ollama`     | LLM inference (`qwen2.5:3b`)               | 11434 |
-| `agent`      | FastAPI agent with explicit tool-call loop  | 8001  |
-| `mcp-server` | FastMCP tool server (Lab 3+)               | 8000  |
-| `ui`         | Chat UI (nginx, vanilla JS)                 | 8080  |
+| Container    | Purpose                                      | Port  |
+|------------- | ---------------------------------------------|-------|
+| `ollama`     | LLM inference (`qwen2.5:3b`)                 | 11434 |
+| `agent`      | FastAPI agent with explicit tool-call loop   | 8001  |
+| `mcp-server` | FastMCP tool server (Lab 3+)                 | 8000  |
+| `ui`         | Chat UI (nginx, vanilla JS)                  | 8080  |
 
 ## Quick start
 
@@ -41,14 +41,14 @@ No images are rebuilt. Everything else stays the same.
 
 ## Environment variables
 
-| Variable          | Default                      | Description                         |
-|-------------------|------------------------------|-------------------------------------|
-| `OPENAI_BASE_URL` | `http://ollama:11434/v1`     | LLM endpoint — swap for Day 2       |
-| `OLLAMA_MODEL`    | `qwen2.5:3b`                 | Model name                          |
-| `TOOL_MODE`       | `hardcoded` / `mcp`          | Set by profile automatically        |
-| `TRANSPARENCY`    | `verbose`                    | `quiet` hides audit log (Lab 4 demo)|
-| `ENABLE_EXTRA_TOOL` | `false`                    | Exposes `search_web` via MCP        |
-| `POISON_DESC`     | `false`                      | Enables poisoned tool description   |
+| Variable            | Default                      | Description                         |
+|---------------------|------------------------------|-------------------------------------|
+| `OPENAI_BASE_URL`   | `http://ollama:11434/v1`     | LLM endpoint — swap for Day 2       |
+| `OLLAMA_MODEL`      | `qwen2.5:3b`                 | Model name                          |
+| `TOOL_MODE`         | `hardcoded` / `mcp`          | Set by profile automatically        |
+| `TRANSPARENCY`      | `verbose`                    | `quiet` hides audit log (Lab 4 demo)|
+| `ENABLE_EXTRA_TOOL` | `false`                      | Exposes `search_web` via MCP        |
+| `POISON_DESC`       | `false`                      | Enables poisoned tool description   |
 
 ## First boot
 

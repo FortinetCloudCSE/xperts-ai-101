@@ -25,15 +25,16 @@ If kubectl get nodes works, you are connected to the cluster and continue to the
 
 ## 2. Clone the repo
 
+The repo is hosted in Github and is used to supply Helm with the required settings for each lab environment as well as provide code to run the AI components of the labs.
+
 ```bash
 cd ~
 git clone https://github.com/FortinetCloudCSE/xperts-ai-101.git
-cd xperts-ai-101
 ```
 
 ## 3. Install the chart for Lab 1
 
-- Pre-built multi-arch images (amd64 + arm64) are published to GHCR and pulled
+- Pre-built multi-arch images (amd64 + arm64) are published to Github Container Registry (GHCR) and pulled
 automatically by the cluster — no manual image pull required.
 
 {{< tabs >}}
@@ -143,16 +144,16 @@ You will run one of these steps per lab to setup for the exercises in those labs
 cd ~/xperts-ai-101/lab-app/helm
 
 # Lab 1 — Ollama only
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml <-- Already executed above for Lab 1
 
 # Lab 2 — Agent (hardcoded tools) + UI
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml <-- Execute in Lab 2
 
 # Lab 3 — Agent (MCP mode) + MCP server + UI
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml <-- Execute in Lab 3
 
 # Lab 4 — Same as lab3 (security demo steps use env overrides)
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml <-- Execute in Lab 4
 ```
 
 {{% notice style="tip" title="Keep it running" %}}
