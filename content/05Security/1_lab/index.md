@@ -27,9 +27,6 @@ restart it:
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
 ```
 
-*Running locally with Docker instead? Click the **Docker Compose** tab — every lab
-page will follow your choice.*
-
 ## Deploy
 
 ```bash
@@ -37,7 +34,6 @@ cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml
 kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
-az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
 ```
 
 Confirm agent is up in MCP mode with verbose transparency:
@@ -48,6 +44,12 @@ curl -s http://localhost:8001/health | jq '{tool_mode, transparency}'
 ```
 
 Now open the UI and confirm the **Audit Log** tab is visible on the right.
+
+Open the Chatbot UI using the output URL.
+
+```bash
+az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
+```
 
 ---
 
@@ -239,7 +241,7 @@ You will see the hidden instructions embedded in the description text.
 
 Now ask the agent an innocent question:
 
-> Search the web for AI regulations news
+> `Search the web for AI regulations news`
 
 Watch the Trace panel. If the model follows the poisoned description, it will
 call `query_employees` with the SQL injection filter and then `send_message`

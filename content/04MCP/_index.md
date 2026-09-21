@@ -63,7 +63,7 @@ MCP servers can expose three types of primitives:
 | ----------- | ------------- |
 | **Tools** | Functions the model can call. This is what the labs use. |
 | **Resources** | Data the model can read (files, database rows, API responses). The agent requests them explicitly rather than the model calling a function. |
-| **Prompts** | Reusable prompt templates the model can invoke by name. Useful for standardising common task patterns. |
+| **Prompts** | Reusable prompt templates the model can invoke by name. Useful for standardizing common task patterns. |
 
 This workshop focuses on tools exclusively, but the other two primitives follow
 the same discovery pattern — the agent asks, the server responds with a schema,
@@ -318,7 +318,7 @@ as instructions.
 
 ## How the agent talks to the MCP server
 
-From `main.py`, the discovery call:
+From `lab-app/images/agent/main.py`, the discovery call:
 
 ```python
 async with streamablehttp_client(MCP_BASE_URL) as (read, write, _):
