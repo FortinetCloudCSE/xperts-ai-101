@@ -142,11 +142,11 @@ Weakest part of this proposal:
   - [x] 2b. Add `render-codeblock-output.html`, pass-through `render-codeblock-{bash,sh,shell}.html` with `run=` badge, CSS, and copy-suppression JS.
   - [x] 2c. Prove it on UserRepo with a demo page, built on the `dev` image variant.
   - [ ] 2d. README + RELEASE_NOTES. Publish the image.
-- [ ] **Phase 3: Convert content** here: every tabbed command/output pair and every bare command+prose pair → `run=` + `output` blocks.
+- [x] **Phase 3: Convert content** here: every tabbed command/output pair and every bare command+prose pair → `run=` + `output` blocks.
   - Drop output blocks that verify nothing, per Google guidance.
   - Strip the `$` prompt from `1_k8s…:36`.
   - Regenerate handouts. Run `lint_paths.py`.
-- [ ] **Phase 4: P1/P2 pedagogy and wording** edits, module by module.
+- [x] **Phase 4: P1/P2 pedagogy and wording** edits, module by module.
 - [ ] Build with the container (`docker run … fortinet-hugo build`) and spot-check rendered pages at each phase. `/code-review low` before each commit.
 - [ ] Close-out: RELEASE_NOTES (if adopted), promote decisions to `CLAUDE.md`, Status → Complete.
 
@@ -174,6 +174,11 @@ Weakest part of this proposal:
   - `collapse` must be quoted: `collapse="true"`.
   - The CentralRepo plan lives at `docs/plans/2026-09-24_Jeff-Kopko_cmd-output-blocks.md`; that repo has no root `plans/`.
   - 2d (push/PR/image) awaits owner approval.
+
+- 2026-09-24: Owner decision: the bastion (Linux VM) is the only execution environment. The Cloud Shell wording and the Web Preview page were removed.
+- 2026-09-24: Phase 3+4 were merged into one pass: 5 parallel module agents on branch `cmd-output-convert` (worktree `~/pythonProjects/worktrees/xperts-ai-101-cmd-output`), then `/code-review medium`. The review found 9 real defects (2 high: Lab 3 dead port-forward after the agent rollout; Lab 2 wrong outbox recipient), all fixed. Commit `75045ea`; builds clean on both the prod image and the local hooks image. 0 `tabs` remain.
+- 2026-09-24: Module 01 was not split. It's 633 lines after trimming a 240-line JSON dump, and now has checkpoints and a bridge section.
+- 2026-09-24: `2_lab_setup` §5/§6 (per-lab upgrade menu, FortiAIGate example) intentionally carry no `run=`: they are reference, not run-as-shown.
 
 ## Decisions & Commentary
 - Output is sequential, not alternative, so tabs are the wrong widget. Commands and output become labelled blocks in reading order.
