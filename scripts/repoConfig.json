@@ -10,6 +10,7 @@
   "marketingCode": "FortiHugo202",
   "videoHeaderSrc": "/videos/CloudsAnimated.mp4",
   "videoHeaderInterval": "60",
+  "disableInlineCopyToClipBoard": true,
   "shortcuts": [
     {
       "text": "Fortinet Cloud CSE",
