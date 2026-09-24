@@ -11,3 +11,4 @@ fortihugorunner
 .vscode/*
 !.vscode/settings.json
 !.vscode/markdown.code-snippets
+__pycache__/
