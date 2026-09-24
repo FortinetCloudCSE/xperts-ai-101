@@ -80,9 +80,11 @@ level where the math happens.
 
 It is all just numbers, processed left to right.
 
+{{% notice style="important" %}}
 This is the structural reason prompt injection cannot be fully patched at the
 model level. You cannot fix a parsing vulnerability when there is no parser.
 Keep this in mind as we build up the rest of the picture.
+{{% /notice %}}
 
 ---
 

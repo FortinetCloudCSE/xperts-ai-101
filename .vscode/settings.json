@@ -1,0 +1,7 @@
+{
+  "[markdown]": {
+    "editor.quickSuggestions": { "other": "on", "comments": "off", "strings": "off" },
+    "editor.wordBasedSuggestions": "matchingDocuments",
+    "editor.snippetSuggestions": "top"
+  }
+}

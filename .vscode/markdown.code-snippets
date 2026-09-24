@@ -1,0 +1,62 @@
+{
+  "Command on bastion": {
+    "scope": "markdown",
+    "prefix": "cmd",
+    "description": "Command the participant runs on the bastion (CentralRepo run= render hook)",
+    "body": ["${1:Sentence saying what the command does.}", "", "```bash {run=\"bastion\"}", "${2:command}", "```", "$0"]
+  },
+  "Expected output": {
+    "scope": "markdown",
+    "prefix": "out",
+    "description": "Expected output panel (no copy button)",
+    "body": ["The output is similar to:", "", "```output", "${1:output}", "```", "$0"]
+  },
+  "Expected output (JSON)": {
+    "scope": "markdown",
+    "prefix": "outj",
+    "description": "Expected output panel with JSON highlighting",
+    "body": ["The output is similar to:", "", "```output {lang=\"json\"}", "${1:{}}", "```", "$0"]
+  },
+  "Expected output (long, collapsed)": {
+    "scope": "markdown",
+    "prefix": "outc",
+    "description": "Long expected output, collapsed by default (value must be quoted)",
+    "body": ["The output is similar to:", "", "```output {collapse=\"true\"}", "${1:output}", "[...]", "```", "$0"]
+  },
+  "Command + output pair": {
+    "scope": "markdown",
+    "prefix": "cmdout",
+    "description": "Command on bastion followed by its expected output",
+    "body": ["${1:Sentence saying what the command does.}", "", "```bash {run=\"bastion\"}", "${2:command}", "```", "", "The output is similar to:", "", "```output", "${3:output}", "```", "$0"]
+  },
+  "Notice box": {
+    "scope": "markdown",
+    "prefix": "notice",
+    "description": "Relearn notice: info background, tip optional hint, note remember, warning can break the lab",
+    "body": ["{{% notice style=\"${1|tip,info,note,warning,important|}\" title=\"${2:Title}\" %}}", "${3:Text}", "{{% /notice %}}", "$0"]
+  },
+  "Checkpoint": {
+    "scope": "markdown",
+    "prefix": "checkpoint",
+    "description": "Checkpoint notice used in Module 01",
+    "body": ["{{% notice style=\"tip\" title=\"Checkpoint\" %}}", "You should now have ${1:what the reader should see}.", "{{% /notice %}}", "$0"]
+  },
+  "Expand": {
+    "scope": "markdown",
+    "prefix": "expand",
+    "description": "Collapsible section (answers, long detail)",
+    "body": ["{{% expand title=\"${1:Title}\" %}}", "${2:Content}", "{{% /expand %}}", "$0"]
+  },
+  "Ctrl+C": {
+    "scope": "markdown",
+    "prefix": "ctrlc",
+    "description": "Keyboard shortcut to stop a blocking command",
+    "body": ["<kbd>Ctrl</kbd>+<kbd>C</kbd>"]
+  },
+  "Keyboard key": {
+    "scope": "markdown",
+    "prefix": "kbd",
+    "description": "Keyboard key",
+    "body": ["<kbd>${1:Key}</kbd>"]
+  }
+}

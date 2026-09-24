@@ -39,6 +39,17 @@ chart, which adds the agent and UI:
 cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml
 ```
+The output should look like this:
+
+```output
+Release "ai101" has been upgraded. Happy Helming!
+NAME: ai101
+LAST DEPLOYED: Thu Sep 24 23:05:07 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 3
+TEST SUITE: None
+```
 
 Wait for the agent deployment to become available:
 
@@ -99,7 +110,9 @@ Open that URL in your browser.
 
 Enter in the chat box UI:
 
-> `Who is in the Engineering department?`
+```bash{run="Lab Agent"}
+Who is in the Engineering department?
+```
 
 Watch the **Trace** panel on the right. You should see:
 
@@ -129,9 +142,10 @@ The output is similar to:
 
 ## Step 2 — Chained tool calls across two iterations
 
-Enter in the chat box UI:
-
-> `Find Alice Chen's manager and send them a message saying Alice will be 15 minutes late today.`
+Ask the Agent:
+```text
+Find Alice Chen's manager and send them a message saying Alice will be 15 minutes late today.
+```
 
 This requires two tool calls the model cannot batch into one turn:
 

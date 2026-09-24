@@ -8,4 +8,7 @@ package.json
 /venv
 fortihugorunner
 .claude/settings.local.json
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/markdown.code-snippets
+__pycache__/
