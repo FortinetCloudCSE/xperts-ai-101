@@ -135,7 +135,7 @@ Weakest part of this proposal:
 - Fragile `awk -F- '{print $4}'` resource-group parsing in labs 03/04. Replace it with a `kubectl`/`az` query or a pre-set env var.
 
 ## Plan
-- [ ] **Phase 0: Onboard.** On approval, replace `CLAUDE.md` with the Appendix draft. Seed project memory.
+- [x] **Phase 0: Onboard.** On approval, replace `CLAUDE.md` with the Appendix draft. Seed project memory.
 - [ ] **Phase 1: P0 fixes** in this repo (items 1–9 above). No CentralRepo dependency.
 - [ ] **Phase 2: CentralRepo** (separate repo, separate plan file there, own worktree):
   - [ ] 2a. Render-verify that ```` ```bash {title=…} ```` works on the current image (the fallback path).
@@ -158,7 +158,11 @@ Weakest part of this proposal:
 - Phase 3 can start on the fallback syntax if Phase 2 stalls.
 
 ## Plan Changes
-- (none)
+- 2026-09-24 (owner decisions):
+  - **Docker path cut.** P0 #2 becomes: remove Docker/"two paths" wording from `content/_index.md` and the prerequisites, and don't declare `deploymentPaths`.
+  - CLAUDE.md draft approved and written (Phase 0), with one correction: the handout tooling is inert here, not CI-enforced.
+- 2026-09-24: P0 #7 resolved. The fence removals were reverted and the typo fixes kept. Without fences, the list-item commands render as plain paragraphs and the kubectl cheat sheet collapses into one paragraph.
+- 2026-09-24: P0 #4 revised. `gen_handouts.py` no-ops without `deploymentPaths`, so nothing in this repo regenerates `09Reference/handouts/`, and its "CI fails if stale" notice is false. With a single path there's no path-specific handout to generate. Phase 1 deletes `content/09Reference/handouts/` and its links. If a printable copy is wanted, use Relearn's built-in print output for the whole site instead.
 
 ## Decisions & Commentary
 - Output is sequential, not alternative, so tabs are the wrong widget. Commands and output become labelled blocks in reading order.
@@ -181,8 +185,6 @@ Weakest part of this proposal:
 
 ## Risks / Open Questions
 - Does Relearn 8's copy button attach to blocks rendered by a custom hook, and can it be suppressed per block without forking `theme.js`? Verify in 2b.
-- Docker path: build it or cut it? This is the owner's call; it changes Phase 1 scope significantly.
-- Is the uncommitted fence removal in `1_k8s…` intentional?
 - Who owns CentralRepo image publishing and timing? Phase 3 waits on it unless the fallback is used.
 
 ## Appendix: draft `CLAUDE.md` for this repo (not yet written; replaces the copied UserRepo file)
