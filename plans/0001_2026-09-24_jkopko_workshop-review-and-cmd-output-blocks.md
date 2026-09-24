@@ -2,7 +2,7 @@
 Date: 2026-09-24
 Owner: Jeff Kopko
 Slug: workshop-review-and-cmd-output-blocks
-Status: Proposed
+Status: Approved
 Supersedes: none
 Superseded-By: none
 Plan File: plans/0001_2026-09-24_jkopko_workshop-review-and-cmd-output-blocks.md
