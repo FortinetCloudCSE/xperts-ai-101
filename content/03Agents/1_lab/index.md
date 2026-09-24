@@ -9,42 +9,67 @@ loop execute in real time through the Trace panel, trigger both single and
 chained tool calls, and read the loop code to see exactly what the theory
 describes.
 
-Before you start, confirm the cluster and your Ollama port-forward:
+Before you start, confirm the cluster and your Ollama port-forward from setup
+are both still up on the bastion (the Linux VM provided for your session):
 
-```bash
+```bash {run="bastion"}
 kubectl get pods -l app.kubernetes.io/instance=ai101
+```
+
+```bash {run="bastion"}
 jobs
 ```
 
 Expect the `ai101-ollama` pod `Running`, and the Ollama port-forward from setup
 listed by `jobs`. If it is missing, restart it:
 
-```bash
+```bash {run="bastion"}
 kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &
 ```
 
+This backgrounds itself, so it will not block the terminal. Confirm it took
+with `jobs`.
+
 ## Deploy
 
-```bash
+Change into the Helm chart directory and upgrade the release to the Lab 2
+chart, which adds the agent and UI:
+
+```bash {run="bastion"}
 cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml
+```
+
+Wait for the agent deployment to become available:
+
+```bash {run="bastion"}
 kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
+```
+
+The output is similar to:
+
+```output
+deployment.apps/ai101-agent condition met
+```
+
+Port-forward the agent so you can reach it from the bastion:
+
+```bash {run="bastion"}
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
 ```
 
+This also backgrounds itself and will not block your terminal — check `jobs`
+for it, and stop it later with `kill %<job-number>` if needed.
+
 Confirm the agent is up and in hardcoded mode:
 
-{{< tabs >}}
-{{% tab title="Agent Check" %}}
-
-```bash
+```bash {run="bastion"}
 curl -s http://localhost:8001/health | jq .
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output {lang="json"}
 {
   "status": "ok",
   "tool_mode": "hardcoded",
@@ -53,14 +78,18 @@ curl -s http://localhost:8001/health | jq .
 }
 ```
 
-{{% /tab %}}
-{{< /tabs >}}
+Open the Chatbot UI. The UI Service is a `LoadBalancer`, so get its external
+address:
 
-Open the Chatbot UI using the output URL.
-
-```bash
-az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
+```bash {run="bastion"}
+echo "http://$(kubectl get svc ai101-ui -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
 ```
+
+If this prints `http://` with no address, the LoadBalancer IP hasn't been assigned
+yet — wait about 30 seconds and re-run it, or run
+`kubectl get svc ai101-ui -w` until `EXTERNAL-IP` appears (<kbd>Ctrl</kbd>+<kbd>C</kbd> to stop).
+
+Open that URL in your browser.
 
  ![chatbotui](browser.png)
 
@@ -74,7 +103,7 @@ Enter in the chat box UI:
 
 Watch the **Trace** panel on the right. You should see:
 
-```bash
+```text
 query_employees(filter="Engineering")
 → {"employees": [{"name": "Alice Chen", ...}, ...]}
 ```
@@ -85,24 +114,16 @@ the loop executed it. The model never touched the database directly.
 
 Verify via the API:
 
-{{< tabs >}}
-{{% tab title="Verify"%}}
-
-```bash
+```bash {run="bastion"}
 curl -s http://localhost:8001/tools | jq '.tools[].name'
 ```
 
-{{% /tab %}}
+The output is similar to:
 
-{{% tab title="Expected Output" style="info" %}}
-
-```bash
+```output
 "query_employees"
 "send_message"
 ```
-
-{{% /tab %}}
-{{< /tabs >}}
 
 ---
 
@@ -117,37 +138,30 @@ This requires two tool calls the model cannot batch into one turn:
 1. `query_employees` to find Alice and her manager.
 2. `send_message` to notify the manager.
 
-- Watch the Trace panel show both steps:
+Watch the Trace panel show both steps:
 
  ![tracepanel](./tracepanel.png)
 
-- Then confirm the outbox received the message:
+Then confirm the outbox received the message in the UI:
 
  ![outbox](./outbox.png)
 
-- Now from the terminal run the following:
+Now verify the same thing from the terminal:
 
-{{< tabs >}}
-{{% tab title="Verify message received"%}}
-
-```bash
+```bash {run="bastion"}
 curl -s http://localhost:8001/outbox | jq '.messages'
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output {lang="json"}
 [
   {
-    "to": "Carol Singh",
-    "body": "Hi Carol, I wanted to inform you that Alice Chen will be 15 minutes late today. She mentioned it might be due to a last-minute client meeting."
+    "to": "Bob Martinez",
+    "body": "Hi Bob, I wanted to inform you that Alice Chen will be 15 minutes late today. She mentioned it might be due to a last-minute client meeting."
   }
 ]
 ```
-
-{{% /tab %}}
-{{< /tabs >}}
 
 {{% notice style="warning" title="Output may vary" %}}
 LLM responses are non-deterministic, so exact wording and behavior can differ
@@ -159,7 +173,7 @@ Small models occasionally describe what they *would* do ("I would send a message
 to Bob...") instead of calling the tool. If the outbox is empty, try the more
 explicit phrasing:
 
-```bash
+```text
 Use the query_employees tool to find who manages Alice Chen,
 then use the send_message tool to tell them Alice will be 15 minutes late today.
 ```
@@ -185,7 +199,9 @@ not call anything.
 
 ## Step 4 — Read the loop
 
-This is the core of the function `_run_agent()` in `lab-app/images/agent/main.py`
+Below is a simplified excerpt of `_run_agent()` in `lab-app/images/agent/main.py`,
+with trace bookkeeping and audit logging removed. The `01`–`20` numbers label the
+excerpt, not the file.
 
 ```python
 01 for iteration in range(MAX_ITERATIONS):               # hard cap at 5
@@ -210,12 +226,21 @@ This is the core of the function `_run_agent()` in `lab-app/images/agent/main.py
 20         return msg["content"]                           # done
 ```
 
-Identify in the actual file:
+Open the real file and find each of these. Answers are in the expander below.
 
-- Where `finish_reason == "tool_calls"` branches. --> Line 06
-- Where tool results are appended to `messages` before the next LLM call. --> Lines 12-16
+- Where `finish_reason == "tool_calls"` branches.
+- Where tool results are appended to `messages` before the next LLM call.
 - What happens when `MAX_ITERATIONS` is reached.
 - How `_run_tool()` hides whether the backend is hardcoded or MCP.
+
+{{% expand title="Answers (line numbers in `main.py`)" %}}
+- Branch: line 212 (excerpt line 06).
+- Tool results appended: lines 231–235 (excerpt lines 12–18).
+- Iteration limit: the loop exits and line 248 logs `max_iterations`, then the
+  agent returns `"Reached iteration limit."` — the excerpt omits this.
+- Backend abstraction: `_run_tool()` at line 150 picks the hardcoded or MCP
+  implementation from `TOOL_MODE`; the loop never knows which one ran.
+{{% /expand %}}
 
 The abstraction in `_run_tool()` is the reason Module 3 can swap the tool
 backend without changing a single line in this loop.
@@ -241,25 +266,20 @@ You should now be able to:
 - Trigger a single tool call, a chained call, and a no-tool response.
 - Find the loop code and identify each branch.
 
-{{< tabs >}}
-{{% tab title="Verify"%}}
-
-```bash
+```bash {run="bastion"}
 curl -s http://localhost:8001/health | jq '.tool_mode'
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output
 "hardcoded"
 ```
 
-{{% /tab %}}
-{{< /tabs >}}
-
 {{% notice style="info" title="Where does FortiAIGate fit" %}}
-FortiAIGate sits between the agent and the LLM and sees every request,
-including tool schemas and the model's tool-call decisions. AI Flow policies
-can intercept or log specific tool invocations before they execute.
+See [Module 2's lab](../../02Inference/1_lab/) for what FortiAIGate is. Sitting
+between the agent and the LLM, it sees every request in this loop too —
+including tool schemas and the model's tool-call decisions. AI Flow, its
+policy engine, can intercept or log specific tool invocations before they
+execute.
 {{% /notice %}}

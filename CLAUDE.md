@@ -1,64 +1,44 @@
-# CLAUDE.md — UserRepo
+# CLAUDE.md — xperts-ai-101
 
-> Global preferences (planning workflow, code quality, operations): `~/.claude/CLAUDE.md`
-> Ecosystem: CentralRepo (Hugo container + theme), ctf_api (quiz engine), TEC-analytics (analytics platform), UserRepo (this repo).
+> Global preferences: `~/.claude/CLAUDE.md`. Ecosystem: CentralRepo (Hugo image + theme + shared shortcodes), UserRepo (template this was cloned from), faig-training-workshop (Day 2 follow-on).
 
 ## Project in One Line
+Self-guided "How AI works" workshop (inference → agents → MCP → AI security) on a Hugo site, plus the `lab-app/` stack participants deploy (Ollama `qwen2.5:3b`, FastAPI agent, FastMCP server, nginx UI) to AKS via Helm.
 
-The FortinetCloudCSE workshop **template**: the site every new workshop repo is cloned from, the authoring guide team members read, and the first repo a CentralRepo layout/shortcode change is proven against.
-
-## It is a template — that is the constraint that governs everything
-
-**Anything committed here is inherited by every new workshop repo.** Before adding a site-wide setting, a content page, or a `scripts/repoConfig.json` key, ask whether a workshop that has never heard of the feature should start life carrying it. If the answer is no, scope it to the page that demonstrates it.
-
-Worked example: the deployment-path gate's live demo declares its two example paths in `content/02Hugo/6_deployment_paths/index.md` **front matter**, not as a `deploymentPaths` site param. Front matter gates that page alone and leaves when the page is deleted; a site param would have handed every new workshop two paths named *(example)* and a padlock line on every page. Declaring both at once is a hard build error. See the CentralRepo `CLAUDE.md` gate section.
-
-## Stack Quick Reference
-
+## Stack
 | Layer | Tech | Notes |
-|-------|------|-------|
-| Site generator | Hugo, inside `public.ecr.aws/k4n6m5h8/fortinet-hugo:latest` | No local Hugo install path — see Build below |
-| Theme, layouts, config | [CentralRepo](https://github.com/FortinetCloudCSE/CentralRepo) | Mounted at build time; **not** in this repo |
-| Deploy | `.github/workflows/static.yml` → GitHub Pages | Push to `main`, plus `workflow_dispatch` (`runner_type`, `image_variant` prod/dev) |
-| Commit status | `Jenkinsfile` | Sets `ci/jenkins/build-status` only |
-| Scanners | `lacework-code-security-pr.yml`, `codex-advisory-review.yml`, `fdevsec.yaml` | Lacework's two statuses take 3–5 min on every PR |
+|---|---|---|
+| Site | Hugo in `public.ecr.aws/k4n6m5h8/fortinet-hugo:latest` (Relearn 8, Hugo 0.165) | Config/theme in CentralRepo, not here |
+| Lab app | `lab-app/` — compose profiles m1–m4, Helm chart `lab-app/helm/ai101` (`values-lab{1..4}.yaml`) | Ports: ollama 11434, agent 8001, mcp 8000, ui 8080 |
+| Deploy | `.github/workflows/static.yml` → GitHub Pages on push to `main` | Template-managed; hand-edits lost |
+| Plans | `plans/` (root) | `docs/` is gitignored and deleted by CentralRepo automation |
+
+## Scope decisions
+- Kubernetes (AKS + Helm) is the only deployment path. The Docker Compose path was cut 2026-09-24; `lab-app/compose/` is dev-only. Don't reintroduce Docker instructions or declare `deploymentPaths`.
+- Participants run every command on the provided **Linux VM (the bastion)** — decided 2026-09-24. Call it "the bastion" (first use: "the bastion — the Linux VM provided for your session"); never "Cloud Shell" or "your laptop". Command fences use `run="bastion"`.
 
 ## Key Files
+- `content/0N<Module>/_index.md` — concept page; `1_lab/index.md` — hands-on lab
+- `content/09Reference/handouts/` — stale copy generated in ai-101; nothing here regenerates it (see Gotchas)
+- `lab-app/images/agent/main.py`, `tools.py`, `mcp-server/server.py` — code the labs quote; keep excerpts in sync
+- `lab-app/scripts/` — lab helper scripts referenced from content
+- `instructor_content/` — instructor-only material
+- `migration_log*.csv` — stale, not about this repo; ignore
 
-```
-content/                  — the authoring guide, one page bundle per task, ordered by `weight`
-layouts/shortcodes/       — repo-local shortcodes only: ContainerFlow, FTNThugoFlow, fortihugorunner
-scripts/repoConfig.json   — the site-chrome knob: title, author, banner, theme variant, shortcuts
-Jenkinsfile               — commit status; its content-check stage is disabled
-repo_upgrade_spec.json / .repo_upgrade_version  — CentralRepo batch-migration bookkeeping
-migration_log*.csv        — stale artifacts, and not even about this repo. Never treat as input.
-```
-
-No `hugo.toml`, `config.toml`, `Dockerfile`, `static/` or `docs/` here, on purpose.
-
-## Build and Run
-
+## Build
 ```bash
-# Reproduce the CI build exactly
 docker run --rm -v "$PWD:/home/UserRepo" public.ecr.aws/k4n6m5h8/fortinet-hugo:latest build
-
-# Live preview
-fortihugorunner launch-server --docker-image fortinet-hugo:latest \
-  --host-port 1313 --container-port 1313 --watch-dir .
 ```
+No test suite; validate by rendering. Built URLs are flat (`02inference/1_lab.html`); Hugo minifies attributes unquoted.
 
-There is no test suite; content is validated by rendering. `npm install && hugo serve` does **not** work — Hugo's config lives in CentralRepo, and `package.json`'s `hugo` script references a `config.toml` and `docs/` that no longer exist.
+## Authoring conventions
+- Commands: ```bash {run="bastion"}, no `$` prompt, one command per block, preceded by a sentence. Output: ```output, introduced by "The output is similar to:". Tabs only for genuine alternatives. Needs the CentralRepo render hooks from plan 0001; until that image ships, `run=` is ignored and `output` renders as a plain code block.
+- Output fences never use `bash`; use `output` (or `{lang="json"}`).
+- Code quoted from `lab-app/` must match the file — labs ask readers to find lines in it.
+- No `<-- comments` inside copyable fences.
 
 ## Gotchas
-
-- **`docs/` is machine-owned — never put anything there.** `.gitignore` excludes it, *and* `CentralRepo/scripts/batch_repo_update.py` hardcodes `FOLDERS_TO_DELETE = ["docs"]` with `BRANCH = "main"`, deleting every blob under it via the GitHub tree API and pushing straight to `main`. That script does not read `repo_upgrade_spec.json`, so the spec and the constant can silently drift; the constant is what runs.
-- **`.github/workflows/static.yml` is template-managed.** `batch_repo_update.py` overwrites it from the operator's CentralRepo checkout — hand-edits are lost. The same run deletes `layouts/shortcodes/FTNThugoFlow.html`, `docker-compose.yml`, `hugo.toml`, `config.toml` and `scripts/docker_*.sh`.
-- **`package.json` and `package-lock.json` are listed in `.gitignore` but tracked** (they predate the entries). An ignore rule here is not evidence a file is untracked.
-- **This repo forbids both squash and merge commits.** `gh-merge-verify <pr> --repo FortinetCloudCSE/UserRepo --method rebase` is the only strategy that works.
-- **A brand-new branch with a PR opened immediately after its first push never gets a `ci/jenkins/build-status` check — it blocks merge forever, not just until CI runs.** Jenkins's webhook here only sends `push` events (no `pull_request`), and its multibranch job skips branches that already have an open PR — so nothing ever triggers a build for that SHA. `mergeStateStatus: BLOCKED` with an empty `reviewDecision` and no pending checks is this, not a review requirement (branch protection here requires 0 approvals). Confirmed 2026-08-31, PR #82. Not fixed at the infra level — see memory `gotcha_jenkins_webhook_push_only_pr_gap.md` for the workaround (temporarily drop the required check from branch protection, merge, restore it — needs admin + explicit sign-off, since it's a shared-repo settings change).
-- **Change site chrome in `scripts/repoConfig.json`**, never in content — there is no `hugo.toml` to edit.
-- **Repo-local `layouts/` wins over the container's** via `local_copy.sh`. Never land a copy of a CentralRepo shortcode here: the local one shadows it silently and the two drift.
-- **Built page URLs are flat** — `02hugo/6_deployment_paths.html`, not `.../index.html`. Verification greps that assume a directory index find nothing.
-- **Hugo minifies attributes unquoted** in built output (`class=pathgate data-path=docker`). Grepping for `data-path="docker"` returns zero on markup that is present.
-- **`scripts/{gen_handouts,lint_paths}.py` and `.github/workflows/{path-lint,handout-pdf}.yml` sit inert in this repo** — they're ai-101's printable-handout tooling, copied in so every new workshop gets it for free; nothing runs until `deploymentPaths` is declared. See `content/02Hugo/7_printable_handouts/index.md`.
-- **Before making `lint` or `handouts` a required status check in a repo that adopts this tooling, confirm their `pull_request` triggers still have no `paths:` filter.** A required check whose trigger is path-filtered never reports at all for a PR outside that filter, which blocks merge forever, not just until CI runs — bit `ai-101` the same day its own copies were made required. Already fixed in the copies here (both triggers are unfiltered; the equivalent filtering happens inside each job so a no-op PR still gets a fast, reporting green check).
+- Shortcodes/render hooks belong in CentralRepo; a same-named file in `layouts/` here silently shadows CentralRepo's.
+- `main` requires `ci/jenkins/build-status` (0 approvals; squash/merge/rebase all allowed, verified 2026-09-24). Likely the same push-only Jenkins webhook gap as UserRepo: push the branch and let Jenkins build **before** opening the PR, or the check may never report.
+- `package.json`'s `hugo` script is dead (references `config.toml`/`docs/`).
+- `gen_handouts.py`, `lint_paths.py`, `handout-pdf.yml`, `path-lint.yml` are **inert** here: they no-op without `deploymentPaths` in `scripts/repoConfig.json`, which this repo doesn't declare. The handout page's "CI fails if stale" notice is false in this repo.

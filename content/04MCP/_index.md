@@ -347,7 +347,9 @@ async with streamablehttp_client(MCP_BASE_URL) as (read, write, _):
         await session.initialize()
         result = await session.call_tool(name, args)
 
-return result.content[0].text
+if result.content and hasattr(result.content[0], "text"):
+    return result.content[0].text
+return json.dumps({"error": "empty result from MCP tool"})
 ```
 
 The agent loop calls `_run_tool(name, args)` regardless of mode. `_run_tool`

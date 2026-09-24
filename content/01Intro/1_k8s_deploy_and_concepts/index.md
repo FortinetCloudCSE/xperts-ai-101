@@ -4,301 +4,77 @@ linkTitle: "Kubernetes Fundamentals"
 weight: 2
 ---
 
-All tasks for this session will be completed from a provided Linux VM and a browser.
+All tasks for this session are completed from the bastion (the Linux VM provided for your session) and a browser.
 
-This session starts with Kubernetes fundamentals using a managed Azure Kubernetes Service (AKS) cluster. Provided credentials allow for access to a Linux VM from which an AKS cluster is deployed in Azure Cloud. Utilizing a prebuilt script, you will deploy the cluster in Azure Cloud without navigating through complex installation steps.
+This session starts with Kubernetes fundamentals using a managed Azure Kubernetes Service (AKS) cluster. Provided credentials give you access to the bastion, from which an AKS cluster is deployed in Azure Cloud. Using a prebuilt script, you deploy the cluster in Azure Cloud without navigating complex installation steps.
 
-The focus areas for teh Kubernetes fundamentals includes **Pods**, **Labels**, **Deployments**, **Replicas**, and **Namespaces**.
+The focus areas for the Kubernetes fundamentals include **Pods**, **Labels**, **Deployments**, **Replicas**, and **Namespaces**.
 
 ## AKS Cluster Deployment
 
-We'll start by deploying a Managed Azure Kubernetes Service (AKS). This hands-on approach introduces you to Kubernetes essentials efficiently, with the setup process completing in about 5 minutes."
+We'll start by deploying a Managed Azure Kubernetes Service (AKS). This hands-on approach introduces you to Kubernetes essentials efficiently, with the setup process completing in about 5 minutes.
 
-The script below will create a Managed Azure Kubernetes Service (AKS) with one worker node and also update the local `kubeconfig` for AKS access. At no point is access to Azure required.
+The script below creates a Managed Azure Kubernetes Service (AKS) with one worker node and updates the local `kubeconfig` for AKS access. The script is pre-installed on the bastion and uses the Azure credentials already configured there, so you don't need to sign in to Azure yourself.
 
-Hover over the gray code box, click the **'copy to clipboard'** icon at the top right corner to copy the command and paste it into the Linux VM terminal and press enter to execute. Navigate through the tabs to check output and to verify the AKS deployment.
+Run the script, then check its output against the expected output below it.
 
 All commands used throughout this session are tailored to your session environment.
 
-{{< tabs title="AKS Create" >}}
-{{% tab title="Provision" %}}
-
-Create AKS Cluster
-
-```bash
+```bash {run="bastion"}
 ./aks-create.sh
 ```
 
-{{% /tab %}}
-{{% tab title="AKS Create Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
-aiuser@vm-linux-aiuser10:~$ ./aks-create.sh 
+```output {collapse="true"}
 {
   "aadProfile": null,
-  "addonProfiles": null,
+  [...]
   "agentPoolProfiles": [
     {
-      "artifactStreamingProfile": null,
-      "availabilityZones": null,
-      "capacityReservationGroupId": null,
       "count": 1,
-      "creationData": null,
-      "currentOrchestratorVersion": "1.35.7",
-      "eTag": "313930d0-0ef5-4424-a88a-a6855915beec",
-      "enableAutoScaling": false,
-      "enableEncryptionAtHost": false,
-      "enableFips": false,
-      "enableNodePublicIp": false,
-      "enableUltraSsd": false,
-      "gatewayProfile": null,
-      "gpuInstanceProfile": null,
-      "gpuProfile": null,
-      "hostGroupId": null,
-      "kubeletConfig": null,
-      "kubeletDiskType": "OS",
-      "linuxOsConfig": null,
-      "localDnsProfile": null,
-      "maxCount": null,
-      "maxPods": 30,
-      "messageOfTheDay": null,
-      "minCount": null,
-      "mode": "System",
       "name": "worker",
-      "networkProfile": null,
-      "nodeImageVersion": "AKSUbuntu-2404gen2containerd-202608.26.0",
-      "nodeLabels": null,
-      "nodePublicIpPrefixId": null,
-      "nodeTaints": null,
-      "orchestratorVersion": "1.35",
-      "osDiskSizeGb": 300,
-      "osDiskType": "Ephemeral",
-      "osSku": "Ubuntu",
-      "osType": "Linux",
-      "podIpAllocationMode": null,
-      "podSubnetId": null,
-      "powerState": {
-        "code": "Running"
-      },
-      "provisioningState": "Succeeded",
-      "proximityPlacementGroupId": null,
-      "scaleDownMode": "Delete",
-      "scaleSetEvictionPolicy": null,
-      "scaleSetPriority": null,
-      "securityProfile": {
-        "enableSecureBoot": false,
-        "enableVtpm": false,
-        "sshAccess": "LocalUser"
-      },
-      "spotMaxPrice": null,
-      "status": null,
-      "tags": null,
-      "type": "VirtualMachineScaleSets",
-      "upgradeSettings": {
-        "drainTimeoutInMinutes": null,
-        "maxSurge": "10%",
-        "maxUnavailable": "0",
-        "nodeSoakDurationInMinutes": null,
-        "undrainableNodeBehavior": null
-      },
-      "virtualMachineNodesStatus": null,
-      "virtualMachinesProfile": null,
+      "mode": "System",
       "vmSize": "Standard_D8ads_v5",
-      "vnetSubnetId": null,
-      "windowsProfile": null,
-      "workloadRuntime": null
+      "osType": "Linux",
+      "provisioningState": "Succeeded",
+      [...]
     }
   ],
-  "aiToolchainOperatorProfile": null,
-  "apiServerAccessProfile": null,
-  "autoScalerProfile": null,
-  "autoUpgradeProfile": {
-    "nodeOsUpgradeChannel": "NodeImage",
-    "upgradeChannel": null
-  },
-  "azureMonitorProfile": null,
-  "azurePortalFqdn": "aks-aiuser-rg-xperts-ai101--02b500-u76am9is.portal.hcp.eastus.azmk8s.io",
-  "bootstrapProfile": {
-    "artifactSource": "Direct",
-    "containerRegistryId": null
-  },
+  [...]
   "currentKubernetesVersion": "1.35.7",
   "disableLocalAccounts": false,
   "diskEncryptionSetId": null,
   "dnsPrefix": "aks-aiuser-rg-xperts-ai101--02b500",
-  "eTag": "b01c8052-cdc4-49c0-9670-959997550b10",
-  "enableRbac": true,
-  "extendedLocation": null,
+  [...]
   "fqdn": "aks-aiuser-rg-xperts-ai101--02b500-u76am9is.hcp.eastus.azmk8s.io",
-  "fqdnSubdomain": null,
-  "hostedSystemProfile": {
-    "enabled": false,
-    "nodeSubnetId": null,
-    "systemNodeSubnetId": null
-  },
-  "httpProxyConfig": null,
-  "id": "/subscriptions/02b50049-c444-416f-a126-3e4c815501ac/resourcegroups/rg-xperts-ai101-aiuser10/providers/Microsoft.ContainerService/managedClusters/a
-ks-aiuser10",
-  "identity": {
-    "delegatedResources": null,
-    "principalId": "768fc4d0-8c40-413e-b393-4864b981c25f",
-    "tenantId": "9472dd98-517e-4f3a-891e-266d7e387dea",
-    "type": "SystemAssigned",
-    "userAssignedIdentities": null
-  },
-  "identityProfile": {
-    "kubeletidentity": {
-      "clientId": "0a1f947c-e30d-4977-a2ff-1a0ef914c840",
-      "objectId": "529b412d-09ac-4d2e-ba7f-8bfec7e9a7f7",
-      "resourceId": "/subscriptions/02b50049-c444-416f-a126-3e4c815501ac/resourcegroups/MC_rg-xperts-ai101-aiuser10_aks-aiuser10_eastus/providers/Microsoft
-.ManagedIdentity/userAssignedIdentities/aks-aiuser10-agentpool"
-    }
-  },
-  "ingressProfile": null,
-  "kind": "Base",
-  "kubernetesVersion": "1.35",
-  "linuxProfile": null,
-  "location": "eastus",
-  "maxAgentPools": 100,
-  "metricsProfile": {
-    "costAnalysis": {
-      "enabled": false
-    }
-  },
+  [...]
   "name": "aks-aiuser10",
-  "networkProfile": {
-    "advancedNetworking": null,
-    "dnsServiceIp": "10.96.0.10",
-    "ipFamilies": [
-      "IPv4"
-    ],
-    "loadBalancerProfile": {
-      "allocatedOutboundPorts": null,
-      "backendPoolType": "nodeIPConfiguration",
-      "effectiveOutboundIPs": [
-        {
-          "id": "/subscriptions/02b50049-c444-416f-a126-3e4c815501ac/resourceGroups/MC_rg-xperts-ai101-aiuser10_aks-aiuser10_eastus/providers/Microsoft.Net
-work/publicIPAddresses/0ffcc513-4c1c-4bf4-b498-aeab33125a1d",
-          "resourceGroup": "MC_rg-xperts-ai101-aiuser10_aks-aiuser10_eastus"
-        }
-      ],
-      "enableMultipleStandardLoadBalancers": null,
-      "idleTimeoutInMinutes": null,
-      "managedOutboundIPs": {
-        "count": 1,
-        "countIpv6": null
-      },
-      "outboundIPs": null,
-      "outboundIpPrefixes": null
-    },
-    "loadBalancerSku": "standard",
-    "natGatewayProfile": null,
-    "networkDataplane": "azure",
-    "networkMode": null,
-    "networkPlugin": "azure",
-    "networkPluginMode": null,
-    "networkPolicy": "none",
-    "outboundType": "loadBalancer",
-    "podCidr": null,
-    "podCidrs": null,
-    "serviceCidr": "10.96.0.0/16",
-    "serviceCidrs": [
-      "10.96.0.0/16"
-    ],
-    "staticEgressGatewayProfile": null
-  },
-  "nodeProvisioningProfile": {
-    "defaultNodePools": null,
-    "mode": "Manual"
-  },
+  [...]
   "nodeResourceGroup": "MC_rg-xperts-ai101-aiuser10_aks-aiuser10_eastus",
-  "nodeResourceGroupProfile": null,
-  "oidcIssuerProfile": {
-    "enabled": true,
-    "issuerUrl": "https://eastus.oic.prod-aks.azure.com/9472dd98-517e-4f3a-891e-266d7e387dea/0075b8b5-ac8c-44c3-a090-862b7877a9e6/"
-  },
-  "podIdentityProfile": null,
-  "powerState": {
-    "code": "Running"
-  },
-  "privateFqdn": null,
-  "privateLinkResources": null,
+  [...]
   "provisioningState": "Succeeded",
   "publicNetworkAccess": null,
   "resourceGroup": "rg-xperts-ai101-aiuser10",
-  "resourceUid": "6aa1d39bec78620001eb4527",
-  "schedulerProfile": null,
-  "securityProfile": {
-    "azureKeyVaultKms": null,
-    "customCaTrustCertificates": null,
-    "defender": null,
-    "imageCleaner": null,
-    "workloadIdentity": null
-  },
-  "serviceMeshProfile": null,
-  "servicePrincipalProfile": {
-    "clientId": "msi",
-    "secret": null
-  },
-  "sku": {
-    "name": "Base",
-    "tier": "Free"
-  },
-  "status": null,
-  "storageProfile": {
-    "blobCsiDriver": null,
-    "diskCsiDriver": {
-      "enabled": true
-    },
-    "fileCsiDriver": {
-      "enabled": true
-    },
-    "snapshotController": {
-      "enabled": true
-    }
-  },
-  "supportPlan": "KubernetesOfficial",
-  "systemData": null,
-  "tags": null,
-  "type": "Microsoft.ContainerService/ManagedClusters",
-  "upgradeSettings": null,
-  "windowsProfile": {
-    "adminPassword": null,
-    "adminUsername": "azureuser",
-    "enableCsiProxy": true,
-    "gmsaProfile": null,
-    "licenseType": null
-  },
-  "workloadAutoScalerProfile": {
-    "keda": null,
-    "verticalPodAutoscaler": null
-  }
+  [...]
 }
 Merged "aks-aiuser10" as current context in /home/aiuser/.kube/config
 Cluster  Created.
 ```
 
-{{% /tab %}}
+Verify the provisioned AKS cluster:
 
-{{% tab title="Verify" %}}
-
-Verify provisioned AKS cluster  
-
-```bash
+```bash {run="bastion"}
 az aks list --resource-group ${RESOURCE_GROUP_NAME} --output table
 ```
 
-{{% /tab %}}
-{{% tab title="Verify Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output
 Name          Location    ResourceGroup             KubernetesVersion    CurrentKubernetesVersion    ProvisioningState    Fqdn
 ------------  ----------  ------------------------  -------------------  --------------------------  -------------------  ----------------------------------------------------------------
 aks-aiuser10  eastus      rg-xperts-ai101-aiuser10  1.35                 1.35.7                      Succeeded            aks-aiuser-rg-xperts-ai101--02b500-u76am9is.hcp.eastus.azmk8s.io
 ```
-
-{{% /tab %}}
-{{< /tabs >}}
 
 ## Manage Kubernetes objects
 
@@ -314,14 +90,14 @@ In this task, we will explore the imperative approach using kubectl to familiari
 
 ### Use kubectl
 
-kubectl is already deployed and configured on your linux VM
+kubectl is already deployed and configured on the bastion.
 
 Once you have a running Kubernetes cluster, you can deploy your containerized applications on top of it. To do this, use the `kubectl` command to create Pods, Deployments or other Kubernetes objects.
 
 kubectl relies on a configuration file found at **~/.kube/config** for authentication and communication with the kube-api-server.
 
 - Running `kubectl config view` displays details about the kube-API server, including its address, name, and the client's key and certificate.
-- Running `kubectl version` display client **kubectl** version and server version.
+- Running `kubectl version` displays the client **kubectl** version and server version.
 
 ### Basic usage of kubectl
 
@@ -329,11 +105,25 @@ The common format of a kubectl command is: <kbd>kubectl</kbd> <kbd>ACTION</kbd> 
 
 This performs the specified action (e.g., create, describe, delete) on the specified resource (e.g., node or deployment). Use --help after the subcommand to get additional info about possible parameters (e.g, kubectl get nodes --help).
 
-Check that kubectl is installed and configured to talk to your cluster, by running the `kubectl version` command.
+Check that kubectl is configured to talk to your cluster by running `kubectl version`,
+which contacts the API server:
 
-- Most used kubectl commands:
+```bash {run="bastion"}
+kubectl version
+```
 
-```bash
+A response with both a `Client Version` and a `Server Version` confirms kubectl
+can reach the cluster.
+
+Running `kubectl` with no arguments lists the available commands:
+
+```bash {run="bastion"}
+kubectl
+```
+
+The output is similar to:
+
+```output {collapse="true"}
 Basic Commands (Beginner):
   create          Create a resource from a file or from stdin
   expose          Take a replication controller, service, deployment or pod and expose it as a new Kubernetes service
@@ -350,29 +140,20 @@ Deploy Commands:
   rollout         Manage the rollout of a resource
   scale           Set a new size for a deployment, replica set, or replication controller
   autoscale       Auto-scale a deployment, replica set, stateful set, or replication controller
-  ```
+```
 
-For example, you can use `kubectl get node` or `kubectl get node -o wide` to check cluster node detail
+For example, you can use `kubectl get node` or `kubectl get node -o wide` to check cluster node detail:
 
-{{< tabs title="kubectl" >}}
-{{% tab title="Check Cluster node" %}}
-
-Check Cluster node
-
-```bash
+```bash {run="bastion"}
 kubectl get node
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output
 NAME                             STATUS   ROLES    AGE   VERSION
 aks-worker-35394522-vmss000000   Ready    <none>   17h   v1.35.7
 ```
-
-{{% /tab %}}
-{{< /tabs >}}
 
 ## Pod
 
@@ -388,55 +169,42 @@ To create a Pod:
 
 #### Create and Verify Pod
 
-{{< tabs title="kubectl run" >}}
-{{% tab title="Create Pod" %}}
+Create a Pod running the juiceshop container:
 
-Create a Pod
-
-```bash
+```bash {run="bastion"}
 kubectl run juiceshop --image=bkimminich/juice-shop
 ```
 
-Creates a Pod with a running juiceshop container.
-{{% /tab %}}
-{{% tab title="Verify" %}}
+Verify the Pod creation:
 
-Verify the Pod creation
-
-```bash
+```bash {run="bastion"}
 kubectl get pod
 ```
 
-{{% /tab %}}
+The output is similar to:
 
-{{% tab title="Expected Output" style="info" %}}
-
-```bash
-kubectl get pod
+```output
 NAME        READY   STATUS    RESTARTS   AGE
 juiceshop   1/1     Running   0          27s
 ```
 
-The **STATUS** of Pod may be **ContainerCreating** , but eventually, it will become **Running**.
+The **STATUS** of the Pod may be **ContainerCreating**, but eventually it becomes **Running**.
 
-{{% /tab %}}
-{{< /tabs >}}
+{{% notice style="tip" title="Checkpoint" %}}
+Checkpoint: you should now have a running Pod (`juiceshop`), created directly with `kubectl run`.
+{{% /notice %}}
 
 #### Review Container Logs
 
-{{< tabs title="kubectl logs" >}}
-{{% tab title="Check Container Log" %}}
+Check the container logs:
 
-Check container logs
-
-```bash
+```bash {run="bastion"}
 kubectl logs po/juiceshop
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output {collapse="true"}
 info: Detected Node.js version v24.19.0 (SUCCESS)
 info: Detected OS linux (SUCCESS)
 info: Detected CPU x64 (SUCCESS)
@@ -464,17 +232,11 @@ info: Check https://howto-llm.owasp-juice.shop for instructions on how to set up
 info: Server listening on port 3000
 ```
 
-{{% /tab %}}
-{{< /tabs >}}
-
 #### Create Pod from yamlfile
 
-Create Pod with `kubectl create -f <yamlfile>`
+Create a Pod from a YAML manifest with `kubectl create -f <yamlfile>`. This writes the manifest with a heredoc, then creates the Pod from it:
 
-{{< tabs title="kubectl create" >}}
-{{% tab title="Create" %}}
-
-```bash
+```bash {run="bastion"}
 cat << EOF | tee juice-shop2.yaml
 apiVersion: v1
 kind: Pod
@@ -493,52 +255,38 @@ kubectl create -f juice-shop2.yaml
 `cat << EOF` is a shell syntax for a "here document" (heredoc). It allows you to provide a block of input text directly in the shell. The input continues until the token EOF (End Of File) is encountered again in the input stream.
 ``|`` is the pipe operator, which takes the output of the command on its left (the heredoc in this case) and uses it as the input for the command on its right. In the next following chapters, we are going to use this a lot.
 
-{{% /tab %}}
-{{% tab title = "Verify Create" %}}
+Verify that both Pods are running:
 
-```bash
+```bash {run="bastion"}
 kubectl get pod
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output Create" style="info" %}}
+The output is similar to:
 
-Two Pods should be running
-
-```bash
+```output
 NAME         READY   STATUS    RESTARTS   AGE
 juiceshop    1/1     Running   0          4m29s
 juiceshop2   1/1     Running   0          22s
 ```
 
-{{% /tab %}}
-{{% tab title="Delete Pod" %}}
+Use `kubectl delete` to delete the `juiceshop2` Pod:
 
-use `kubectl delete` to delete the Pod juiceshop2
-
-```bash
+```bash {run="bastion"}
 kubectl delete pod juiceshop2
 ```
 
-{{% /tab %}}
-{{% tab title="Verify Delete" %}}
+Check the Pod list again:
 
-Check Pod again
-
-```bash
+```bash {run="bastion"}
 kubectl get pod
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output Delete" style="info" %}}
+The output is similar to:
 
-```bash
+```output
 NAME        READY   STATUS    RESTARTS   AGE
 juiceshop   1/1     Running   0          63s
 ```
-
-{{% /tab %}}
-{{< /tabs >}}
 
 ### Labels
 
@@ -546,36 +294,30 @@ Labels in Kubernetes are key/value pairs attached to objects, such as Pods, Serv
 
 1. Labels can be utilized to filter resources when using kubectl commands. Execute the command below to retrieve all Pods labeled with run=juiceshop.
 
-    ```bash
+    ```bash {run="bastion"}
     kubectl get pods -l run=juiceshop
     ```
 
 1. Labels can be added to an object using the `kubectl label` command. Execute the command below to add the key:value pair "purpose=debug" to the Pod named juiceshop.
 
-    ```bash
+    ```bash {run="bastion"}
     kubectl label pod juiceshop purpose=debug
     ```
 
 #### Get Labels
 
-{{< tabs title="kubectl get">}}
-{{% tab title="Display Labels" %}}
 To display all labels:
 
-```bash
+```bash {run="bastion"}
 kubectl get pod --show-labels
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
-juiceshop    1/1     Running   0          8m3s    purpose=debug,run=juiceshop,topology.kubernetes.io/region=eastus,topology.kubernetes.io/zone=0
-juiceshop2   1/1     Running   0          3m56s   run=juiceshop2,topology.kubernetes.io/region=eastus,topology.kubernetes.io/zone=0
+```output
+NAME        READY   STATUS    RESTARTS   AGE     LABELS
+juiceshop   1/1     Running   0          8m3s    purpose=debug,run=juiceshop,topology.kubernetes.io/region=eastus,topology.kubernetes.io/zone=0
 ```
-
-{{% /tab %}}
-{{< /tabs >}}
 
 ## Deployments
 
@@ -591,18 +333,15 @@ While directly creating Pods might be suitable for learning purposes or specific
 
 Deploy your first application on Kubernetes using the `kubectl create deployment` command. This is an imperative command, it requires specifying the deployment name and the location of the application image (including the full repository URL for images not hosted on Docker Hub).
 
-{{< tabs title="kubectl create deployment" >}}
-{{% tab title="Deployment" %}}
+Deploy the kubernetes-bootcamp application:
 
-Deployment kubernetes-bootcamp application
-
-```bash
+```bash {run="bastion"}
 kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1
 ```
 
-the **--image** chooses the container image to use for Pod, the image here is from image repository gcr.io.
+The **--image** flag chooses the container image to use for the Pod; the image here is from the gcr.io image repository.
 
-Other image repositories can be utilized if you prefer to use juice-shop from docker'
+Other image repositories can be used if you prefer to use juice-shop from Docker Hub:
 
 - `kubectl create deployment juiceshop --image=docker.io/bkimminich/juice-shop` as Docker Hub is the default registry
 - `kubectl create deployment juiceshop --image=bkimminich/juice-shop` could also be used
@@ -618,21 +357,15 @@ By executing this command, you instruct Kubernetes to pull the specified contain
 
 The `kubectl create deployment` command is used to create a new deployment in Kubernetes. Deployments manage a set of replicas of your application, ensuring that a specified number of instances (Pods) are running at any given time.
 
-{{% /tab %}}
-{{% tab title="Verify" %}}
+Verify the deployment:
 
-Verify the deployment
-
-```bash
+```bash {run="bastion"}
 kubectl get deployment -l app=kubernetes-bootcamp
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+There should be a single deployment running a single Pod of the app container(s), running inside a Pod with shared storage and IP. The output is similar to:
 
-There should be a single deployment running a single Pod of the app container(s) running inside a Pod with shared storage and IP.
-
-```bash
+```output
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
 kubernetes-bootcamp   1/1     1            1           24s
 ```
@@ -641,14 +374,15 @@ In the output:
 
 - **kubernetes-bootcamp** is the name of the deployment managing your application.
 - **READY 1/1** indicates that there is one **Pod** targeted by the deployment, and it is ready.
-  - 1/1 mean's the deployment expects 1 Pod and the Pod in ready status is also 1 which means the actual deployed Pod meets the expected number (**replica**)
+  - 1/1 means the deployment expects 1 Pod and the Pod in ready status is also 1 which means the actual deployed Pod meets the expected number (**replica**)
 - **UP-TO-DATE**: Indicates the number of replicas that have been updated to achieve the desired state.
   - 1 indicates that one replica is up-to-date with the desired configuration.
 - **AVAILABLE**: Shows the number of replicas that are available to serve requests.
   - 1 indicates there is one replica available.
 
-{{% /tab %}}
-{{< /tabs >}}
+{{% notice style="tip" title="Checkpoint" %}}
+Checkpoint: you should now have a Deployment (`kubernetes-bootcamp`) managing one Pod.
+{{% /notice %}}
 
 Let's keep this deployment to explore what is **ReplicaSet**
 
@@ -656,33 +390,28 @@ Let's keep this deployment to explore what is **ReplicaSet**
 
 A **ReplicaSet** is a Kubernetes resource that ensures a specified number of replicas of a Pod are running at any given time. It is one of the key controllers used for Pod replication and management, offering both scalability and fault tolerance for applications. The primary purpose of a ReplicaSet is to maintain a stable set of replica Pods running at any given time. As such, it is often used to guarantee the availability of a specified number of identical Pods. **Deployment** is a higher-level resource in Kubernetes that actually manages ReplicaSets and provides declarative updates to applications.
 
-{{< tabs title="kubectl get rs">}}
-{{% tab title="Check ReplicaSet" %}}
+Check the ReplicaSet created by the Deployment:
 
-Check the ReplicaSet from Deployment
-
-```bash
+```bash {run="bastion"}
 kubectl get rs -l app=kubernetes-bootcamp
 ```
 
-{{% /tab %}}
-{{% tab title="Check Details" %}}
+The output is similar to:
 
-Check details of ReplicaSet from Deployment
+```output
+NAME                             DESIRED   CURRENT   READY   AGE
+kubernetes-bootcamp-67fbdd6b79   1         1         1       111s
+```
 
-```bash
+Check the ReplicaSet's details:
+
+```bash {run="bastion"}
 kubectl describe rs kubernetes-bootcamp
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
-~$ kubectl get rs -l app=kubernetes-bootcamp
-NAME                             DESIRED   CURRENT   READY   AGE
-kubernetes-bootcamp-67fbdd6b79   1         1         1       111s
-
-~$ kubectl describe rs kubernetes-bootcamp
+```output {collapse="true"}
 Name:           kubernetes-bootcamp-67fbdd6b79
 Namespace:      default
 Selector:       app=kubernetes-bootcamp,pod-template-hash=67fbdd6b79
@@ -711,57 +440,40 @@ Pod Template:
 
 In the output, the line **Controlled By:  Deployment/kubernetes-bootcamp** indicates that ReplicaSet is controlled by Deployment/kubernetes-bootcamp.
 
-{{% /tab %}}
-{{< /tabs >}}
-
 ## Manage your Deployment
 
 ### Scale the Application
 
-{{< tabs title="kubectl scale">}}
-{{% tab title="Scale Out" %}}
+Scale out the deployment to 10 replicas:
 
-Scale out deployment
-
-```bash
+```bash {run="bastion"}
 kubectl scale deployment kubernetes-bootcamp --replicas=10
 ```
 
-{{% /tab %}}
-{{% tab title="Verify Scale Out" %}}
+Verify the scale-out:
 
-Verify deployment scale out
-
-```bash
+```bash {run="bastion"}
 kubectl get deployment kubernetes-bootcamp
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output Out" style="info" %}}
+The output is similar to:
 
-```bash
+```output
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
 kubernetes-bootcamp   10/10   10           10          4m11s
 ```
 
-The **READY** status will eventually show 10/10, indicating that 10 replicas were expected and all 10 are now available.
+The **READY** status eventually shows 10/10, indicating that 10 replicas were expected and all 10 are now available.
 
-Use `kubectl get pod` to list the pods, use `-l` to select which pod to list.
-**app=kubernetes-bootcamp** is the label assigned to pod during creating.
-the expected pod will become 10.
+Use `kubectl get pod` with `-l` to list the Pods created by the deployment (**app=kubernetes-bootcamp** is the label assigned to the Pods on creation); you should see 10 Pods:
 
-{{% /tab %}}
-{{% tab title="Check new Pod" %}}
-
-Check the Pod created by deployment
-
-```bash
+```bash {run="bastion"}
 kubectl get pod -l app=kubernetes-bootcamp
 ```
 
-10 Pod will be created.
+The output is similar to:
 
-```bash
+```output
 NAME                                   READY   STATUS    RESTARTS   AGE
 kubernetes-bootcamp-67fbdd6b79-2k5r9   1/1     Running   0          53s
 kubernetes-bootcamp-67fbdd6b79-6hxbn   1/1     Running   0          53s
@@ -775,32 +487,21 @@ kubernetes-bootcamp-67fbdd6b79-wv29h   1/1     Running   0          52s
 kubernetes-bootcamp-67fbdd6b79-z4bm2   1/1     Running   0          52s
 ```
 
-{{% /tab %}}
-{{% tab title="Scale In" %}}
+To reduce resource usage, scale the deployment back in to 1 replica, decreasing the expected number of Pods:
 
-Scale in deployment
-
-To reduce resource usage by scaling in the deployment, modify the --replicas parameter to 1, decreasing the expected number of Pods:
-
-```bash
+```bash {run="bastion"}
 kubectl scale deployment kubernetes-bootcamp --replicas=1
 ```
 
-{{% /tab %}}
-{{% tab title="Verify Scale In" %}}
+Verify the scale-in:
 
-Verify deployment scale in
-
-```bash
+```bash {run="bastion"}
 kubectl get pod -l app=kubernetes-bootcamp -o wide
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output Scale In" style="info" %}}
+Some Pods will be in the **Terminating** state, and eventually only 1 Pod remains active. The output is similar to:
 
-Some Pods will be in the **Terminating** state, and eventually, only 1 Pod will remain active.
-
-```bash
+```output
 NAME                                   READY   STATUS    RESTARTS   AGE     IP            NODE                             NOMINATED NODE   READINESS GATES
 kubernetes-bootcamp-67fbdd6b79-grrcw   1/1     Running   0          7m29s   10.224.0.14   aks-worker-35394522-vmss000000   <none>           <none>
 ```
@@ -821,14 +522,11 @@ Above output is from the `kubectl get pod -l app=kubernetes-bootcamp -o wide` co
 
 - **NODE**: worker001 - This indicates the name of the node (physical or virtual machine) within the Kubernetes cluster on which this Pod is running. The scheduler decides the placement of Pods based on various factors like resources, affinity/anti-affinity rules, etc. In this case, the Pod is running on a node named worker001.
 
-Below diagram show a Pod can have 1 container or multiple containers, with or without shared storage.
+Below diagram shows a Pod can have 1 container or multiple containers, with or without shared storage.
 
 All the containers within a single Pod in Kubernetes follow  "shared fate" principle. This means that containers in a Pod are scheduled on the same node (physical or virtual machine) and share the same lifecycle, network namespace, IP address, and storage volumes.
 
 ![pods](https://kubernetes.io/docs/tutorials/kubernetes-basics/public/images/module_03_pods.svg)
-
-{{% /tab %}}
-{{< /tabs >}}
 
 ## Namespace
 
@@ -852,76 +550,61 @@ One pattern this organization could follow is to partition the Kubernetes cluste
 
 ### Create deployment in namespace
 
-Follow the steps below to explore how namespaces organize your deployments in Kubernetes. Execute each command sequentially:
+Follow the steps below to explore how namespaces organize your deployments in Kubernetes. Execute each command sequentially.
 
-{{< tabs title="kubectl create namespace">}}
-{{% tab title="Create" %}}
+Create two namespaces:
 
-Create namespace:
-
-```bash
+```bash {run="bastion"}
 kubectl create namespace production
 kubectl create namespace development
 ```
 
-{{% /tab %}}
-{{% tab title="Verify" %}}
+Verify the namespaces were created:
 
-Verify the namespace creation:
-
-```bash
+```bash {run="bastion"}
 kubectl get namespace production
 kubectl get namespace development
 ```
 
-{{% /tab %}}
-{{% tab title="Deploy app" %}}
+Deploy the same application into each namespace:
 
-Deploy an application into namespace:
-
-```bash
+```bash {run="bastion"}
 kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1 --namespace=production
 kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1 --namespace=development
 ```
 
-{{% /tab %}}
-{{% tab title="Monitor" %}}
+Monitor each deployment's rollout progress:
 
-Monitor the deployment's progress:
-
-```bash
+```bash {run="bastion"}
 kubectl rollout status deployment kubernetes-bootcamp -n development
 kubectl rollout status deployment kubernetes-bootcamp -n production
 ```
 
-{{% /tab %}}
-{{% tab title="Check details" %}}
+Check the deployment and Pod details in each namespace:
 
-Check the deployment details:
-
-```bash
+```bash {run="bastion"}
 kubectl get deployment kubernetes-bootcamp -n development
 kubectl get deployment kubernetes-bootcamp -n production
-kubectl get pod --namespace=production 
+kubectl get pod --namespace=production
 kubectl get pod -n=development
 ```
 
-or use `kubectl get all -n=production` and `kubectl get all -n=development` to list everything in that namespace.
+Or use `kubectl get all -n=production` and `kubectl get all -n=development` to list everything in that namespace.
 
-{{% /tab %}}
-{{% tab title="Delete" %}}
+{{% notice style="tip" title="Checkpoint" %}}
+Checkpoint: you should now have identical `kubernetes-bootcamp` Deployments and Pods isolated in two Namespaces (`production` and `development`).
+{{% /notice %}}
 
- Delete namespace and everything inside it
+Delete the namespaces and everything inside them. This takes a while — ***do not interrupt*** the deletion process:
 
-it will take a while to delete namespace, ***do not interrupt*** the deletion process.
-
-```bash
+```bash {run="bastion"}
 kubectl delete namespace production
 kubectl delete namespace development
 ```
 
-{{% /tab %}}
-{{< /tabs >}}
+## How this connects to the AI labs
+
+Everything above — Pods, Deployments, Namespaces — is what you'll see again as soon as you install the `ai101` Helm chart in the next section. Each of Ollama, the agent, the MCP server and the UI runs as its own **Deployment** (which manages a **Pod**), and each is fronted by its own **Service** — a kind of object this section didn't create by hand, but Helm does, one per component. The chart also creates a PersistentVolumeClaim for Ollama's model storage, a ConfigMap for the UI's nginx config, and (if you enable it) an Ingress. All of it lands in the `default` **Namespace** (the same one you already worked in above) unless you override it. Helm itself stores each release's state in a Kubernetes Secret — that's Helm 3's own bookkeeping, not a chart-authored object.
 
 ### Review Questions
 

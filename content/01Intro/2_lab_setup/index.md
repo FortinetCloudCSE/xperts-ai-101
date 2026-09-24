@@ -6,6 +6,8 @@ weight: 3
 
 ## Prerequisites
 
+kubectl, Helm and jq are already installed on the bastion (the Linux VM provided for your session). The table below is for reference — you don't need to install anything.
+
 | Requirement | Version | Check |
 | ------------- | --------- | ------- |
 | kubectl | 1.28+ | `kubectl version --client` |
@@ -16,39 +18,43 @@ weight: 3
 
 ## 1. Verify Kubernetes access
 
-```bash
+Confirm kubectl is pointed at your cluster:
+
+```bash {run="bastion"}
 kubectl config current-context
+```
+
+List the cluster nodes:
+
+```bash {run="bastion"}
 kubectl get nodes
 ```
 
-If kubectl get nodes works, you are connected to the cluster and continue to the Clone the repo step.
+If `kubectl get nodes` works, you are connected to the cluster and can continue to the Clone the repo step.
 
 ## 2. Clone the repo
 
-The repo is hosted in Github and is used to supply Helm with the required settings for each lab environment as well as provide code to run the AI components of the labs.
+The repo is hosted on GitHub and supplies Helm with the settings for each lab environment, plus the code that runs the AI components of the labs.
 
-```bash
+```bash {run="bastion"}
 cd ~
 git clone https://github.com/FortinetCloudCSE/xperts-ai-101.git
 ```
 
 ## 3. Install the chart for Lab 1
 
-- Pre-built multi-arch images (amd64 + arm64) are published to Github Container Registry (GHCR) and pulled
-automatically by the cluster — no manual image pull required.
+Pre-built multi-arch images (amd64 + arm64) are published to GitHub Container Registry (GHCR) and pulled automatically by the cluster — no manual image pull required.
 
-{{< tabs >}}
-{{% tab title="Install Chart" %}}
+Install the Lab 1 chart, which deploys Ollama only:
 
-```bash
+```bash {run="bastion"}
 cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output
 Release "ai101" does not exist. Installing it now.
 NAME: ai101
 LAST DEPLOYED: Tue Jul 14 18:35:02 2026
@@ -59,43 +65,28 @@ DESCRIPTION: Install complete
 TEST SUITE: None
 ```
 
-{{% /tab %}}
-{{< /tabs >}}
+Wait for the Ollama pod to start, then watch it move to `Running` (this can take 60–90 seconds while the image pulls). This command watches continuously — stop it with <kbd>Ctrl</kbd>+<kbd>C</kbd> once you see `Running`:
 
-- Wait for the Ollama pod to start, then follow its logs to track the model download:
-
-{{< tabs >}}
-{{% tab title="Watch Ollama Pod" %}}
-
-```bash
+```bash {run="bastion"}
 kubectl get pods -w
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output
 NAME                           READY   STATUS    RESTARTS   AGE
 ai101-ollama-8699cc758-sqrgt   1/1     Running   0          12m
- ```
+```
 
-{{% /tab %}}
-{{< /tabs >}}
+Once the `ai101-ollama-*` pod shows `Running`, follow its logs to confirm the model download completed. This command streams continuously — stop it with <kbd>Ctrl</kbd>+<kbd>C</kbd> when you're done:
 
-- Once the `ai101-ollama-*` pod shows `Running` (may take 60–90 s for the image pull)
-
-{{< tabs >}}
-
-{{% tab title="Follow the logs" %}}
-
-```bash
+```bash {run="bastion"}
 kubectl logs -l app.kubernetes.io/component=ollama -f
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output
 [GIN] 2026/07/14 - 18:49:21 | 200 |     410.443µs |       127.0.0.1 | GET      "/api/tags"
 [GIN] 2026/07/14 - 18:49:21 | 200 |     431.543µs |       127.0.0.1 | GET      "/api/tags"
 [GIN] 2026/07/14 - 18:49:31 | 200 |      45.616µs |       127.0.0.1 | HEAD     "/"
@@ -103,57 +94,49 @@ kubectl logs -l app.kubernetes.io/component=ollama -f
 [GIN] 2026/07/14 - 18:49:41 | 200 |      23.003µs |       127.0.0.1 | HEAD     "/"
 ```
 
-{{% /tab %}}
-{{< /tabs >}}
-
 ## 4. Verify
 
-First, port-forward the Ollama service so Cloud Shell can reach the Ollama API running inside the Kubernetes cluster (or background it with `&`):
+Port-forward the Ollama service so the bastion can reach the Ollama API running inside the Kubernetes cluster. This backgrounds the port-forward with `&` so it keeps running:
 
-{{< tabs >}}
-{{% tab title="Port Forward" %}}
-
-```bash
+```bash {run="bastion"}
 kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &
 ```
 
-Then, in a new terminal or current terminal, send a test prompt to the Ollama OpenAI-compatible API endpoint:
+Send a test prompt to the Ollama OpenAI-compatible API endpoint:
 
-```bash
+```bash {run="bastion"}
 curl -s http://localhost:11434/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"qwen2.5:3b","messages":[{"role":"user","content":"ping"}]}' \
   | jq -r '.choices[0].message.content'
 ```
 
-If the command returns a text response, Ollama is running successfully and the model is able to perform inference.
-{{% /tab %}}
+If the command returns a text response, Ollama is running and the model is able to perform inference. The output is similar to:
 
-{{% tab title="Expected Output" style="info" %}}
+```output
 Pong! Your ping request was successfully answered. How can I assist you further?
-{{% /tab %}}
-{{< /tabs >}}
+```
 
-The `kubectl port-forward` command creates a temporary connection from `localhost:11434` to the Ollama service running inside the Kubernetes cluster. The `curl` command then sends a small test prompt to that local endpoint. Kubernetes forwards the request to Ollama, Ollama runs the model, and the model response is returned back to Cloud Shell.
+The `kubectl port-forward` command creates a temporary connection from `localhost:11434` to the Ollama service running inside the Kubernetes cluster. The `curl` command then sends a small test prompt to that local endpoint. Kubernetes forwards the request to Ollama, Ollama runs the model, and the model response is returned to the bastion.
 
 ## 5. Reference — upgrade per lab
 
-You will run one of these steps per lab to setup for the exercises in those labs. This is for reference only.
+Each lab tells you which of these to run to set up for its exercises. This is for reference only — run only the command for the lab you're on:
 
 ```bash
 cd ~/xperts-ai-101/lab-app/helm
 
-# Lab 1 — Ollama only
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml <-- Already executed above for Lab 1
+# Lab 1 — Ollama only (already done above)
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml
 
 # Lab 2 — Agent (hardcoded tools) + UI
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml <-- Execute in Lab 2
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml
 
 # Lab 3 — Agent (MCP mode) + MCP server + UI
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml <-- Execute in Lab 3
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml
 
 # Lab 4 — Same as lab3 (security demo steps use env overrides)
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml <-- Execute in Lab 4
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml
 ```
 
 {{% notice style="tip" title="Keep it running" %}}
@@ -164,9 +147,9 @@ Leave the release running as you work through the labs. Each lab section tells y
 
 ## 6. FortiAIGate routing
 
-FortiAIGate is not setup for this session, this is informational only.
+FortiAIGate is not set up for this session — this section is informational only.
 
-To route the agent through FortiAIGate instead of the local Ollama, it would be a simple change to the agent URL:
+To route the agent through FortiAIGate instead of the local Ollama, you would change a single value:
 
 ```bash
 cd ~/xperts-ai-101/lab-app/helm
