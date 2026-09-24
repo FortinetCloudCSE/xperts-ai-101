@@ -4,15 +4,11 @@ linkTitle: "Reference"
 weight: 90
 ---
 
-## Reference pages for your path
-
-
-**Kubernetes / Helm** — the pages and sections below apply to you:
+## Reference pages
 
 | Page / section | What it covers |
 |---|---|
-| [Printable handout](handouts/handout-k8s/) | Every Kubernetes / Helm step in one linear page, for printing |
-| [Kubernetes / Helm Setup](/01Intro/2_prereqs_k8s) | Cluster reconnect, chart install, port-forward, upgrade per lab, cleanup |
+| [Kubernetes / Helm Setup](/01Intro/2_lab_setup) | Cluster reconnect, chart install, port-forward, upgrade per lab, cleanup |
 | [Troubleshooting Azure Cloud Shell Web Preview](cloud-shell-web-preview/) | `Unauthorized` on Web Preview, per browser |
 | [Environment variables](#environment-variables) | Every variable the lab app reads |
 | [Day 2 swap](#day-2-swap--one-line-change) | Point the agent at FortiAIGate |

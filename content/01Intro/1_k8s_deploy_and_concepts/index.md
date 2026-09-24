@@ -8,13 +8,13 @@ All tasks for this session will be completed from a provided Linux VM and a brow
 
 This session starts with Kubernetes fundamentals using a managed Azure Kubernetes Service (AKS) cluster. Provided credentials allow for access to a Linux VM from which an AKS cluster is deployed in Azure Cloud. Utilizing a prebuilt script, you will deploy the cluster in Azure Cloud without navigating through complex installation steps.
 
-The focus areas for teh Kubernetes fundamentals includes **Pods**, **Labels**, **Deployments**, **Replicas**, and **Namespaces**.
+The focus areas for the Kubernetes fundamentals includes **Pods**, **Labels**, **Deployments**, **Replicas**, and **Namespaces**.
 
 ## AKS Cluster Deployment
 
-We'll start by deploying a Managed Azure Kubernetes Service (AKS). This hands-on approach introduces you to Kubernetes essentials efficiently, with the setup process completing in about 5 minutes."
+We'll start by deploying a Managed Azure Kubernetes Service (AKS). This hands-on approach introduces you to Kubernetes essentials efficiently, with the setup process completing in about 5 minutes.
 
-The script below will create a Managed Azure Kubernetes Service (AKS) with one worker node and also update the local `kubeconfig` for AKS access. At no point is access to Azure required.
+The script below will create a Managed Azure Kubernetes Service (AKS) with one worker node and also update the local `kubeconfig` for AKS access. The script is pre-installed on your Linux VM and uses the Azure credentials already configured there, so you don't need to sign in to Azure yourself.
 
 Hover over the gray code box, click the **'copy to clipboard'** icon at the top right corner to copy the command and paste it into the Linux VM terminal and press enter to execute. Navigate through the tabs to check output and to verify the AKS deployment.
 
@@ -641,7 +641,7 @@ In the output:
 
 - **kubernetes-bootcamp** is the name of the deployment managing your application.
 - **READY 1/1** indicates that there is one **Pod** targeted by the deployment, and it is ready.
-  - 1/1 mean's the deployment expects 1 Pod and the Pod in ready status is also 1 which means the actual deployed Pod meets the expected number (**replica**)
+  - 1/1 means the deployment expects 1 Pod and the Pod in ready status is also 1 which means the actual deployed Pod meets the expected number (**replica**)
 - **UP-TO-DATE**: Indicates the number of replicas that have been updated to achieve the desired state.
   - 1 indicates that one replica is up-to-date with the desired configuration.
 - **AVAILABLE**: Shows the number of replicas that are available to serve requests.
@@ -759,7 +759,7 @@ Check the Pod created by deployment
 kubectl get pod -l app=kubernetes-bootcamp
 ```
 
-10 Pod will be created.
+10 Pods will be created.
 
 ```bash
 NAME                                   READY   STATUS    RESTARTS   AGE
@@ -821,7 +821,7 @@ Above output is from the `kubectl get pod -l app=kubernetes-bootcamp -o wide` co
 
 - **NODE**: worker001 - This indicates the name of the node (physical or virtual machine) within the Kubernetes cluster on which this Pod is running. The scheduler decides the placement of Pods based on various factors like resources, affinity/anti-affinity rules, etc. In this case, the Pod is running on a node named worker001.
 
-Below diagram show a Pod can have 1 container or multiple containers, with or without shared storage.
+Below diagram shows a Pod can have 1 container or multiple containers, with or without shared storage.
 
 All the containers within a single Pod in Kubernetes follow  "shared fate" principle. This means that containers in a Pod are scheduled on the same node (physical or virtual machine) and share the same lifecycle, network namespace, IP address, and storage volumes.
 

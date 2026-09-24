@@ -103,6 +103,10 @@ kubectl logs -l app.kubernetes.io/component=ollama -f
 [GIN] 2026/07/14 - 18:49:41 | 200 |      23.003µs |       127.0.0.1 | HEAD     "/"
 ```
 
+
+{{% notice style="tip" title="Exit logging" %}}
+You may need to type <kbd>CTRL</kbd>+<kbd>c</kbd> to exit the logging command
+{{% /notice %}}
 {{% /tab %}}
 {{< /tabs >}}
 
@@ -143,17 +147,17 @@ You will run one of these steps per lab to setup for the exercises in those labs
 ```bash
 cd ~/xperts-ai-101/lab-app/helm
 
-# Lab 1 — Ollama only
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml <-- Already executed above for Lab 1
+# Lab 1 — Ollama only (already done above)
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml
 
 # Lab 2 — Agent (hardcoded tools) + UI
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml <-- Execute in Lab 2
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml
 
 # Lab 3 — Agent (MCP mode) + MCP server + UI
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml <-- Execute in Lab 3
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml
 
 # Lab 4 — Same as lab3 (security demo steps use env overrides)
-helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml <-- Execute in Lab 4
+helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml
 ```
 
 {{% notice style="tip" title="Keep it running" %}}

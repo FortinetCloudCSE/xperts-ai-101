@@ -199,6 +199,10 @@ a lot of confusion when you are reading code or debugging.
 }
 ```
 
+The Lab 1 script sends only `model`, `messages`, `temperature` and `stream`.
+`top_p` and `max_tokens` are shown because you will meet them in almost every
+client; when a request omits them, the server's own defaults apply.
+
 `stream: false` returns the full response as a single JSON object once generation
 is complete. Set it to `true` and the API streams tokens as server-sent events
 — useful for responsive chat UIs, but it changes the response format and
@@ -271,7 +275,9 @@ Before computing the final probability distribution, the model's raw scores
 (logits) are divided by the temperature value.
 
 - **`temperature: 0`** — effectively deterministic. All probability mass
-  concentrates on the top token. Run the same prompt twice, get the same output.
+  concentrates on the top token. Run the same prompt twice and you will usually
+  get the same output — usually, not always: batching and floating-point
+  differences across hardware can still change a token.
 - **`temperature: 1`** — sample from the distribution as the model computes it.
 - **`temperature > 1`** — flatten the distribution. Lower-ranked tokens become
   more likely. Output becomes more varied, sometimes to the point of being
@@ -298,8 +304,8 @@ account for 90% of the probability mass, throw out the remaining 10% tail,
 then sample from what is left. This prevents rare "tail" tokens from being
 selected even when temperature raises their probability slightly.
 
-Most production systems set both. The defaults in this workshop are
-`temperature: 0.7` and `top_p: 0.9`.
+Most production systems set both. This workshop sets only `temperature: 0.7`;
+`top_p` is left at the Ollama server default.
 
 ### max_tokens
 

@@ -185,7 +185,9 @@ not call anything.
 
 ## Step 4 — Read the loop
 
-This is the core of the function `_run_agent()` in `lab-app/images/agent/main.py`
+Below is a simplified excerpt of `_run_agent()` in `lab-app/images/agent/main.py`,
+with trace bookkeeping and audit logging removed. The `01`–`20` numbers label the
+excerpt, not the file.
 
 ```python
 01 for iteration in range(MAX_ITERATIONS):               # hard cap at 5
@@ -210,12 +212,21 @@ This is the core of the function `_run_agent()` in `lab-app/images/agent/main.py
 20         return msg["content"]                           # done
 ```
 
-Identify in the actual file:
+Open the real file and find each of these. Answers are in the expander below.
 
-- Where `finish_reason == "tool_calls"` branches. --> Line 06
-- Where tool results are appended to `messages` before the next LLM call. --> Lines 12-16
+- Where `finish_reason == "tool_calls"` branches.
+- Where tool results are appended to `messages` before the next LLM call.
 - What happens when `MAX_ITERATIONS` is reached.
 - How `_run_tool()` hides whether the backend is hardcoded or MCP.
+
+{{% expand title="Answers (line numbers in `main.py`)" %}}
+- Branch: line 212 (excerpt line 06).
+- Tool results appended: lines 231–235 (excerpt lines 12–18).
+- Iteration limit: the loop exits and line 248 logs `max_iterations`, then the
+  agent returns `"Reached iteration limit."` — the excerpt omits this.
+- Backend abstraction: `_run_tool()` at line 150 picks the hardcoded or MCP
+  implementation from `TOOL_MODE`; the loop never knows which one ran.
+{{% /expand %}}
 
 The abstraction in `_run_tool()` is the reason Module 3 can swap the tool
 backend without changing a single line in this loop.
