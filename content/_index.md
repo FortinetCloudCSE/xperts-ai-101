@@ -10,10 +10,10 @@ description: "A hands-on workshop covering LLM inference, autonomous agents, the
 
 This is a hands-on lab that takes you from raw LLM inference all the way through
 a realistic agentic security attack, using a purpose-built application running
-entirely on your laptop. The four lab exercises take roughly 2.5 hours; allow
+in your own Kubernetes lab cluster. The four lab exercises take roughly 2.5 hours; allow
 ~3 hours total including setup, a break, and wrap-up.
 
-You will build a small HR assistant backed by a local LLM, connect it to tools,
+You will build a small HR assistant backed by a self-hosted LLM, connect it to tools,
 extend it with MCP, and then break it deliberately — watching SQL injection,
 data exfiltration, and audit-log contrast play out in real time.
 

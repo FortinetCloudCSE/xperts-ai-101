@@ -15,6 +15,7 @@ Self-guided "How AI works" workshop (inference → agents → MCP → AI securit
 
 ## Scope decisions
 - Kubernetes (AKS + Helm) is the only deployment path. The Docker Compose path was cut 2026-09-24; `lab-app/compose/` is dev-only. Don't reintroduce Docker instructions or declare `deploymentPaths`.
+- Participants run every command on the provided **Linux VM (the bastion)** — decided 2026-09-24. Call it "the bastion" (first use: "the bastion — the Linux VM provided for your session"); never "Cloud Shell" or "your laptop". Command fences use `run="bastion"`.
 
 ## Key Files
 - `content/0N<Module>/_index.md` — concept page; `1_lab/index.md` — hands-on lab
@@ -31,7 +32,7 @@ docker run --rm -v "$PWD:/home/UserRepo" public.ecr.aws/k4n6m5h8/fortinet-hugo:l
 No test suite; validate by rendering. Built URLs are flat (`02inference/1_lab.html`); Hugo minifies attributes unquoted.
 
 ## Authoring conventions
-- Commands: ```bash {run="bastion"}, no `$` prompt, one command per block, preceded by a sentence. Output: ```output, introduced by "The output is similar to:". Tabs only for genuine alternatives. (Pending plan 0001 / CentralRepo render hooks.)
+- Commands: ```bash {run="bastion"}, no `$` prompt, one command per block, preceded by a sentence. Output: ```output, introduced by "The output is similar to:". Tabs only for genuine alternatives. Needs the CentralRepo render hooks from plan 0001; until that image ships, `run=` is ignored and `output` renders as a plain code block.
 - Output fences never use `bash`; use `output` (or `{lang="json"}`).
 - Code quoted from `lab-app/` must match the file — labs ask readers to find lines in it.
 - No `<-- comments` inside copyable fences.

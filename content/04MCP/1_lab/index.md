@@ -9,37 +9,61 @@ changing a line of agent code. You will see dynamic discovery in action, add
 a new tool to a running system without restarting the agent, and observe that
 the agent loop behaves identically regardless of which backend is active.
 
-Before you start, confirm the cluster and your agent port-forward:
+Confirm the cluster's pods are running on the bastion (the Linux VM provided
+for your session).
 
-```bash
+```bash {run="bastion"}
 kubectl get pods -l app.kubernetes.io/instance=ai101
+```
+
+Expect the `ai101-ollama`, `ai101-agent`, and `ai101-ui` pods `Running`.
+
+Confirm the agent port-forward from Lab 2 is still listed:
+
+```bash {run="bastion"}
 jobs
 ```
 
-Expect the `ai101-ollama`, `ai101-agent`, and `ai101-ui` pods `Running`, and the
-agent port-forward from Lab 2 listed by `jobs`. If it is missing, restart it:
+If it is missing, restart it. This runs in the background and keeps logging
+to a file, so it does not block your terminal; stop it later with
+<kbd>Ctrl</kbd>+<kbd>C</kbd> if you bring it to the foreground with `fg`.
 
-```bash
+```bash {run="bastion"}
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
 ```
 
 ## Deploy
 
-```bash
+Deploy the MCP server and switch the agent to MCP-discovered tools.
+
+```bash {run="bastion"}
 cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml
-kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
 ```
 
-Verify tool_mode:
+Wait for the rollout to finish. The `TOOL_MODE` change replaces the agent pod,
+which kills the Lab 2 port-forward to the old one.
 
-```bash
+```bash {run="bastion"}
+kubectl rollout status deployment/ai101-agent
+```
+
+Restart the agent port-forward (backgrounded; stop it later with
+<kbd>Ctrl</kbd>+<kbd>C</kbd> after bringing it to the foreground with `fg`):
+
+```bash {run="bastion"}
+kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
+```
+
+Confirm the agent's tool mode switched to `mcp`.
+
+```bash {run="bastion"}
 curl -s http://localhost:8001/health | jq .
 ```
 
-Expected output:
+The output is similar to:
 
-```bash
+```output {lang="json"}
 {
   "status": "ok",
   "tool_mode": "mcp",
@@ -48,15 +72,15 @@ Expected output:
 }
 ```
 
-Verify tool names:
+Confirm the tool names the agent discovered from the MCP server.
 
-```bash
+```bash {run="bastion"}
 curl -s http://localhost:8001/tools | jq '.tools[].name'
 ```
 
-Expected output:
+The output is similar to:
 
-```bash
+```output
 "query_employees"
 "send_message"
 ```
@@ -65,13 +89,20 @@ Expected output:
 
 ## Step 1 — Same agent, different backend
 
-Open the Chatbot UI using the output URL.
+Get the external IP address of the UI service.
 
-```bash
-az network public-ip list -g MC_${RESOURCE_GROUP_NAME}_aks-$(echo ${RESOURCE_GROUP_NAME} | awk -F- '{print $4}')_$(az group show -n ${RESOURCE_GROUP_NAME} --query location -o tsv) | jq '.[1].ipAddress' | awk '{ gsub(/[\x22\x27]/, ""); print "http://" $0 }'
+```bash {run="bastion"}
+kubectl get svc ai101-ui -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ```
 
-Ask this question.
+If this prints nothing, the LoadBalancer IP hasn't been assigned yet — wait about
+30 seconds and re-run it, or run `kubectl get svc ai101-ui -w` until `EXTERNAL-IP`
+appears (<kbd>Ctrl</kbd>+<kbd>C</kbd> to stop).
+
+The command prints the `ai101-ui` service's external IP address. Open
+`http://<that-ip>` in your browser.
+
+Ask this question in the Chatbot UI.
 
 > `Who is in the Engineering department?`
 
@@ -79,19 +110,15 @@ The response is identical to Lab 2. The Trace panel shows the same tool call.
 The only difference is how that call was dispatched: over HTTP to the MCP
 server rather than as a direct function call in the same process.
 
-Check how the agent currently sees its tools:
+Check how the agent currently sees its tools.
 
-{{< tabs >}}
-{{% tab title="Check tools"%}}
-
-```bash
+```bash {run="bastion"}
 curl -s http://localhost:8001/tools | jq '{mode: .mode, tools: [.tools[].name]}'
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output {lang="json"}
 {
   "mode": "mcp",
   "tools": [
@@ -101,14 +128,11 @@ curl -s http://localhost:8001/tools | jq '{mode: .mode, tools: [.tools[].name]}'
 }
 ```
 
-{{% /tab %}}
-{{< /tabs >}}
-
 ---
 
 ## Step 2 — Compare discovery vs hardcoded
 
-Compare the two loader functions in `lab-app/images/agent/main.py`:
+Compare the two loader functions in `lab-app/images/agent/main.py`.
 
 ```python
 def _load_hardcoded() -> None:
@@ -133,7 +157,7 @@ async def _discover_mcp() -> None:
 Both functions produce the same `_schemas` format. Everything below them in
 `lab-app/images/agent/main.py` — the `_run_agent()` loop, the LLM call, the trace — is unchanged.
 
-From `_run_tool()` in `lab-app/images/agent/main.py` see how the dispatch differs between modes. The loop
+`_run_tool()` in `lab-app/images/agent/main.py` shows how the dispatch differs between modes. The loop
 itself never calls this function differently.
 
 ```python
@@ -154,15 +178,19 @@ itself never calls this function differently.
 
 ## Step 3 — Add a tool without restarting the agent
 
-```bash
+Before this step, the agent knows two tools — `query_employees` and
+`send_message`, confirmed above. Enable the third tool, `search_web`, on the
+MCP server without touching the agent.
+
+```bash {run="bastion"}
 cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab3.yaml \
     --set mcpServer.enableExtraTool=true
 ```
 
-Expected output:
+The output is similar to:
 
-```bash
+```output
 Release "ai101" has been upgraded. Happy Helming!
 NAME: ai101
 LAST DEPLOYED: Wed Sep 15 19:13:24 2026
@@ -173,50 +201,35 @@ DESCRIPTION: Upgrade complete
 TEST SUITE: None
 ```
 
-- Only the MCP server was restarted. The agent container is still running with
-its previous tool list. Trigger re-discovery without touching the agent:
+Only the MCP server was restarted. The agent container is still running with
+its previous tool list. Trigger re-discovery without touching the agent.
 
-{{< tabs >}}
-{{% tab title="Discovery" %}}
-
-```bash
+```bash {run="bastion"}
 curl -s -X POST http://localhost:8001/tools/refresh | jq .
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output {lang="json"}
 {
   "refreshed": true,
   "count": 3
 }
 ```
 
-{{% /tab %}}
-{{< /tabs >}}
+Check the tool list again. It should now show three tools instead of two.
 
-- Check updated tools now
-
-{{< tabs >}}
-{{% tab title="Check updated tools" %}}
-
-```bash
+```bash {run="bastion"}
 curl -s http://localhost:8001/tools | jq '.tools[].name'
-
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output
 "query_employees"
 "send_message"
 "search_web"
 ```
-
-{{% /tab %}}
-{{< /tabs >}}
 
 The agent now knows about `search_web`. The model can call it on the next
 request. No rebuild. No code change.
@@ -233,7 +246,7 @@ The Trace panel should show `search_web` being called. The result is stubbed
 (the server returns canned text), but the full discovery → schema registration
 → tool call → result flow is real.
 
- ![searchweb](searchweb.png)
+![searchweb](searchweb.png)
 
 ---
 
@@ -256,26 +269,21 @@ You should now be able to:
 - Describe what changes between Lab 2 and Lab 3 (only the tool backend).
 - Add a tool to a running system and confirm the agent picks it up.
 
-{{< tabs >}}
-{{% tab title="Check Tools Length" %}}
+Confirm the final tool count.
 
-```bash
+```bash {run="bastion"}
 curl -s http://localhost:8001/tools | jq '.tools | length'
-
 ```
 
-{{% /tab %}}
-{{% tab title="Expected Output" style="info" %}}
+The output is similar to:
 
-```bash
+```output
 3
 ```
 
-{{% /tab %}}
-{{< /tabs >}}
-
 {{% notice style="info" title="Where does FortiAIGate fit" %}}
-When the agent routes through FortiAIGate, the gateway sees every MCP
+When the agent routes through FortiAIGate (see
+[Lab 1](/02inference/1_lab/) for what it is), the gateway sees every MCP
 tool-call request and response. AI Flow policies can inspect which tools are
 being called and with what arguments — visibility the MCP server itself does
 not provide.

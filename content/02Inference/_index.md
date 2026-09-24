@@ -57,7 +57,7 @@ starts with individual characters and repeatedly merges the most frequent pairs,
 building up a vocabulary of a few tens of thousands of common fragments. Common
 short words end up as single tokens. Longer or rarer words get split.
 
-```bash
+```text
 Input:  "The emergency override code is ACME-RED-ALPHA-7"
 
 Approximate tokens:
@@ -153,7 +153,7 @@ exchange — unless your application includes that history in the new request.
 
 It is the application's job to maintain the conversation and resend it:
 
-```bash
+```text
 Turn 1 request:  [system] [user: "hello"]
                   ↓
                  model replies: "Hi there!"

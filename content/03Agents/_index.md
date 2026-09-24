@@ -190,7 +190,7 @@ with all the fragility that implies.
 The agent loop adds messages to the conversation on every iteration. Starting
 from a single user message, a two-tool-call turn produces:
 
-```bash
+```text
 [system]                          ← always present
 [user: "Who manages Engineering?"]
 [assistant: content=null, tool_calls=[call_1]]   ← model's tool request
@@ -200,7 +200,7 @@ from a single user message, a two-tool-call turn produces:
 
 If the model chains two tool calls across two iterations:
 
-```bash
+```text
 [system]
 [user: "Find Alice's manager and email them"]
 [assistant: tool_calls=[call_1]]                  ← iteration 1 request
@@ -366,7 +366,7 @@ iteration has `answer` instead. If `MAX_ITERATIONS` is reached, `answer` is
 
 ### Agent loop state machine
 
-```bash
+```text
 START → [LLM call] → finish_reason?
                        ├─ tool_calls → execute tools → append results → [LLM call again]
                        ├─ stop → return answer
