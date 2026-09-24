@@ -138,9 +138,9 @@ Weakest part of this proposal:
 - [x] **Phase 0: Onboard.** On approval, replace `CLAUDE.md` with the Appendix draft. Seed project memory.
 - [x] **Phase 1: P0 fixes** in this repo (items 1–9 above). No CentralRepo dependency.
 - [ ] **Phase 2: CentralRepo** (separate repo, separate plan file there, own worktree):
-  - [ ] 2a. Render-verify that ```` ```bash {title=…} ```` works on the current image (the fallback path).
-  - [ ] 2b. Add `render-codeblock-output.html`, pass-through `render-codeblock-{bash,sh,shell}.html` with `run=` badge, CSS, and copy-suppression JS.
-  - [ ] 2c. Prove it on UserRepo with a demo page, built on the `dev` image variant.
+  - [x] 2a. Render-verify that ```` ```bash {title=…} ```` works on the current image (the fallback path).
+  - [x] 2b. Add `render-codeblock-output.html`, pass-through `render-codeblock-{bash,sh,shell}.html` with `run=` badge, CSS, and copy-suppression JS.
+  - [x] 2c. Prove it on UserRepo with a demo page, built on the `dev` image variant.
   - [ ] 2d. README + RELEASE_NOTES. Publish the image.
 - [ ] **Phase 3: Convert content** here: every tabbed command/output pair and every bare command+prose pair → `run=` + `output` blocks.
   - Drop output blocks that verify nothing, per Google guidance.
@@ -166,6 +166,14 @@ Weakest part of this proposal:
 
 - 2026-09-24: Phase 1 done in `82a51c1`. Built clean (36 pages). P0 #9: `aks-create.sh` is described as pre-installed on the VM [Likely]; not verified against the VM image.
 - 2026-09-24: Phase 2 ran as a background subagent in worktree `~/pythonProjects/worktrees/CentralRepo-cmd-output-blocks`, not in tmux, because `claude-capped` refused: 7 sessions already running, limit 6.
+
+- 2026-09-24: Phase 2a–2c are done in the CentralRepo worktree (`3c62700`, `9ea180a`, `78ca7f5`) and the UserRepo worktree (`0a7c843`, a demo page at `02Hugo/9_commands_and_output`).
+  - Pages built without `run=` render byte-identically (0 of 36 pages differ).
+  - Headless Chromium caught a subagent copy-button bug: theme.js is `defer`, so the strip ran too early. Fixed in `78ca7f5`.
+  - Fallback syntax `{title=…}` works today, but renders as a single-tab widget, not a badge.
+  - `collapse` must be quoted: `collapse="true"`.
+  - The CentralRepo plan lives at `docs/plans/2026-09-24_Jeff-Kopko_cmd-output-blocks.md`; that repo has no root `plans/`.
+  - 2d (push/PR/image) awaits owner approval.
 
 ## Decisions & Commentary
 - Output is sequential, not alternative, so tabs are the wrong widget. Commands and output become labelled blocks in reading order.
