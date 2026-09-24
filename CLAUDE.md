@@ -32,7 +32,7 @@ docker run --rm -v "$PWD:/home/UserRepo" public.ecr.aws/k4n6m5h8/fortinet-hugo:l
 No test suite; validate by rendering. Built URLs are flat (`02inference/1_lab.html`); Hugo minifies attributes unquoted.
 
 ## Authoring conventions
-- Commands: ```bash {run="bastion"}, no `$` prompt, one command per block, preceded by a sentence. Output: ```output, introduced by "The output is similar to:". Tabs only for genuine alternatives. Needs the CentralRepo render hooks from plan 0001; until that image ships, `run=` is ignored and `output` renders as a plain code block.
+- Commands: ```bash {run="bastion"}, no `$` prompt, one command per block, preceded by a sentence. Output: ```output, introduced by "The output is similar to:". Tabs only for genuine alternatives. Render hooks live in CentralRepo (v26.3.an+). Reference-only menus (e.g. `2_lab_setup` §5 per-lab upgrades) get no `run=`. `collapse="true"` must be quoted.
 - Output fences never use `bash`; use `output` (or `{lang="json"}`).
 - Code quoted from `lab-app/` must match the file — labs ask readers to find lines in it.
 - No `<-- comments` inside copyable fences.
@@ -40,5 +40,10 @@ No test suite; validate by rendering. Built URLs are flat (`02inference/1_lab.ht
 ## Gotchas
 - Shortcodes/render hooks belong in CentralRepo; a same-named file in `layouts/` here silently shadows CentralRepo's.
 - `main` requires `ci/jenkins/build-status` (0 approvals; squash/merge/rebase all allowed, verified 2026-09-24). Likely the same push-only Jenkins webhook gap as UserRepo: push the branch and let Jenkins build **before** opening the PR, or the check may never report.
+- Any `helm upgrade` that changes agent values replaces the agent pod and kills its port-forward: follow with `kubectl rollout status deployment/ai101-agent` (not `kubectl wait --for=condition=Available`, which returns mid-rollout) and restart the forward before any `localhost:8001` call.
+- Stop a specific port-forward with `pkill -f "port-forward svc/<name>"`, never `kill %N`: job numbers shift across labs and `%1` is the Ollama forward from setup.
+- UI address: `kubectl get svc ai101-ui -o jsonpath='{.status.loadBalancer.ingress[0].ip}'` (LoadBalancer in values-lab2..4), not `az network public-ip` parsing; the IP can be empty for ~30 s after upgrade.
+- Expected output must match `lab-app/` seed data (e.g. Alice Chen's manager is Bob Martinez, `seed.sql`) — reviewers caught invented output twice.
+- Plan/log commits carry `[skip ci]`; merge PRs with `gh-merge-verify <pr> --repo FortinetCloudCSE/xperts-ai-101 --method squash -- --subject … --body …` so the token doesn't suppress the Pages deploy.
 - `package.json`'s `hugo` script is dead (references `config.toml`/`docs/`).
 - `gen_handouts.py`, `lint_paths.py`, `handout-pdf.yml`, `path-lint.yml` are **inert** here: they no-op without `deploymentPaths` in `scripts/repoConfig.json`, which this repo doesn't declare. The handout page's "CI fails if stale" notice is false in this repo.

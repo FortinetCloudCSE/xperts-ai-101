@@ -2,7 +2,7 @@
 Date: 2026-09-24
 Owner: Jeff Kopko
 Slug: workshop-review-and-cmd-output-blocks
-Status: Approved
+Status: Complete
 Supersedes: none
 Superseded-By: none
 Plan File: plans/0001_2026-09-24_jkopko_workshop-review-and-cmd-output-blocks.md
@@ -137,18 +137,18 @@ Weakest part of this proposal:
 ## Plan
 - [x] **Phase 0: Onboard.** On approval, replace `CLAUDE.md` with the Appendix draft. Seed project memory.
 - [x] **Phase 1: P0 fixes** in this repo (items 1–9 above). No CentralRepo dependency.
-- [ ] **Phase 2: CentralRepo** (separate repo, separate plan file there, own worktree):
+- [x] **Phase 2: CentralRepo** (separate repo, separate plan file there, own worktree):
   - [x] 2a. Render-verify that ```` ```bash {title=…} ```` works on the current image (the fallback path).
   - [x] 2b. Add `render-codeblock-output.html`, pass-through `render-codeblock-{bash,sh,shell}.html` with `run=` badge, CSS, and copy-suppression JS.
   - [x] 2c. Prove it on UserRepo with a demo page, built on the `dev` image variant.
-  - [ ] 2d. README + RELEASE_NOTES. Publish the image.
+  - [x] 2d. README + RELEASE_NOTES. Publish the image.
 - [x] **Phase 3: Convert content** here: every tabbed command/output pair and every bare command+prose pair → `run=` + `output` blocks.
   - Drop output blocks that verify nothing, per Google guidance.
   - Strip the `$` prompt from `1_k8s…:36`.
   - Regenerate handouts. Run `lint_paths.py`.
 - [x] **Phase 4: P1/P2 pedagogy and wording** edits, module by module.
-- [ ] Build with the container (`docker run … fortinet-hugo build`) and spot-check rendered pages at each phase. `/code-review low` before each commit.
-- [ ] Close-out: RELEASE_NOTES (if adopted), promote decisions to `CLAUDE.md`, Status → Complete.
+- [x] Build with the container (`docker run … fortinet-hugo build`) and spot-check rendered pages at each phase. `/code-review low` before each commit.
+- [x] Close-out: RELEASE_NOTES (if adopted), promote decisions to `CLAUDE.md`, Status → Complete.
 
 ## Implementation Method
 **Hybrid**:
@@ -186,17 +186,28 @@ Weakest part of this proposal:
 - The `bash` hook is pass-through when `run` is absent, so there are zero visual changes for workshops that don't opt in.
 
 ## Files Changed
+- Shipped: CentralRepo #115, #116 (A11 `htmlEscape` fix), #117 (dev→main promotion; prod image v26.3.an); UserRepo #84 (demo page `02Hugo/9_commands_and_output`); xperts-ai-101 #7 (all content + CLAUDE.md).
 - `CLAUDE.md` (rewritten for ai-101), `content/_index.md` (now tracked), `content/01Intro/{1_k8s_deploy_and_concepts,2_lab_setup}/index.md`, `content/02Inference/_index.md`, `content/03Agents/1_lab/index.md`, `content/09Reference/{_index.md,cloud-shell-web-preview/index.md}`, `content/09Reference/handouts/` (deleted)
 
 ## Session Summary
-- (write at end)
+- Reviewed the whole workshop and fixed the P0 correctness defects: home page committed, Docker path cut, dead links, stale handout, false sampling defaults, Lab 2 line numbers.
+- Standardised command/output presentation. There are 0 tabs; `bash {run="bastion"}` + `output` fences render via new CentralRepo render hooks, which stay a pass-through for workshops that don't opt in.
+- Owner decisions: the bastion (Linux VM) is the only execution environment, and the Docker path is cut.
+- The medium review caught 9 lab-breaking defects (dead port-forward after agent rollout, wrong outbox recipient, `kill %1`, fragile IP parsing); all fixed before release.
+- Release issues:
+  - Dev CI A11 failed on `htmlEscape` (fixed in #116).
+  - The promotion conflicted with main's squash duplicates (merged main into dev, keeping dev's side).
+  - A stale local `fortinet-hugo:latest` briefly looked like the prod image lacked the hooks. Re-pulling showed v26.3.an has them.
+- Live on both Pages sites, verified by curl.
 
 ## Promotion
-- [ ] `Decisions & Commentary` walked
-- [ ] Durable facts promoted to `CLAUDE.md`
-- [ ] `Status:` set to `Complete`
+- [x] `Decisions & Commentary` walked
+- [x] Durable facts promoted to `CLAUDE.md` (bastion-only, render-hook conventions, rollout/port-forward, pkill, UI IP, seed-data output, skip-ci merge); CentralRepo gotchas pushed to its `dev`
+- [x] `Status:` set to `Complete`
 
 ## Follow-ups
+- [ ] Verify on the real bastion image that `aks-create.sh` and `${RESOURCE_GROUP_NAME}` are pre-provisioned (pages assume so).
+- [ ] Reset local `jkopkoEdits` to `origin/main` (it was squash-merged as #7).
 - [ ] Backport the convention to `ai-101`, `k8s-101-workshop` and `faig-training-workshop` after UserRepo proof.
 
 ## Risks / Open Questions
