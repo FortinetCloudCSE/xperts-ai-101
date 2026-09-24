@@ -136,7 +136,7 @@ Weakest part of this proposal:
 
 ## Plan
 - [x] **Phase 0: Onboard.** On approval, replace `CLAUDE.md` with the Appendix draft. Seed project memory.
-- [ ] **Phase 1: P0 fixes** in this repo (items 1–9 above). No CentralRepo dependency.
+- [x] **Phase 1: P0 fixes** in this repo (items 1–9 above). No CentralRepo dependency.
 - [ ] **Phase 2: CentralRepo** (separate repo, separate plan file there, own worktree):
   - [ ] 2a. Render-verify that ```` ```bash {title=…} ```` works on the current image (the fallback path).
   - [ ] 2b. Add `render-codeblock-output.html`, pass-through `render-codeblock-{bash,sh,shell}.html` with `run=` badge, CSS, and copy-suppression JS.
@@ -164,13 +164,16 @@ Weakest part of this proposal:
 - 2026-09-24: P0 #7 resolved. The fence removals were reverted and the typo fixes kept. Without fences, the list-item commands render as plain paragraphs and the kubectl cheat sheet collapses into one paragraph.
 - 2026-09-24: P0 #4 revised. `gen_handouts.py` no-ops without `deploymentPaths`, so nothing in this repo regenerates `09Reference/handouts/`, and its "CI fails if stale" notice is false. With a single path there's no path-specific handout to generate. Phase 1 deletes `content/09Reference/handouts/` and its links. If a printable copy is wanted, use Relearn's built-in print output for the whole site instead.
 
+- 2026-09-24: Phase 1 done in `82a51c1`. Built clean (36 pages). P0 #9: `aks-create.sh` is described as pre-installed on the VM [Likely]; not verified against the VM image.
+- 2026-09-24: Phase 2 ran as a background subagent in worktree `~/pythonProjects/worktrees/CentralRepo-cmd-output-blocks`, not in tmux, because `claude-capped` refused: 7 sessions already running, limit 6.
+
 ## Decisions & Commentary
 - Output is sequential, not alternative, so tabs are the wrong widget. Commands and output become labelled blocks in reading order.
 - Use render hooks rather than shortcodes: authors write plain markdown, and the handout generator and linter stay shortcode-agnostic.
 - The `bash` hook is pass-through when `run` is absent, so there are zero visual changes for workshops that don't opt in.
 
 ## Files Changed
-- (none yet)
+- `CLAUDE.md` (rewritten for ai-101), `content/_index.md` (now tracked), `content/01Intro/{1_k8s_deploy_and_concepts,2_lab_setup}/index.md`, `content/02Inference/_index.md`, `content/03Agents/1_lab/index.md`, `content/09Reference/{_index.md,cloud-shell-web-preview/index.md}`, `content/09Reference/handouts/` (deleted)
 
 ## Session Summary
 - (write at end)
