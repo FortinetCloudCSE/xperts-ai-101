@@ -36,6 +36,7 @@ No test suite; validate by rendering. Built URLs are flat (`02inference/1_lab.ht
 - Output fences never use `bash`; use `output` (or `{lang="json"}`).
 - Code quoted from `lab-app/` must match the file — labs ask readers to find lines in it.
 - No `<-- comments` inside copyable fences.
+- Authoring snippets in `.vscode/markdown.code-snippets` (`cmd`, `out`, `outj`, `outc`, `cmdout`, `notice`, `checkpoint`, `expand`, `ctrlc`, `kbd`) encode these conventions; keep them in sync when a convention changes. `.gitignore` un-ignores only that file and `.vscode/settings.json`.
 
 ## Gotchas
 - Shortcodes/render hooks belong in CentralRepo; a same-named file in `layouts/` here silently shadows CentralRepo's.
