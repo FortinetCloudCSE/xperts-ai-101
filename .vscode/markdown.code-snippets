@@ -29,6 +29,12 @@
     "description": "Command on bastion followed by its expected output",
     "body": ["${1:Sentence saying what the command does.}", "", "```bash {run=\"bastion\"}", "${2:command}", "```", "", "The output is similar to:", "", "```output", "${3:output}", "```", "$0"]
   },
+  "Chatbot prompt": {
+    "scope": "markdown",
+    "prefix": "chatbot",
+    "description": "Prompt the participant types into the lab app's chat UI (CentralRepo run= render hook, chatbot target)",
+    "body": ["```text {run=\"chatbot\"}", "${1:prompt}", "```", "$0"]
+  },
   "Notice box": {
     "scope": "markdown",
     "prefix": "notice",

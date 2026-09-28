@@ -240,7 +240,9 @@ request. No rebuild. No code change.
 
 In the chat box:
 
-> `Search the web for recent news about AI in enterprise security.`
+```text {run="chatbot"}
+Search the web for recent news about AI in enterprise security.
+```
 
 The Trace panel should show `search_web` being called. The result is stubbed
 (the server returns canned text), but the full discovery → schema registration

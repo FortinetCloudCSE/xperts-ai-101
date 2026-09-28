@@ -49,7 +49,7 @@ of tool schemas in a format the agent already knows how to use.
 
 This is not a new idea — it is essentially what LSP (Language Server Protocol)
 did for IDE tooling in 2016. MCP applies the same pattern to AI agents. The
-[MCP specification](https://spec.modelcontextprotocol.io/specification/) is
+[MCP specification](https://modelcontextprotocol.io/specification/2026-07-28) is
 open; Anthropic proposed it and it has since been adopted by major providers
 and tool vendors.
 
@@ -274,6 +274,10 @@ definitions, each with:
 The agent converts these into OpenAI-format tool schemas and stores them in
 `_schemas`. This is the only place where MCP and OpenAI formats differ slightly;
 the conversion is one line per field.
+
+{{% notice note %}}
+
+{{% /notice %}}
 
 ### Phase 2: Execution (call_tool)
 
