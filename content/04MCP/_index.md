@@ -276,6 +276,18 @@ The agent converts these into OpenAI-format tool schemas and stores them in
 the conversion is one line per field.
 
 {{% notice note %}}
+As FYI, the MCP tool we're using is converting to OpenAI-format because the Ollama model we've selected for this workshop uses the OpenAI standards.
+
+The conversion to the OpenAI format happens because of the target Large Language Model's (LLM) API requirements, not because of a limitation in the Model Context Protocol (MCP).
+
+Even though MCP is an open, model-agnostic standard, the final recipient of the tool schema is an AI model. If the application or agent is powered by an OpenAI model (or an API that mimics OpenAI’s format), it must feed the tool definitions into that specific model's API using its expected syntax.
+
+Here is a breakdown of why this translation occurs:
+- Role Separation: MCP standardizes how servers expose tools to clients. The OpenAI format standardizes how clients send tools to a specific LLM.
+- The Translation Layer: The agent acts as the bridge. It reads the universal MCP schema and translates it into the "native language" of the specific AI engine it is talking to.
+- Model Agnosticism: If you switched the underlying model from OpenAI to Anthropic's Claude or Google's Gemini, the agent would instead translate that exact same MCP response into Anthropic's or Gemini's specific tool formats.
+
+Because MCP handles the open server-side standard, the agent only needs a tiny translation layer ("one line per field") to talk to any LLM on the market.
 
 {{% /notice %}}
 

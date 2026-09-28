@@ -89,22 +89,11 @@ The output is similar to:
 
 ## Step 1 — Same agent, different backend
 
-Get the external IP address of the UI service.
-
-```bash {run="bastion"}
-kubectl get svc ai101-ui -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
-```
-
-If this prints nothing, the LoadBalancer IP hasn't been assigned yet — wait about
-30 seconds and re-run it, or run `kubectl get svc ai101-ui -w` until `EXTERNAL-IP`
-appears (<kbd>Ctrl</kbd>+<kbd>C</kbd> to stop).
-
-The command prints the `ai101-ui` service's external IP address. Open
-`http://<that-ip>` in your browser.
-
 Ask this question in the Chatbot UI.
 
-> `Who is in the Engineering department?`
+```text {run="chatbot"}
+Who is in the Engineering department?
+```
 
 The response is identical to Lab 2. The Trace panel shows the same tool call.
 The only difference is how that call was dispatched: over HTTP to the MCP
