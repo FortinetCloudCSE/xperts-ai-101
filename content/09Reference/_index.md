@@ -9,7 +9,6 @@ weight: 90
 | Page / section | What it covers |
 |---|---|
 | [Kubernetes / Helm Setup](/01Intro/2_lab_setup) | Cluster reconnect, chart install, port-forward, upgrade per lab, cleanup |
-| [Authoring Guide](/09Reference/1_authoring_guide) | For lab authors: command/output/`chatbot` blocks, notices, expand, tabs, VS Code snippets |
 | [Environment variables](#environment-variables) | Every variable the lab app reads |
 | [Day 2 swap](#day-2-swap--one-line-change) | Point the agent at FortiAIGate |
 | [Known issues](#known-issues-and-workarounds) | Common lab errors and fixes |
