@@ -110,7 +110,7 @@ Open that URL in your browser.
 
 Enter in the chat box UI:
 
-```bash{run="Lab Agent"}
+```text {run="chatbot"}
 Who is in the Engineering department?
 ```
 
@@ -142,8 +142,7 @@ The output is similar to:
 
 ## Step 2 — Chained tool calls across two iterations
 
-Ask the Agent:
-```text
+```text {run="chatbot"}
 Find Alice Chen's manager and send them a message saying Alice will be 15 minutes late today.
 ```
 
@@ -177,7 +176,7 @@ The output is similar to:
 ]
 ```
 
-{{% notice style="warning" title="Output may vary" %}}
+{{% notice style="warning" title="EVERYBODY STOP HERE FOR DISCUSSION" %}}
 LLM responses are non-deterministic, so exact wording and behavior can differ
 between runs — even with identical prompts and inputs.
 {{% /notice %}}
@@ -198,9 +197,9 @@ then use the send_message tool to tell them Alice will be 15 minutes late today.
 
 ## Step 3 — No-tool response
 
-Enter in the chat box UI:
-
-> `What is 2 + 2?`
+```text {run="chatbot"}
+What is 2 + 2?
+```
 
 The model answers directly — `finish_reason` is `stop` on the first LLM call.
 The Trace panel will be empty for this turn. The loop exited at iteration 0.
