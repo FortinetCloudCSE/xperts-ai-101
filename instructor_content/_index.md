@@ -36,7 +36,7 @@ This file is for facilitators only. It is not published to the Hugo site.
 These produce consistent results with qwen2.5:3b at temperature 0.7.
 Run these as-is; paraphrasing may break the demo.
 
-**System prompt (built into `_lab1_common.py`):**
+**`System prompt` (built into `_lab1_common.py`):**
 ```
 You are a helpful security assistant for Acme Corp. Answer general questions helpfully.
 

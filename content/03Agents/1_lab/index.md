@@ -4,32 +4,54 @@ linkTitle: "Lab 2"
 weight: 1
 ---
 
-Lab 2 brings up the agent and UI alongside Ollama. You will watch the tool-call
-loop execute in real time through the Trace panel, trigger both single and
-chained tool calls, and read the loop code to see exactly what the theory
-describes.
+|      |    |  
+|:----:|:---|
+| **Goal**                   | Understand the Agent Loop
+| **Task**                   | Trigger a single tool, multi-tool, and no tool call
+| **Validation** | Verify Tool_mode = Hardcoded
 
-Before you start, confirm the cluster and your Ollama port-forward from setup
-are both still up on the bastion (the Linux VM provided for your session):
+- Lab 2 deploys an agent and UI alongside Ollama. 
+- You will watch the tool-call
+loop execute in real time through the Trace panel, trigger both single and chained tool calls, and read the loop code to see exactly what the theory describes.
+
+
+Confirm the pod is running and the background job is port-forwarding:
 
 ```bash {run="bastion"}
 kubectl get pods -l app.kubernetes.io/instance=ai101
-```
-
-```bash {run="bastion"}
 jobs
+
+
 ```
 
-Expect the `ai101-ollama` pod `Running`, and the Ollama port-forward from setup
-listed by `jobs`. If it is missing, restart it:
+{{% notice style="warning" %}}
+You may need to hit <kbd>Enter</kbd> after jobs to see the port forwarding.  Be careful with the copy/paste.  If you lost connectivity to the Linx session, you'll probably need to restart port-forwarding
+{{%/notice %}}
+
+
+```output {collapse="true" hl_lines="4 6-7"}
+
+aiuser@vm-linux-aiuser49:~/xperts-ai-101/lab-app/helm$ kubectl get pods -l 
+app.kubernetes.io/instance=ai101
+NAME                           READY   STATUS    RESTARTS   AGE
+ai101-ollama-f9f6ff589-wfdxr   1/1     Running   0          11m
+aiuser@vm-linux-aiuser49:~/xperts-ai-101/lab-app/helm$ jobs
+[1]+  Running                 kubectl port-forward svc/ai101-ollama 11434:1
+1434 > /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &
+
+```
+
+Expect the `ai101-ollama` pod `Running`, and the Ollama port-forward listed by
+`jobs`. 
+
+{{% notice style="info" expanded="false" title="If port-forwarding job is missing..." %}}
+Restart it in the background:
 
 ```bash {run="bastion"}
 kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &
 ```
 
-This backgrounds itself, so it will not block the terminal. Confirm it took
-with `jobs`.
-
+{{% /notice %}}
 ## Deploy
 
 Change into the Helm chart directory and upgrade the release to the Lab 2
@@ -41,7 +63,7 @@ helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml
 ```
 The output should look like this:
 
-```output
+```output {collapse="true"}
 Release "ai101" has been upgraded. Happy Helming!
 NAME: ai101
 LAST DEPLOYED: Thu Sep 24 23:05:07 2026
@@ -59,11 +81,11 @@ kubectl wait deployment/ai101-agent --for=condition=Available --timeout=120s
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 deployment.apps/ai101-agent condition met
 ```
 
-Port-forward the agent so you can reach it from the bastion:
+Port-forward **the agent** so you can reach it from the bastion:
 
 ```bash {run="bastion"}
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
@@ -71,6 +93,21 @@ kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.l
 
 This also backgrounds itself and will not block your terminal — check `jobs`
 for it, and stop it later with `kill %<job-number>` if needed.
+
+{{% notice style=info expanded=false title="Verify 2 Port Forwarding jobs" %}}
+```bash {run="bastion"}
+jobs
+```
+
+```output {hl_lines="2 5"}
+aiuser@vm-linux-aiuser49:~/xperts-ai-101/lab-app/helm$ jobs
+[1]-  Running                 kubectl port-forward svc/ai101-ollama 11434:11434 >
+ /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &  (wd: ~/xperts-ai-101/lab-
+app/scripts)
+[2]+  Running                 kubectl port-forward svc/ai101-agent 8001:8001 > /t
+mp/ai101-agent-port-forward.log 2>&1 < /dev/null &
+```
+{{% /notice %}}
 
 Confirm the agent is up and in hardcoded mode:
 
@@ -80,7 +117,7 @@ curl -s http://localhost:8001/health | jq .
 
 The output is similar to:
 
-```output {lang="json"}
+```output {lang="json" collapse="true"}
 {
   "status": "ok",
   "tool_mode": "hardcoded",
@@ -114,10 +151,10 @@ Enter in the chat box UI:
 Who is in the Engineering department?
 ```
 
-Watch the **Trace** panel on the right. You should see:
+Watch the **Trace** panel on the right. You should see a single tool call Iteration:
 
 ```text
-query_employees(filter="Engineering")
+query_employees{filter="Engineering"}
 → {"employees": [{"name": "Alice Chen", ...}, ...]}
 ```
 
@@ -133,7 +170,7 @@ curl -s http://localhost:8001/tools | jq '.tools[].name'
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 "query_employees"
 "send_message"
 ```
@@ -167,7 +204,7 @@ curl -s http://localhost:8001/outbox | jq '.messages'
 
 The output is similar to:
 
-```output {lang="json"}
+```output {lang="json" collapse="true"}
 [
   {
     "to": "Bob Martinez",
@@ -179,6 +216,10 @@ The output is similar to:
 {{% notice style="warning" title="EVERYBODY STOP HERE FOR DISCUSSION" %}}
 LLM responses are non-deterministic, so exact wording and behavior can differ
 between runs — even with identical prompts and inputs.
+
+
+
+The full employee DB loaded into this model is here: https://github.com/FortinetCloudCSE/xperts-ai-101/blob/69326987a4b22cbe67dce358e17f25cd8779d55a/lab-app/images/agent/seed.sql
 {{% /notice %}}
 
 {{% notice style="tip" title="If the model narrates instead of acting" %}}
@@ -204,7 +245,7 @@ What is 2 + 2?
 The model answers directly — `finish_reason` is `stop` on the first LLM call.
 The Trace panel will be empty for this turn. The loop exited at iteration 0.
 
-This is worth seeing explicitly: the loop only runs tools when the model
+{{% badge color="red" %}} IMPORTANT {{% /badge %}} This is worth seeing explicitly: the loop only runs tools when the model
 decides to. For questions the model can answer from training knowledge, it does
 not call anything.
 
@@ -247,7 +288,7 @@ Open the real file and find each of these. Answers are in the expander below.
 - How `_run_tool()` hides whether the backend is hardcoded or MCP.
 
 {{% expand title="Answers (line numbers in `main.py`)" %}}
-- Branch: line 212 (excerpt line 06).
+- Branch: [line 212](https://github.com/FortinetCloudCSE/xperts-ai-101/blob/69326987a4b22cbe67dce358e17f25cd8779d55a/lab-app/images/agent/main.py#L212) (excerpt line 06).
 - Tool results appended: lines 231–235 (excerpt lines 12–18).
 - Iteration limit: the loop exits and line 248 logs `max_iterations`, then the
   agent returns `"Reached iteration limit."` — the excerpt omits this.
@@ -279,13 +320,15 @@ You should now be able to:
 - Trigger a single tool call, a chained call, and a no-tool response.
 - Find the loop code and identify each branch.
 
+
+{{% badge color="blue" %}}Optional Verification {{% /badge %}}
 ```bash {run="bastion"}
 curl -s http://localhost:8001/health | jq '.tool_mode'
 ```
 
-The output is similar to:
+The output should be:
 
-```output
+```output {collapse="false"}
 "hardcoded"
 ```
 

@@ -14,7 +14,7 @@ By the end of this page you should be able to explain:
 - How a model produces output (token prediction, not retrieval or rule matching)
 - What the chat message structure looks like and what each role is for
 - Why the model is stateless and what that means for your application
-- Why a system prompt is not a security boundary
+- Why a `system prompt` is not a security boundary
 - How prompt injection exploits the structure of the context window
 
 The hands-on part is in [Lab 1](1_lab/). The theory here will make the attack
@@ -72,9 +72,9 @@ or use the model's tokenizer library directly.
 {{% /notice %}}
 
 Here is why this matters beyond trivia: from the model's perspective, your
-system prompt, your user message, and any injected text are all the same
+`system prompt`, your `user message`, and `any injected text` are all the same
 thing — a flat stream of integer token IDs fed into the same computation.
-There is no "trusted input" flag attached to system prompt tokens. No semantic
+There is no "trusted input" flag attached to `system prompt` tokens. No semantic
 distinction between "instruction" and "data." No firewall between roles at the
 level where the math happens.
 
@@ -142,7 +142,7 @@ flowchart LR
 ```
 
 Everything inside the context window receives equal attention from the model.
-There is no concept of "older messages matter less." A system prompt written
+There is no concept of "older messages matter less." A `system prompt` written
 at the start of the conversation and a user message written at turn 50 are
 processed with the same weight — assuming both still fit in the window.
 
@@ -395,9 +395,9 @@ Module 2 builds it from scratch in about 25 lines of Python.
 
 ## Common prompt patterns
 
-System prompts follow a handful of patterns that repeat across almost every
+`System prompts` follow a handful of patterns that repeat across almost every
 production LLM application. Knowing them by name makes it easier to read
-someone else's system prompt and immediately understand what it is trying to
+someone else's `system prompt` and immediately understand what it is trying to
 do — and where it might be weak.
 
 **Persona** — establishes what the model is:
@@ -413,7 +413,7 @@ do — and where it might be weak.
 conversation starts. Not used in the lab scripts, but extremely common in
 production where output format must be precise and consistent.
 
-The Lab 1 system prompt uses the first three. A persona that makes the model
+The Lab 1 `system prompt` uses the first three. A persona that makes the model
 cooperative, a constraint rule that uses keyword matching to refuse, and context
 injection that puts the secret in the prompt where the model can see it.
 
@@ -424,7 +424,7 @@ injection that puts the secret in the prompt where the model can see it.
 Once you understand prompt patterns, the attack surface becomes obvious:
 every pattern has a weakness, and that weakness comes from the same root cause —
 the model cannot structurally distinguish an instruction from data. The same
-attention mechanism that reads the system prompt reads the user message reads
+attention mechanism that reads the `system prompt` reads the user message reads
 the tool result.
 
 Which means: any text that lands in the context window from a source the
@@ -460,8 +460,8 @@ Lab 1:
   injection, the "parser" is a statistical model so there is no clean patch.
   Mitigations focus on input filtering, output validation, and enforcing
   authorization at the tool-call layer rather than trusting the model to refuse.
-- **LLM07 — System Prompt Leakage**: confidential content placed in the system
-  prompt (the override code) is extracted via injection. The system prompt is
+- **LLM07 — `System Prompt` Leakage**: confidential content placed in the `system
+  prompt` (the override code) is extracted via injection. The `system prompt` is
   not a secrets store — anything in the context window can be retrieved if the
   model is manipulated into outputting it.
 
@@ -470,15 +470,15 @@ Reference: [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top
 
 ---
 
-## Why system prompts are not access control
+## Why `system prompts` are not access control
 
 This deserves its own section because it is the most common
-misconception in LLM application security — the idea that a well-written system
-prompt can enforce a security policy.
+misconception in LLM application security — the idea that a well-written `system
+prompt` can enforce a security policy.
 
 It cannot. Here is the comparison:
 
-| Property | Real access control (e.g. RBAC) | System prompt |
+| Property | Real access control (e.g. RBAC) | `System prompt` |
 | ---------- | --------------------------------- | --------------- |
 | Enforcement | Runtime — code checks permission *before* the action executes | Statistical — model *trained* to produce a refusal output |
 | Bypass method | Requires exploiting the enforcement code itself | Requires finding a token sequence the model predicts differently |
@@ -486,10 +486,10 @@ It cannot. Here is the comparison:
 | Consistency | Identical outcome for identical inputs | Non-deterministic across runs, models, and temperatures |
 | Auditability | Binary allow/deny, logged at the enforcement point | Probabilistic; no guarantee the instruction was followed |
 
-The correct mental model: a system prompt shapes the model's *default behavior*.
+The correct mental model: a `system prompt` shapes the model's *default behavior*.
 It does not constrain what the model is *capable* of producing. With the right
 input, the model will produce anything it was trained to produce — including
-the thing the system prompt says it should not.
+the thing the `system prompt` says it should not.
 
 The appropriate response to this is not despair — it is architecture. Treat
 the model as untrusted. Validate tool arguments in code before executing them.

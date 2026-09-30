@@ -20,6 +20,8 @@ Run the script, then check its output against the expected output below it.
 
 All commands used throughout this session are tailored to your session environment.
 
+{{% badge style="red" %}} REQUIRED {{% /badge %}}
+
 ```bash {run="bastion"}
 ./aks-create.sh
 ```
@@ -64,19 +66,23 @@ Cluster  Created.
 
 Verify the provisioned AKS cluster:
 
+{{% badge style="red" %}} REQUIRED {{% /badge %}}
+
 ```bash {run="bastion"}
 az aks list --resource-group ${RESOURCE_GROUP_NAME} --output table
 ```
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 Name          Location    ResourceGroup             KubernetesVersion    CurrentKubernetesVersion    ProvisioningState    Fqdn
 ------------  ----------  ------------------------  -------------------  --------------------------  -------------------  ----------------------------------------------------------------
 aks-aiuser10  eastus      rg-xperts-ai101-aiuser10  1.35                 1.35.7                      Succeeded            aks-aiuser-rg-xperts-ai101--02b500-u76am9is.hcp.eastus.azmk8s.io
 ```
 
 ## Manage Kubernetes objects
+
+{{% badge style="aqua" %}} Informational {{% /badge %}}
 
 There are two primary methods for managing Kubernetes objects:
 
@@ -150,7 +156,7 @@ kubectl get node
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME                             STATUS   ROLES    AGE   VERSION
 aks-worker-35394522-vmss000000   Ready    <none>   17h   v1.35.7
 ```
@@ -183,7 +189,7 @@ kubectl get pod
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME        READY   STATUS    RESTARTS   AGE
 juiceshop   1/1     Running   0          27s
 ```
@@ -263,7 +269,7 @@ kubectl get pod
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME         READY   STATUS    RESTARTS   AGE
 juiceshop    1/1     Running   0          4m29s
 juiceshop2   1/1     Running   0          22s
@@ -283,7 +289,7 @@ kubectl get pod
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME        READY   STATUS    RESTARTS   AGE
 juiceshop   1/1     Running   0          63s
 ```
@@ -314,7 +320,7 @@ kubectl get pod --show-labels
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME        READY   STATUS    RESTARTS   AGE     LABELS
 juiceshop   1/1     Running   0          8m3s    purpose=debug,run=juiceshop,topology.kubernetes.io/region=eastus,topology.kubernetes.io/zone=0
 ```
@@ -365,7 +371,7 @@ kubectl get deployment -l app=kubernetes-bootcamp
 
 There should be a single deployment running a single Pod of the app container(s), running inside a Pod with shared storage and IP. The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
 kubernetes-bootcamp   1/1     1            1           24s
 ```
@@ -398,7 +404,7 @@ kubectl get rs -l app=kubernetes-bootcamp
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME                             DESIRED   CURRENT   READY   AGE
 kubernetes-bootcamp-67fbdd6b79   1         1         1       111s
 ```
@@ -458,7 +464,7 @@ kubectl get deployment kubernetes-bootcamp
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
 kubernetes-bootcamp   10/10   10           10          4m11s
 ```
@@ -473,7 +479,7 @@ kubectl get pod -l app=kubernetes-bootcamp
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME                                   READY   STATUS    RESTARTS   AGE
 kubernetes-bootcamp-67fbdd6b79-2k5r9   1/1     Running   0          53s
 kubernetes-bootcamp-67fbdd6b79-6hxbn   1/1     Running   0          53s
@@ -501,7 +507,7 @@ kubectl get pod -l app=kubernetes-bootcamp -o wide
 
 Some Pods will be in the **Terminating** state, and eventually only 1 Pod remains active. The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME                                   READY   STATUS    RESTARTS   AGE     IP            NODE                             NOMINATED NODE   READINESS GATES
 kubernetes-bootcamp-67fbdd6b79-grrcw   1/1     Running   0          7m29s   10.224.0.14   aks-worker-35394522-vmss000000   <none>           <none>
 ```
