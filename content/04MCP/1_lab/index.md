@@ -4,6 +4,12 @@ linkTitle: "Lab 3"
 weight: 1
 ---
 
+|      |    |  
+|:----:|:---|
+| **Goal**                   | Understand how MCP extends LLMs
+| **Task**                   | Interact with the model using MCP and load an additional MCP tool without restarting the agent
+| **Validation** | 3 total tools loaded vs 2
+
 Lab 3 switches the agent from hardcoded tools to MCP-discovered tools — without
 changing a line of agent code. You will see dynamic discovery in action, add
 a new tool to a running system without restarting the agent, and observe that
@@ -18,19 +24,19 @@ kubectl get pods -l app.kubernetes.io/instance=ai101
 
 Expect the `ai101-ollama`, `ai101-agent`, and `ai101-ui` pods `Running`.
 
-Confirm the agent port-forward from Lab 2 is still listed:
+Confirm the agent port-forward from Lab 2 is still listed & forwarding port 8001:
 
 ```bash {run="bastion"}
 jobs
 ```
-
-If it is missing, restart it. This runs in the background and keeps logging
-to a file, so it does not block your terminal; stop it later with
-<kbd>Ctrl</kbd>+<kbd>C</kbd> if you bring it to the foreground with `fg`.
+{{% notice style="info" expanded="false" title="If port-forwarding job is missing..." %}}
+Restart it in the background:
 
 ```bash {run="bastion"}
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
 ```
+
+{{% /notice %}}
 
 ## Deploy
 
@@ -63,7 +69,7 @@ curl -s http://localhost:8001/health | jq .
 
 The output is similar to:
 
-```output {lang="json"}
+```output {lang="json" collapse="true" hl_lines="3"}
 {
   "status": "ok",
   "tool_mode": "mcp",
@@ -80,7 +86,7 @@ curl -s http://localhost:8001/tools | jq '.tools[].name'
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 "query_employees"
 "send_message"
 ```
@@ -107,7 +113,7 @@ curl -s http://localhost:8001/tools | jq '{mode: .mode, tools: [.tools[].name]}'
 
 The output is similar to:
 
-```output {lang="json"}
+```output {lang="json" collapse="true"}
 {
   "mode": "mcp",
   "tools": [
@@ -179,7 +185,7 @@ helm upgrade ai101 ./ai101 -f ai101/values-lab3.yaml \
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 Release "ai101" has been upgraded. Happy Helming!
 NAME: ai101
 LAST DEPLOYED: Wed Sep 15 19:13:24 2026
@@ -199,7 +205,7 @@ curl -s -X POST http://localhost:8001/tools/refresh | jq .
 
 The output is similar to:
 
-```output {lang="json"}
+```output {lang="json" collapse="true" hl_lines="3"}
 {
   "refreshed": true,
   "count": 3
@@ -214,7 +220,7 @@ curl -s http://localhost:8001/tools | jq '.tools[].name'
 
 The output is similar to:
 
-```output
+```output {collapse="true" hl_lines="3"}
 "query_employees"
 "send_message"
 "search_web"
@@ -260,15 +266,15 @@ You should now be able to:
 - Describe what changes between Lab 2 and Lab 3 (only the tool backend).
 - Add a tool to a running system and confirm the agent picks it up.
 
-Confirm the final tool count.
+{{% badge color=blue %}}Optional Verification {{% /badge %}} Confirm the final tool count.
 
 ```bash {run="bastion"}
 curl -s http://localhost:8001/tools | jq '.tools | length'
 ```
 
-The output is similar to:
+The output should be:
 
-```output
+```output {collapse="true"}
 3
 ```
 

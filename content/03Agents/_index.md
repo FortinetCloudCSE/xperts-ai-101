@@ -4,6 +4,7 @@ linkTitle: "Module 2: Agents"
 weight: 30
 ---
 
+
 This page covers the theory behind how an agent works: the tool-call loop,
 how the model signals that it wants to run a function, how tool schemas are
 structured, and why the agent in this workshop is deliberately simple. The
@@ -44,9 +45,8 @@ The word "agent" gets used to describe everything from a simple chatbot wrapper
 to a fully autonomous system managing cloud infrastructure. For this workshop,
 we use a precise definition:
 
-**An agent is a loop that calls an LLM, checks whether the model wants to run
-a tool, executes that tool if so, feeds the result back into the context, and
-repeats — until the model produces a plain text reply or a safety limit fires.**
+{{% badge style="red" %}} IMPORTANT {{% /badge %}} **An agent is a loop that calls an LLM, checks whether the model wants to run
+a tool, executes that tool if so, feeds the result back into the context, and repeats — until the model produces a plain text reply or a safety limit fires.**
 
 ```mermaid
 flowchart TD
@@ -66,9 +66,12 @@ they can go wrong.
 
 These two terms are often used interchangeably but mean different things:
 
-**Agent** refers to a specific, identifiable software system: a loop, an LLM,
-and a set of tools. You can point at it in code. The container in this workshop
-is an agent.
+**Agent** refers to a specific, identifiable software system: 
+- a loop
+- an LLM
+- and a set of tools. 
+
+You can point to it in code. The container in this workshop is an agent.
 
 **Agentic** is an adjective that describes any system where an LLM drives
 decisions and real-world actions — to any degree. An agent is always agentic.
@@ -217,7 +220,7 @@ context window may lose earlier messages if the chain grows long enough.
 ### One call, one conversation
 
 The agent in this workshop is stateless across `/chat` calls. Each request
-builds the message list from scratch — system prompt plus the single user
+builds the message list from scratch — `system prompt` plus the single user
 message in that request. The model has no memory of previous `/chat` calls.
 
 `session_id` in the request body is for **log grouping only** — it tags audit
@@ -271,7 +274,7 @@ structured-output extraction patterns.
 
 ## The tools in this workshop
 
-Both labs use the same two tools. The implementations are intentionally simple
+Both labs use the same [two tools](https://github.com/FortinetCloudCSE/xperts-ai-101/blob/69326987a4b22cbe67dce358e17f25cd8779d55a/lab-app/images/agent/tools.py#L20). The implementations are intentionally simple
 so the focus stays on the loop, not the tools themselves.
 
 | Tool | What it does |
@@ -279,7 +282,7 @@ so the focus stays on the loop, not the tools themselves.
 | `query_employees` | Queries the SQLite HR database by department. **Intentionally vulnerable to SQL injection** — the vulnerability is the lesson in Module 4, not a mistake. |
 | `send_message` | Appends a message to an in-memory outbox. Nothing leaves the container. Inspect the outbox via `/outbox`. |
 
-The agent also has a system prompt — different from Lab 1's:
+The agent also has a [`system prompt`](https://github.com/FortinetCloudCSE/xperts-ai-101/blob/69326987a4b22cbe67dce358e17f25cd8779d55a/lab-app/images/agent/main.py#L35) — different from Lab 1's:
 
 ```text
 You are a helpful HR assistant for Acme Corp.
@@ -310,7 +313,7 @@ The only differences are in `_load_hardcoded()` / `_discover_mcp()` (how
 schemas are obtained) and `_run_tool()` (how a call is dispatched). The loop
 itself never knows which mode is active.
 
-This abstraction is Module 3's teaching point: if you can swap the tool
+{{% badge color="red" %}} IMPORTANT {{% /badge %}} This abstraction is Module 3's teaching point: if you can swap the tool
 backend without changing the loop, you can also add new tools at runtime
 without restarting anything.
 

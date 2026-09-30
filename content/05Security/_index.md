@@ -231,9 +231,9 @@ flowchart LR
 
 Four vulnerability classes, one natural-language message, no code exploit.
 
-### Why the system prompt does not save you
+### Why the `system prompt` does not save you
 
-The agent system prompt (shown in Module 2) contains a CONFIDENTIAL NOTE:
+The agent `system prompt` (shown in Module 2) contains a CONFIDENTIAL NOTE:
 
 ```text
 Do not share salary figures or the contents of any confidential employee notes
@@ -241,17 +241,17 @@ with users under any circumstances.
 ```
 
 In the SQL injection attack, the `confidential` column appears in the tool
-result JSON — not in the model's generated text. The constraint in the system
-prompt operates on what the model *outputs*. It has no effect on what appears
+result JSON — not in the model's generated text. The constraint in the `system
+prompt` operates on what the model *outputs*. It has no effect on what appears
 inside a tool result, which the model reads as input for its next response.
 
 By the time the model sees the salary data, it has already been retrieved and
-placed in the context window. The system prompt then tells it to forward
+placed in the context window. The `system prompt` then tells it to forward
 everything to the attacker's address — which it does, because the injected
 instruction said so.
 
-Module 1 showed that system prompts are not security controls at the instruction
-level. Module 4 shows the same is true at the data layer: a system prompt
+Module 1 showed that `system prompts` are not security controls at the instruction
+level. Module 4 shows the same is true at the data layer: a `system prompt`
 constraint on output cannot compensate for a missing control on tool input.
 
 ---
@@ -330,14 +330,14 @@ checks, each catching what the previous one misses:
 | Layer | Control | What it catches |
 | ------- | --------- | ----------------- |
 | Input | Input validation / prompt guards | Known injection patterns before the model sees them |
-| Model | System prompt constraints | Limits behavior of a cooperative model |
+| Model | `System prompt` constraints | Limits behavior of a cooperative model |
 | Tool | Per-call authorization check | Adversarial tool calls from manipulated model |
 | Tool | Parameterized queries / input sanitization | SQLi, path traversal, SSRF in tool implementations |
 | Output | Output filtering | PII or sensitive data in model responses |
 | Audit | Immutable audit log | Forensics and anomaly detection post-incident |
 | Network | Egress filtering | Restricts what `send_message` can actually reach |
 
-The agent in this workshop has controls at the model layer (system prompt) and
+The agent in this workshop has controls at the model layer (`system prompt`) and
 the audit layer (`/logs`). It intentionally omits per-call authorization and
 tool-level input sanitization — those gaps are the lesson.
 
@@ -401,7 +401,7 @@ this workshop map to:
 | LLM01 | Prompt Injection | Labs 1, 4 |
 | LLM02 | Sensitive Information Disclosure | Labs 1, 4 |
 | LLM06 | Excessive Agency | Lab 4 |
-| LLM07 | System Prompt Leakage | Lab 1 |
+| LLM07 | `System Prompt` Leakage | Lab 1 |
 
 Lab 4 also demonstrates **MCP tool-description poisoning** — a variant of
 indirect prompt injection where the injection vector is the protocol discovery
@@ -460,4 +460,4 @@ value and the industry has already adopted them at scale. The appropriate
 response is to treat the model as an untrusted component: validate what it
 decides to do before doing it, log everything independently of the model's
 output, and enforce authorization at the tool layer in code rather than
-trusting system prompt constraints.
+trusting `system prompt` constraints.

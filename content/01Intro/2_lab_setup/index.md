@@ -8,15 +8,15 @@ weight: 3
 
 kubectl, Helm and jq are already installed on the bastion (the Linux VM provided for your session). The table below is for reference — you don't need to install anything.
 
-| Requirement | Version | Check |
-| ------------- | --------- | ------- |
-| kubectl | 1.28+ | `kubectl version --client` |
-| Helm | 3.14+ | `helm version` |
-| jq | 1.6+ | `jq --version` |
-| A running cluster | — | `kubectl cluster-info` |
-| Default StorageClass | — | `kubectl get storageclass` |
+| Requirement | Version | Check | Purpose
+| ------------- | --------- | ------- | -----
+| kubectl | 1.28+ | `kubectl version --client` | Managing K8S clusters |
+| Helm | 3.14+ | `helm version` | Package manager automating the creation, packaging, configuration, and deployment of application |
+| jq | 1.6+ | `jq --version` | lightweight and flexible command-line JSON processor used to slice, filter, map, and transform the highly detailed JSON data returned by the Kubernetes API |
+| Running cluster | — | `kubectl cluster-info` | Get info on an existing cluster|
+| Default StorageClass | — | `kubectl get storageclass` | Get info on cluster storage |
 
-## 1. Verify Kubernetes access
+## 1. Verify Kubernetes access {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
 Confirm kubectl is pointed at your cluster:
 
@@ -30,9 +30,21 @@ List the cluster nodes:
 kubectl get nodes
 ```
 
-If `kubectl get nodes` works, you are connected to the cluster and can continue to the Clone the repo step.
+```output {collapse="true" hl_lines="4 6"}
+aiuser@vm-linux-aiuser49:~$ az aks list --resource-group ${RESOURCE_GROUP_NAME} --output table
+Name          Location    ResourceGroup             KubernetesVersion    CurrentKubernetesVersion    ProvisioningState    Fqdn
+------------  ----------  ------------------------  -------------------  --------------------------  -------------------  ----------------------------------------------------------------
+aks-aiuser49  eastus      rg-xperts-ai101-aiuser49  1.35                 1.35.8                      Succeeded            aks-aiuser-rg-xperts-ai101--02b500-bc473s4a.hcp.eastus.azmk8s.io
+aiuser@vm-linux-aiuser49:~$ kubectl config current-context
+aks-aiuser49
+aiuser@vm-linux-aiuser49:~$ kubectl get nodes
+NAME                             STATUS   ROLES    AGE     VERSION
+aks-worker-29780268-vmss000000   Ready    <none>   6m33s   v1.35.8
+```
 
-## 2. Clone the repo
+If `kubectl get nodes` works, you are connected to the cluster and can continue to the Clone the repo step.  You should see 'kubectl' pointing to the cluster you created on the initial AKS Cluster creation step!
+
+## 2. Clone the repo {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
 The repo is hosted on GitHub and supplies Helm with the settings for each lab environment, plus the code that runs the AI components of the labs.
 
@@ -41,7 +53,7 @@ cd ~
 git clone https://github.com/FortinetCloudCSE/xperts-ai-101.git
 ```
 
-## 3. Install the chart for Lab 1
+## 3. Install the chart for Lab 1 {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
 Pre-built multi-arch images (amd64 + arm64) are published to GitHub Container Registry (GHCR) and pulled automatically by the cluster — no manual image pull required.
 
@@ -54,7 +66,7 @@ helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 Release "ai101" does not exist. Installing it now.
 NAME: ai101
 LAST DEPLOYED: Tue Jul 14 18:35:02 2026
@@ -73,7 +85,7 @@ kubectl get pods -w
 
 The output is similar to:
 
-```output
+```output {collapse="true"}
 NAME                           READY   STATUS    RESTARTS   AGE
 ai101-ollama-8699cc758-sqrgt   1/1     Running   0          12m
 ```
@@ -86,15 +98,32 @@ kubectl logs -l app.kubernetes.io/component=ollama -f
 
 The output is similar to:
 
-```output
-[GIN] 2026/07/14 - 18:49:21 | 200 |     410.443µs |       127.0.0.1 | GET      "/api/tags"
-[GIN] 2026/07/14 - 18:49:21 | 200 |     431.543µs |       127.0.0.1 | GET      "/api/tags"
-[GIN] 2026/07/14 - 18:49:31 | 200 |      45.616µs |       127.0.0.1 | HEAD     "/"
-[GIN] 2026/07/14 - 18:49:31 | 200 |     334.521µs |       127.0.0.1 | GET      "/api/tags"
-[GIN] 2026/07/14 - 18:49:41 | 200 |      23.003µs |       127.0.0.1 | HEAD     "/"
+```output {collapse="true"}
+kubernetes.io/component=ollama -f
+pulling 161ddde4c9cd... 100% ▕████████████████▏  487 B                     
+    
+verifying sha256 digest 
+writing manifest 
+success 
+Pull complete.
+Model ready: qwen2.5:3b
+[GIN] 2026/09/29 - 20:47:24 | 200 |      27.337µs |       127.0.0.1 | HEAD 
+    "/"
+[GIN] 2026/09/29 - 20:47:24 | 200 |     337.089µs |       127.0.0.1 | GET  
+    "/api/tags"
+[GIN] 2026/09/29 - 20:47:34 | 200 |      28.101µs |       127.0.0.1 | HEAD 
+    "/"
+[GIN] 2026/09/29 - 20:47:34 | 200 |     314.953µs |       127.0.0.1 | GET  
+    "/api/tags"
+[GIN] 2026/09/29 - 20:47:44 | 200 |      24.998µs |       127.0.0.1 | HEAD 
+    "/"
+[GIN] 2026/09/29 - 20:47:44 | 200 |     307.093µs |       127.0.0.1 | GET  
+    "/api/tags"
+[GIN] 2026/09/29 - 20:47:54 | 200 |      28.458µs |       127.0.0.1 | HEAD 
+    "/"
 ```
 
-## 4. Verify
+## 4. Verify {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
 Port-forward the Ollama service so the bastion can reach the Ollama API running inside the Kubernetes cluster. This backgrounds the port-forward with `&` so it keeps running:
 
@@ -111,15 +140,15 @@ curl -s http://localhost:11434/v1/chat/completions \
   | jq -r '.choices[0].message.content'
 ```
 
-If the command returns a text response, Ollama is running and the model is able to perform inference. The output is similar to:
+{{% badge style="green" %}} Note {{% /badge %}} If the command returns a text response, Ollama is running and the model is able to perform inference. The output is similar to:
 
-```output
+```output {collapse="true"}
 Pong! Your ping request was successfully answered. How can I assist you further?
 ```
 
 The `kubectl port-forward` command creates a temporary connection from `localhost:11434` to the Ollama service running inside the Kubernetes cluster. The `curl` command then sends a small test prompt to that local endpoint. Kubernetes forwards the request to Ollama, Ollama runs the model, and the model response is returned to the bastion.
 
-## 5. Reference — upgrade per lab
+## 5. Reference — upgrade per lab {{% badge style="aqua" %}} Informational {{% /badge %}}
 
 Each lab tells you which of these to run to set up for its exercises. This is for reference only — run only the command for the lab you're on:
 
@@ -145,7 +174,7 @@ Leave the release running as you work through the labs. Each lab section tells y
 
 ---
 
-## 6. FortiAIGate routing
+## 6. FortiAIGate routing {{% badge style="aqua" %}} Informational {{% /badge %}}
 
 FortiAIGate is not set up for this session — this section is informational only.
 
