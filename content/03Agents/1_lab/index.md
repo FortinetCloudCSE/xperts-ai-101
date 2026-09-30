@@ -178,6 +178,12 @@ The output is similar to:
 "send_message"
 ```
 
+{{% notice style="info" %}}
+Because we're using an incredibly small model (3 Billion parameters), and LLM's are inherently non-deterministic, the answers this model provides will vary.  If you don't get the expected output, **try rephrasing the question slightly differently** and see how the output changes.
+
+
+{{% /notice %}}
+
 ---
 
 ## Step 2 — Chained tool calls across two iterations
