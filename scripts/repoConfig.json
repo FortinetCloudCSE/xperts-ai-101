@@ -13,6 +13,12 @@
   "disableInlineCopyToClipBoard": true,
   "shortcuts": [
     {
+      "text": "AI101 Presentation (PDF)",
+      "URL": "/ai101.pdf",
+      "icon": "fa-file-pdf",
+      "weight": 10
+    },
+    {
       "text": "Fortinet Cloud CSE",
       "URL": "https://github.com/FortinetCloudCSE",
       "icon": "fa-graduation-cap",

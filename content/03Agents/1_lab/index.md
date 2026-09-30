@@ -15,30 +15,33 @@ weight: 1
 loop execute in real time through the Trace panel, trigger both single and chained tool calls, and read the loop code to see exactly what the theory describes.
 
 
-Confirm the pod is running and the background job is port-forwarding:
+Confirm the pod is running:
 
 ```bash {run="bastion"}
 kubectl get pods -l app.kubernetes.io/instance=ai101
+```
+
+The output is similar to:
+
+```output {collapse="true" hl_lines="2"}
+NAME                           READY   STATUS    RESTARTS   AGE
+ai101-ollama-f9f6ff589-wfdxr   1/1     Running   0          11m
+```
+
+Confirm the background job is port-forwarding:
+
+```bash {run="bastion"}
 jobs
-
-
 ```
 
 {{% notice style="warning" %}}
-You may need to hit <kbd>Enter</kbd> after jobs to see the port forwarding.  Be careful with the copy/paste.  If you lost connectivity to the Linx session, you'll probably need to restart port-forwarding
+You may need to hit <kbd>Enter</kbd> after jobs to see the port forwarding.  If you lost connectivity to the Linux session, you'll probably need to restart port-forwarding
 {{%/notice %}}
 
+The output is similar to:
 
-```output {collapse="true" hl_lines="4 6-7"}
-
-aiuser@vm-linux-aiuser49:~/xperts-ai-101/lab-app/helm$ kubectl get pods -l 
-app.kubernetes.io/instance=ai101
-NAME                           READY   STATUS    RESTARTS   AGE
-ai101-ollama-f9f6ff589-wfdxr   1/1     Running   0          11m
-aiuser@vm-linux-aiuser49:~/xperts-ai-101/lab-app/helm$ jobs
-[1]+  Running                 kubectl port-forward svc/ai101-ollama 11434:1
-1434 > /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &
-
+```output {collapse="true" hl_lines="1"}
+[1]+  Running                 kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &
 ```
 
 Expect the `ai101-ollama` pod `Running`, and the Ollama port-forward listed by
