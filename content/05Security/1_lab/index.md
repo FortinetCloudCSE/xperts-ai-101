@@ -83,7 +83,7 @@ The output should be:
 }
 ```
 
-Now open the Chatbot UI and confirm the **Audit Log** tab is visible on the right.
+Now open the Chatbot UI (re-run the `echo` command from Lab 3, Step 1 if you need its address) and confirm the **Audit Log** tab is visible on the right.
 
 ---
 

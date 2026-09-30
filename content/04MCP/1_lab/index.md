@@ -95,6 +95,12 @@ The output is similar to:
 
 ## Step 1 — Same agent, different backend
 
+Open the Chatbot UI. If you no longer have it open from Lab 2, print its address:
+
+```bash {run="bastion"}
+echo "http://$(kubectl get svc ai101-ui -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+```
+
 Ask this question in the Chatbot UI.
 
 ```text {run="chatbot"}
