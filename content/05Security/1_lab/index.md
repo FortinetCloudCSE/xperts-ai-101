@@ -6,9 +6,9 @@ weight: 1
 
 |      |    |  
 |:----:|:---|
-| **Goal**                   | Explore and interact with the Ollama model
-| **Task**                   | Launch an LLM injection attack to reveal confidential information the LLM isn't supposed to reveal
-| **Validation** | Ollama tells you the Emergency Override Code!
+| **Goal**                   | Understand LLM tool chain vulnerabilities and model verbosity
+| **Task**                   | Launch an LLM tool chain attack to reveal confidential information the LLM isn't supposed to reveal & observe Verbosity settings
+| **Validation** | UI chat reveals sensitive information while hiding its tracks!
 
 Lab 4 runs the full attack chain: prompt injection to SQL injection to data
 exfiltration, all through the agent's legitimate tools. You will then see what
@@ -176,6 +176,10 @@ kubectl rollout status deployment/ai101-agent
 ```
 
 {{% badge color="red" %}} IMPORTANT {{% /badge %}} Wait for the agent to be ready before reloading the UI.
+
+{{% notice style="info" %}}
+For the simplified purposes of this workshop, our model only retains information/context while the UI session is active.  In other words, all user input and all output becomes part of the model context as long as you don't reload your browser window.  This sometimes reinforces whatever answer the model first provided because that input/output becomes part of its context.  Whenever you reload the Chat UI browser window, it effectively erases/resets all session context, and there is no stored context from session to session in this simplistic Chat agent.
+{{% /notice %}}
 
  The rollout replaces the agent pod, which kills the port-forward to the old one. If you don't see a response,
 start the agent port-forward again (backgrounded; stop later with
