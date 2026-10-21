@@ -9,7 +9,7 @@ Self-guided "How AI works" workshop (inference → agents → MCP → AI securit
 ```bash
 docker run --rm -v "$PWD:/home/UserRepo" public.ecr.aws/k4n6m5h8/fortinet-hugo:latest build
 ```
-No test suite; validate by rendering. Built URLs are flat (`02inference/1_lab.html`), and Hugo writes attributes unquoted.
+No test suite; validate by rendering. Built URLs are flat (`01inference/1_lab.html`), and Hugo writes attributes unquoted.
 
 ## Scope
 - Kubernetes (AKS + Helm) is the only deployment path; the Docker path was cut 2026-09-24. Never reintroduce Docker instructions or declare `deploymentPaths`.

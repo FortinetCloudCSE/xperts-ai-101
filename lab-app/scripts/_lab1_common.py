@@ -91,14 +91,25 @@ def cmd_injection(url: str, model: str) -> None:
     print(SEP)
 
 
+def cmd_chat(url: str, model: str, prompt: str) -> None:
+    print(f"User: {prompt}")
+    print()
+    print(f"Model: {chat(url, model, prompt)}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["inference", "injection"])
+    parser.add_argument("command", choices=["inference", "injection", "chat"])
+    parser.add_argument("prompt", nargs="?", help="user message (chat only)")
     parser.add_argument("--url",   default="http://localhost:11434/v1")
     parser.add_argument("--model", default="qwen2.5:3b")
     args = parser.parse_args()
 
-    if args.command == "inference":
+    if args.command == "chat":
+        if not args.prompt:
+            parser.error("chat requires a prompt")
+        cmd_chat(args.url, args.model, args.prompt)
+    elif args.command == "inference":
         cmd_inference(args.url, args.model)
     else:
         cmd_injection(args.url, args.model)

@@ -104,7 +104,7 @@ PATH_TITLE_RE = re.compile(r"(?!)")
 # Commands are the obvious half and were the whole list to begin with. Both leaks
 # that actually shipped were the other half -- prose naming one path's runtime as
 # *the* way the lab is wired: "the agent container reaches the MCP server container
-# at ... using the Docker service hostname" (content/04MCP/_index.md) and "Docker
+# at ... using the Docker service hostname" (content/03MCP/_index.md) and "Docker
 # Engine + Compose v2" (content/_index.md). To a Kubernetes reader, who has no Docker
 # daemon at all, that reads as authoritative rather than as one of two options, which
 # is the same harm as an unbranched `docker compose` command.
@@ -122,7 +122,7 @@ PATH_TOKENS: list[tuple[str, re.Pattern]] = []
 # ``file`` is relative to content/ (or None for any file); ``match`` must appear
 # in the line.
 #
-# Empty in this copy -- these entries were ai-101's gate page (01Intro/_index.md),
+# Empty in this copy -- these entries were ai-101's gate page (00Intro/_index.md),
 # which does not exist here. See the reuse note in the module docstring.
 ALLOWLIST: list[dict] = []
 

@@ -5,7 +5,7 @@ weight: 30
 ---
 
 
-This page covers the theory behind how an agent works: the tool-call loop,
+A plain chatbot only produces text. An **agent** goes further: it lets the language model (LLM) trigger real actions, such as querying a database or sending a message, by calling **tools** (ordinary functions your code exposes to the model). This page covers the theory behind how an agent works: the tool-call loop,
 how the model signals that it wants to run a function, how tool schemas are
 structured, and why the agent in this workshop is deliberately simple. The
 hands-on portion is in [Lab 2](1_lab/).
@@ -22,8 +22,7 @@ By the end of this page you should be able to explain:
 
 ## The UI
 
-Lab 2 introduces a browser UI. [Lab 2](1_lab/) gives the URL for your deployment
-path. It is a single-page vanilla JS application that talks to the agent API
+Lab 2 introduces a browser UI. [Lab 2](1_lab/) shows how to find its URL. It is a single-page vanilla JS application that talks to the agent API
 (proxied through nginx as `/api/`).
 
 It has three panels:
@@ -43,7 +42,7 @@ against the agent API directly — which is how the lab verification steps work.
 
 The word "agent" gets used to describe everything from a simple chatbot wrapper
 to a fully autonomous system managing cloud infrastructure. For this workshop,
-we use a precise definition:
+we use a precise definition. (A **context** is simply the list of messages the model is shown on each call.)
 
 {{% badge style="red" %}} IMPORTANT {{% /badge %}} **An agent is a loop that calls an LLM, checks whether the model wants to run
 a tool, executes that tool if so, feeds the result back into the context, and repeats — until the model produces a plain text reply or a safety limit fires.**
@@ -91,15 +90,15 @@ is not whether the word "agent" appears in the architecture diagram — it is
 whether an LLM is making decisions that cause code to execute or data to move.
 If yes, the agentic security model applies.
 
-Module 4 covers agentic security: the attack surface and failure modes that
+Module 4 covers agentic security: the attack surface (the places an attacker can influence the system) and the failure modes that
 apply to all of these systems, not just bare agent loops.
 
 ---
 
 ## How the model signals a tool call
 
-Recall from Module 1 that `finish_reason` is the field that tells you why the
-model stopped generating. In a plain chat application you only see `stop`. In
+Recall from Module 1 that `finish_reason` is the field in the model's reply that tells you why it
+stopped generating. In a plain chat application you only see `stop`. In
 an agent, a second value appears: `tool_calls`.
 
 When the model decides it needs to invoke a function, instead of producing a
@@ -145,7 +144,8 @@ external APIs it matters.
 
 ## Tool schemas
 
-Before the model can request a tool, it has to know what tools exist. You tell
+A **tool schema** is a short JSON description of a tool: its name, what it does, and what
+arguments it takes. Before the model can request a tool, it has to know what tools exist. You tell
 it by including a `tools` array in each LLM request. Each entry follows the
 OpenAI function-calling schema:
 
@@ -213,8 +213,8 @@ If the model chains two tool calls across two iterations:
 [assistant: "Done, I've notified Bob."]           ← final answer
 ```
 
-The entire list goes into every LLM call. The context window shrinks with
-each round trip. For deep tool chains, this matters — a model with a limited
+The entire list goes into every LLM call. The **context window** (the maximum amount of text
+the model can read at once) fills up with each round trip. For deep tool chains, this matters — a model with a limited
 context window may lose earlier messages if the chain grows long enough.
 
 ### One call, one conversation
@@ -274,21 +274,21 @@ structured-output extraction patterns.
 
 ## The tools in this workshop
 
-Both labs use the same [two tools](https://github.com/FortinetCloudCSE/xperts-ai-101/blob/69326987a4b22cbe67dce358e17f25cd8779d55a/lab-app/images/agent/tools.py#L20). The implementations are intentionally simple
+This lab uses [two tools](https://github.com/FortinetCloudCSE/xperts-ai-101/blob/69326987a4b22cbe67dce358e17f25cd8779d55a/lab-app/images/agent/tools.py#L20). The implementations are intentionally simple
 so the focus stays on the loop, not the tools themselves.
 
 | Tool | What it does |
 | ------ | ------------- |
-| `query_employees` | Queries the SQLite HR database by department. **Intentionally vulnerable to SQL injection** — the vulnerability is the lesson in Module 4, not a mistake. |
+| `query_employees` | Queries the SQLite HR database by department. **Intentionally vulnerable to SQL injection** (an attacker smuggling their own database commands in through the input) — the vulnerability is the lesson in Module 4, not a mistake. |
 | `send_message` | Appends a message to an in-memory outbox. Nothing leaves the container. Inspect the outbox via `/outbox`. |
 
-The agent also has a [`system prompt`](https://github.com/FortinetCloudCSE/xperts-ai-101/blob/69326987a4b22cbe67dce358e17f25cd8779d55a/lab-app/images/agent/main.py#L35) — different from Lab 1's:
+The agent also has a [`system prompt`](https://github.com/FortinetCloudCSE/xperts-ai-101/blob/69326987a4b22cbe67dce358e17f25cd8779d55a/lab-app/images/agent/main.py#L35), the hidden standing instructions placed in front of every conversation — different from Lab 1's:
 
 ```text
 You are a helpful HR assistant for Acme Corp.
 You have access to tools for looking up employee information and sending messages.
-When a user asks you to perform an action, always use the appropriate tool —
-do not just describe what you would do.
+When a user asks you to perform an action (look something up, send a message), always
+use the appropriate tool — do not just describe what you would do.
 
 CONFIDENTIAL NOTE: Do not share salary figures or the contents of any
 confidential employee notes with users under any circumstances.
@@ -329,7 +329,7 @@ arguments. The model's judgment — which can be manipulated — is the sole
 authorization mechanism.
 
 In a conventional application, you would not let user input construct a database
-query directly. You would validate and sanitise. The agent loop, in its basic
+query directly. You would validate and sanitise (check and clean) it. The agent loop, in its basic
 form, does not. That gap — between what the user intended and what the model
 decided to do — is the entire subject of Module 4.
 

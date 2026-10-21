@@ -108,7 +108,7 @@ EXCLUDE_DIRS = {OUT_DIR}
 # Pages skipped even though they contain a pathtabs block, keyed by path relative
 # to content/. The gate page's pathtabs block *is* the interactive path chooser --
 # on paper the path is already chosen, so it has nothing to say.
-EXCLUDE_PAGES = {Path("01Intro/_index.md")}
+EXCLUDE_PAGES = {Path("00Intro/_index.md")}
 
 # Paragraphs that only make sense on the interactive site: they tell the reader to
 # click the other path's tab, which is impossible on paper. Matched against the
@@ -556,7 +556,7 @@ LINK_RE = re.compile(r"(!?)\[([^\]]*)\]\(\s*([^)\s]+)([^)]*)\)")
 
 
 def _absolute_page_ref(source_dir: Path, dest: str) -> str:
-    """``../../09Reference/`` on a page in 05Security/1_lab -> ``/09Reference``.
+    """``../../09Reference/`` on a page in 04Security/1_lab -> ``/09Reference``.
 
     Hugo's link render hook resolves a ``/``-rooted content path to a real page and
     emits the baseURL-prefixed URL, so the link survives being moved into the
