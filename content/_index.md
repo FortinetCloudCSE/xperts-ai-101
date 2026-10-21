@@ -68,4 +68,4 @@ You need:
 - A modern web browser
 - The lab credentials handed out at the start of the session
 
-See [Setup & Prerequisites](./01Intro) for the full walkthrough.
+See [Setup & Prerequisites](./00Intro) for the full walkthrough.

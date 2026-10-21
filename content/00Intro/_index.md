@@ -10,7 +10,7 @@ Setup takes roughly 20–30 minutes: about 5 minutes to deploy the AKS cluster, 
 
 1. {{% badge style="red" %}} REQUIRED {{% /badge %}} Deploy a Managed Kubernetes Service (AKS) on Azure (about 5 minutes).
 
-    - kubectl, Helm and jq utilies are already installed on the bastion.
+    - kubectl, Helm and jq utilities are already installed on the bastion.
 
 2. {{% badge style="aqua" %}} Informational {{% /badge %}} Run through the Kubernetes overview and concepts.
 
@@ -18,7 +18,7 @@ Setup takes roughly 20–30 minutes: about 5 minutes to deploy the AKS cluster, 
 
 ## Lab Stack overview
 
-The lab application is four containers deployed to Kubernetes with Helm. Each lab adds one layer:
+The lab application is four containers deployed to Kubernetes with Helm: **Ollama** (runs the AI model), the **agent** (an LLM plus the code that lets it use tools), an **MCP server** (a standard way to offer tools to an agent), and a chat **UI**. Each lab adds one layer:
 
 ```mermaid
 flowchart TD
@@ -28,7 +28,7 @@ flowchart TD
 ```
 
 {{% notice style="tip" title="What the heck is Kubernetes?!?!" %}}
-While we'll utilize Kubernetes (K8S) in this class, along with kubectl to manage K8S clusters, and Helm to install apps on the clusters, THIS IS NOT A K8S workshop.  That's here: https://fortinetcloudcse.github.io/k8s-101-workshop/.  Arguably, you may not need to fully undrestand K8S to understand what's going on in this workshop. :sunglasses:
+While we'll utilize Kubernetes (K8S) in this class, along with kubectl to manage K8S clusters, and Helm to install apps on the clusters, THIS IS NOT A K8S workshop.  That's here: https://fortinetcloudcse.github.io/k8s-101-workshop/.  Arguably, you may not need to fully understand K8S to understand what's going on in this workshop. :sunglasses:
 
 {{% /notice %}}
 

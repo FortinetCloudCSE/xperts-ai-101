@@ -103,12 +103,12 @@ Weakest part of this proposal:
 2. Home page advertises two paths (Docker / Kubernetes) "chosen on the setup page", but:
    - No `deploymentPaths` is declared anywhere.
    - No Docker page exists.
-   - The handout links `/01Intro/1_prereqs_docker` (a dead link).
+   - The handout links `/00Intro/1_prereqs_docker` (a dead link).
    Either declare the paths and write the Docker page, or cut Docker from the home page. [Certain]
-3. Dead links to `/01Intro/2_prereqs_k8s` (real page: `2_lab_setup`) at `09Reference/_index.md:15` and `handout-k8s/index.md:1178`. [Certain]
+3. Dead links to `/00Intro/2_prereqs_k8s` (real page: `2_lab_setup`) at `09Reference/_index.md:15` and `handout-k8s/index.md:1178`. [Certain]
 4. The handout is stale against its source: it has a New Session step and screenshot that are gone from `2_lab_setup`. Regenerate it via `gen_handouts.py`. [Likely]
-5. `03Agents/1_lab/index.md:190-211`: the numbered "loop code" is a paraphrase, so line numbers don't match `lab-app/images/agent/main.py:206-246`. The "identify in the actual file" exercise breaks. [Certain]
-6. `02Inference/_index.md:189-199, 301-302` claims `top_p: 0.9` / `max_tokens: 512` are workshop defaults. No script sends them. [Certain]
+5. `02Agents/1_lab/index.md:190-211`: the numbered "loop code" is a paraphrase, so line numbers don't match `lab-app/images/agent/main.py:206-246`. The "identify in the actual file" exercise breaks. [Certain]
+6. `01Inference/_index.md:189-199, 301-302` claims `top_p: 0.9` / `max_tokens: 512` are workshop defaults. No script sends them. [Certain]
 7. The uncommitted diff in `1_k8s_deploy_and_concepts/index.md`:
    - The typo fixes are good.
    - It also removes three ```` ```bash ```` fences. Two indented commands become plain list text, which loses the copy button.
@@ -124,9 +124,9 @@ Weakest part of this proposal:
 - FortiAIGate, Input Guard and AI Flow appear undefined in every lab. Add one "What is FortiAIGate" definition box at first use and link it from later labs.
 - The execution environment is called "Linux VM", "Cloud Shell" and "your laptop" on different pages. Pick one term, define it once, and have `run=` badges enforce it.
 - Temperature 0 is described as "same output every time". Soften to "usually reproducible". [Likely]
-- `02Inference/1_lab` Step 1 re-runs `helm upgrade` for Ollama without saying why.
+- `01Inference/1_lab` Step 1 re-runs `helm upgrade` for Ollama without saying why.
 - Time estimates exist only on the home page. Add them to module intros, including setup.
-- `05Security/1_lab:99-104`: `chars_exfiltrated: 67` looks like an unrun placeholder. Replace it with real output. [Guessing]
+- `04Security/1_lab:99-104`: `chars_exfiltrated: 67` looks like an unrun placeholder. Replace it with real output. [Guessing]
 
 ### P2: wording/format
 - JSON output fenced as `bash`; `json` is used zero times in labs. This is resolved by the `output {lang=json}` convention.
@@ -187,7 +187,7 @@ Weakest part of this proposal:
 
 ## Files Changed
 - Shipped: CentralRepo #115, #116 (A11 `htmlEscape` fix), #117 (dev→main promotion; prod image v26.3.an); UserRepo #84 (demo page `02Hugo/9_commands_and_output`); xperts-ai-101 #7 (all content + CLAUDE.md).
-- `CLAUDE.md` (rewritten for ai-101), `content/_index.md` (now tracked), `content/01Intro/{1_k8s_deploy_and_concepts,2_lab_setup}/index.md`, `content/02Inference/_index.md`, `content/03Agents/1_lab/index.md`, `content/09Reference/{_index.md,cloud-shell-web-preview/index.md}`, `content/09Reference/handouts/` (deleted)
+- `CLAUDE.md` (rewritten for ai-101), `content/_index.md` (now tracked), `content/00Intro/{1_k8s_deploy_and_concepts,2_lab_setup}/index.md`, `content/01Inference/_index.md`, `content/02Agents/1_lab/index.md`, `content/09Reference/{_index.md,cloud-shell-web-preview/index.md}`, `content/09Reference/handouts/` (deleted)
 
 ## Session Summary
 - Reviewed the whole workshop and fixed the P0 correctness defects: home page committed, Docker path cut, dead links, stale handout, false sampling defaults, Lab 2 line numbers.
@@ -242,7 +242,7 @@ Self-guided "How AI works" workshop (inference → agents → MCP → AI securit
 
 ## Build
 docker run --rm -v "$PWD:/home/UserRepo" public.ecr.aws/k4n6m5h8/fortinet-hugo:latest build
-No test suite; validate by rendering. Built URLs are flat (`02inference/1_lab.html`); Hugo minifies attributes unquoted.
+No test suite; validate by rendering. Built URLs are flat (`01inference/1_lab.html`); Hugo minifies attributes unquoted.
 
 ## Authoring conventions
 - Commands: ```bash {run="bastion"}, no `$` prompt, one command per block, preceded by a sentence. Output: ```output, introduced by "The output is similar to:". Tabs only for genuine alternatives. (Pending plan 0001 / CentralRepo render hooks.)

@@ -4,7 +4,10 @@ linkTitle: "Module 3: MCP"
 weight: 40
 ---
 
-This page covers the theory behind MCP: the problem it solves, how the protocol
+**MCP (Model Context Protocol)** is a standard way for an AI agent to discover
+and call tools hosted by a separate service. In MCP terms, the agent is the
+**client** (it asks for things) and the tool service is the **server** (it
+provides them). This page covers the theory behind MCP: the problem it solves, how the protocol
 works at the wire level, and what dynamic tool discovery means for both
 capability and security. The hands-on portion is in [Lab 3](1_lab/).
 
@@ -14,7 +17,7 @@ By the end of this page you should be able to explain:
 - The three MCP transports and which one this workshop uses
 - The two-phase interaction: discovery (list_tools) and execution (call_tool)
 - How tool schemas flow from the MCP server into the LLM request
-- Why dynamic discovery creates an attack surface that static tool lists do not
+- Why dynamic discovery (the agent learning its tools at runtime) creates an attack surface that static tool lists do not
 
 ---
 
@@ -24,7 +27,8 @@ Before MCP, every AI application that wanted to call an external tool had to
 write a custom integration. A security posture check tool, a ticketing system,
 a CMDB, a code execution sandbox — each one required its own client library,
 auth flow, schema definition, and error handling. N applications times M tools
-equals N×M bespoke connectors to build and maintain.
+equals N×M bespoke connectors to build and maintain. (A **tool** is simply a
+function the LLM can ask the agent to run, such as "look up an employee".)
 
 ```mermaid
 flowchart LR
@@ -47,8 +51,9 @@ any MCP-compliant server without knowing in advance what tools that server
 exposes. The agent asks "what can you do?" and the server answers with a list
 of tool schemas in a format the agent already knows how to use.
 
-This is not a new idea — it is essentially what LSP (Language Server Protocol)
-did for IDE tooling in 2016. MCP applies the same pattern to AI agents. The
+This is not a new idea — it is essentially what LSP (Language Server Protocol,
+the standard that lets any code editor reuse one language's autocomplete and
+error-checking service) did for IDE tooling in 2016. MCP applies the same pattern to AI agents. The
 [MCP specification](https://modelcontextprotocol.io/specification/2026-07-28) is
 open; Anthropic proposed it and it has since been adopted by major providers
 and tool vendors.
@@ -78,8 +83,8 @@ to use during the initialization handshake.
 
 | Transport | How it works | When to use |
 | ----------- | ------------- | ------------- |
-| **stdio** | Agent spawns the server as a child process; they communicate over stdin/stdout | Local tools on the same machine |
-| **SSE** (deprecated) | Server-sent events over HTTP; older spec | Legacy deployments |
+| **stdio** (standard input/output) | Agent spawns the server as a child process; they communicate over stdin/stdout | Local tools on the same machine |
+| **SSE** (server-sent events, deprecated) | Server-sent events over HTTP; older spec | Legacy deployments |
 | **Streamable HTTP** | HTTP POST for requests, streaming for responses; current spec | Remote servers, containers, production |
 
 This workshop uses **streamable HTTP** on port 8000 at path `/mcp`. The agent and
@@ -115,7 +120,8 @@ You will hear "JSON-RPC" whenever MCP is discussed. It is worth understanding
 what it actually is, because it explains several things about MCP that seem odd
 if you expect a conventional REST API.
 
-**JSON-RPC 2.0** is a lightweight remote procedure call protocol. Instead of
+**JSON-RPC 2.0** is a lightweight remote procedure call (RPC: calling a function
+on another machine as if it were local) protocol, with messages written in JSON. Instead of
 mapping operations to HTTP verbs and URL paths, every operation is a POST to
 the same endpoint with a JSON body that names the method:
 
@@ -160,7 +166,9 @@ A tool call looks like this on the wire:
 }
 ```
 
-You rarely write this JSON directly — the MCP SDK does it for you. But it is
+Here `tools/list` is the discovery request and `tools/call` is the execution
+request. You rarely write this JSON directly — the MCP SDK (the helper library
+both the agent and the server import) does it for you. But it is
 useful to know what is actually crossing the wire when debugging or when reading
 MCP server logs.
 
@@ -179,7 +187,7 @@ body. This is a deliberate choice:
   (progress updates, log messages) without the client polling. This fits
   streaming HTTP better than REST conventions.
 
-### The challenge: two kinds of error
+### Two kinds of error
 
 JSON-RPC has a structured error format:
 
@@ -263,6 +271,9 @@ sequenceDiagram
 
 ### Phase 1: Discovery (list_tools)
 
+**Tool discovery** is the agent asking the server which tools exist and how to
+call them.
+
 The agent opens an HTTP session to the MCP server, completes the initialize
 handshake, and calls `list_tools`. The server returns an array of tool
 definitions, each with:
@@ -302,6 +313,10 @@ returns the result as text.
 From the agent loop's perspective, this is identical to calling a local Python
 function. The `_run_tool()` abstraction hides which backend is active.
 
+Why it matters: the model never talks to the MCP server directly. The agent
+sits in the middle, passes the tool descriptions to the model, and runs whatever
+tool the model asks for.
+
 ---
 
 ## Dynamic discovery: power and risk
@@ -315,7 +330,9 @@ runtime, and the agent can pick them up without restarting:
 4. Agent calls `/tools/refresh` — rediscovers, now sees three tools.
 5. Model can immediately call the new tool.
 
-No agent restart. No code change. No redeploy.
+No agent restart. No code change. No redeploy. In the lab this is done with
+`mcpServer.enableExtraTool=true` on the Helm chart, which sets the
+`ENABLE_EXTRA_TOOL` variable on the MCP server.
 
 This is powerful for the same reason it is dangerous. The tools the model can
 call are not determined at development time — they are determined at runtime

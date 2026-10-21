@@ -11,7 +11,7 @@ during later modules when you need a reminder of how a specific piece works.
 
 By the end of this page you should be able to explain:
 
-- How a model produces output (token prediction, not retrieval or rule matching)
+- How a model produces output (token prediction, not retrieval or rule matching). A **token** is a small chunk of text, often a word or part of one.
 - What the chat message structure looks like and what each role is for
 - Why the model is stateless and what that means for your application
 - Why a `system prompt` is not a security boundary
@@ -29,7 +29,7 @@ to think of the model as a search engine that finds the right answer, or a
 database that retrieves stored facts, or a reasoning engine that works through
 logic. None of those are accurate.
 
-When you send a message to an LLM, the model does exactly one thing: it looks
+**Inference** means running an already-trained model to produce output, as opposed to training it. An **LLM** (large language model) is the kind of model this workshop uses. When you send a message to an LLM, the model does exactly one thing: it looks
 at every token it has seen so far and predicts the single most probable next
 token. Then it appends that token and repeats. It does this until it produces
 a special end-of-sequence token, or until some other stopping condition fires.
@@ -38,7 +38,7 @@ That is the entire mechanism. Token prediction, repeated.
 
 There is no execution engine, no rule database, no logic tree. Just a very
 large function that maps a sequence of tokens to a probability distribution over
-the vocabulary — shaped by the billions of parameters adjusted during training
+the vocabulary — shaped by the billions of parameters (numeric weights) adjusted during training
 to make certain continuations more probable than others.
 
 This sounds simple. The security consequences are not, and we will come back to
@@ -288,7 +288,7 @@ Before computing the final probability distribution, the model's raw scores
 The lab uses `0.7` — a common default for chat that produces natural-sounding
 output while keeping some consistency.
 
-A security note worth stating explicitly: at `temperature: 0.7`, the injection
+**Why it matters:** because the choice is random, the same prompt can give different answers on different runs. That is why you may need to re-run a lab step. A security note worth stating explicitly: at `temperature: 0.7`, the injection
 in Lab 1 will not succeed 100% of the time. The model occasionally samples
 toward the refusal. At higher temperatures, it becomes *more* reliable — because
 the "Access denied" pattern becomes a less consistently selected token sequence.
@@ -409,11 +409,11 @@ do — and where it might be weak.
 **Context injection** — embeds information the model needs but was not trained on:
 > *"CONFIDENTIAL: The emergency override code is ACME-RED-ALPHA-7."*
 
-**Few-shot examples** — shows the desired input/output pattern before the real
-conversation starts. Not used in the lab scripts, but extremely common in
+**Few-shot examples** — shows a few sample input/output pairs before the real
+conversation starts, so the model copies the pattern. Not used in the lab scripts, but extremely common in
 production where output format must be precise and consistent.
 
-The Lab 1 `system prompt` uses the first three. A persona that makes the model
+The Lab 1 `system prompt` (shown in full in [Lab 1](1_lab/#what-the-model-is-protecting)) uses the first three. A persona that makes the model
 cooperative, a constraint rule that uses keyword matching to refuse, and context
 injection that puts the secret in the prompt where the model can see it.
 
@@ -424,7 +424,7 @@ injection that puts the secret in the prompt where the model can see it.
 Once you understand prompt patterns, the attack surface becomes obvious:
 every pattern has a weakness, and that weakness comes from the same root cause —
 the model cannot structurally distinguish an instruction from data. The same
-attention mechanism that reads the `system prompt` reads the user message reads
+attention mechanism (the part of the model that weighs how relevant every earlier token is) that reads the `system prompt` reads the user message reads
 the tool result.
 
 Which means: any text that lands in the context window from a source the
@@ -434,7 +434,7 @@ application does not fully control is a potential injection vector.
 | -------- | ------------ | ------- |
 | User message | Direct prompt injection | The attacker controls the input directly |
 | Tool result (database row, API response) | Indirect prompt injection | Attacker poisons data the agent will retrieve |
-| Retrieved document (RAG) | Indirect prompt injection | Attacker plants content in a knowledge base or search result |
+| Retrieved document (RAG, retrieval-augmented generation: documents fetched and pasted into the prompt) | Indirect prompt injection | Attacker plants content in a knowledge base or search result |
 | Tool *description* | MCP tool poisoning | Attacker modifies the description of a tool the model reads to decide what to call |
 
 **Indirect injection** is the harder problem in practice. The application
@@ -478,7 +478,7 @@ prompt` can enforce a security policy.
 
 It cannot. Here is the comparison:
 
-| Property | Real access control (e.g. RBAC) | `System prompt` |
+| Property | Real access control (e.g. RBAC, role-based access control) | `System prompt` |
 | ---------- | --------------------------------- | --------------- |
 | Enforcement | Runtime — code checks permission *before* the action executes | Statistical — model *trained* to produce a refusal output |
 | Bypass method | Requires exploiting the enforcement code itself | Requires finding a token sequence the model predicts differently |

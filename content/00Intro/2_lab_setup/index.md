@@ -42,22 +42,15 @@ NAME                             STATUS   ROLES    AGE     VERSION
 aks-worker-29780268-vmss000000   Ready    <none>   6m33s   v1.35.8
 ```
 
-If `kubectl get nodes` works, you are connected to the cluster and can continue to the Clone the repo step.  You should see 'kubectl' pointing to the cluster you created on the initial AKS Cluster creation step!
+If `kubectl get nodes` works, you are connected to the cluster and can continue to the next step.  You should see 'kubectl' pointing to the cluster you created on the initial AKS Cluster creation step!
 
-## 2. Clone the repo {{% badge style="red" %}} REQUIRED {{% /badge %}}
+## 2. Install the chart for Lab 1 {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
-The repo is hosted on GitHub and supplies Helm with the settings for each lab environment, plus the code that runs the AI components of the labs.
-
-```bash {run="bastion"}
-cd ~
-git clone https://github.com/FortinetCloudCSE/xperts-ai-101.git
-```
-
-## 3. Install the chart for Lab 1 {{% badge style="red" %}} REQUIRED {{% /badge %}}
+The workshop repo is already cloned on the bastion (the Linux VM provided for your session) at `~/xperts-ai-101`. It supplies Helm with the settings for each lab environment, plus the code that runs the AI components of the labs.
 
 Pre-built multi-arch images (amd64 + arm64) are published to GitHub Container Registry (GHCR) and pulled automatically by the cluster — no manual image pull required.
 
-Install the Lab 1 chart, which deploys Ollama only:
+Install the Lab 1 chart, which deploys Ollama only. Ollama is the program that downloads and runs the AI model (here `qwen2.5:3b`, a small 3-billion-parameter language model) inside your cluster. Running a model to get a reply is called **inference**; Helm is the Kubernetes package manager that installs the chart for you:
 
 ```bash {run="bastion"}
 cd ~/xperts-ai-101/lab-app/helm
@@ -123,15 +116,19 @@ Model ready: qwen2.5:3b
     "/"
 ```
 
-## 4. Verify {{% badge style="red" %}} REQUIRED {{% /badge %}}
+## 3. Verify {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
-Port-forward the Ollama service so the bastion can reach the Ollama API running inside the Kubernetes cluster. This backgrounds the port-forward with `&` so it keeps running:
+Ollama listens on a port inside the cluster that the bastion can't reach directly, so a **port-forward** (a temporary tunnel from the bastion into the cluster) is needed. The command below backgrounds the tunnel with `&` so it keeps running while you do other things:
 
 ```bash {run="bastion"}
 kubectl port-forward svc/ai101-ollama 11434:11434 > /tmp/ai101-ollama-port-forward.log 2>&1 < /dev/null &
 ```
 
-Send a test prompt to the Ollama OpenAI-compatible API endpoint:
+{{% notice style="warning" title="If you lose your Linux session connection" %}}
+If your connection to the Linux session (the bastion) drops, the background port-forward dies with it. Re-run the same `kubectl port-forward` command above to restart it before continuing.
+{{% /notice %}}
+
+Send a test prompt to the Ollama OpenAI-compatible API endpoint (the same HTTP request format OpenAI's API uses, so most AI tools can talk to it). A **prompt** is the text you send to the model. This one is just a user message with no system prompt:
 
 ```bash {run="bastion"}
 curl -s http://localhost:11434/v1/chat/completions \
@@ -146,9 +143,9 @@ curl -s http://localhost:11434/v1/chat/completions \
 Pong! Your ping request was successfully answered. How can I assist you further?
 ```
 
-The `kubectl port-forward` command creates a temporary connection from `localhost:11434` to the Ollama service running inside the Kubernetes cluster. The `curl` command then sends a small test prompt to that local endpoint. Kubernetes forwards the request to Ollama, Ollama runs the model, and the model response is returned to the bastion.
+**What you just saw:** `kubectl port-forward` created a temporary connection from `localhost:11434` to the Ollama service inside the cluster. The `curl` command sent a small test prompt to that local endpoint, Kubernetes forwarded it to Ollama, Ollama ran the model, and the reply came back to the bastion. Every lab builds on this path, so if later commands fail with "connection refused", the port-forward is the first thing to check. The model's wording will differ on each run.
 
-## 5. Reference — upgrade per lab {{% badge style="aqua" %}} Informational {{% /badge %}}
+## 4. Reference — upgrade per lab {{% badge style="aqua" %}} Informational {{% /badge %}}
 
 Each lab tells you which of these to run to set up for its exercises. This is for reference only — run only the command for the lab you're on:
 
@@ -174,7 +171,7 @@ Leave the release running as you work through the labs. Each lab section tells y
 
 ---
 
-## 6. FortiAIGate routing {{% badge style="aqua" %}} Informational {{% /badge %}}
+## 5. FortiAIGate routing {{% badge style="aqua" %}} Informational {{% /badge %}}
 
 FortiAIGate is not set up for this session — this section is informational only.
 
