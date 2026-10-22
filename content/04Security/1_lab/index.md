@@ -94,16 +94,25 @@ cd ~/xperts-ai-101/lab-app/helm
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml
 ```
 
-The upgrade replaces the agent pod. Wait for the rollout to finish:
+If you came straight from Lab 3, this replaces the MCP server pod (the extra `search_web` tool is switched back off) but not the agent pod. Wait for the MCP server rollout to finish:
 
 ```bash {run="bastion"}
-kubectl rollout status deployment/ai101-agent
+kubectl rollout status deployment/ai101-mcp-server
 ```
 
-The old pod's port-forward is now dead. Restart it (backgrounded; stop it the same way as above, and re-run it if your Linux session ever drops):
+The agent still holds its old tool list, which includes `search_web`. Ask it to discover the tools again. If this returns `Internal Server Error`, wait a few seconds and run it again; the agent can't reach the new MCP pod for a moment after a rollout.
 
 ```bash {run="bastion"}
-kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
+curl -s -X POST http://localhost:8001/tools/refresh | jq .
+```
+
+The output is similar to:
+
+```output {lang="json" collapse="true" hl_lines="3"}
+{
+  "refreshed": true,
+  "count": 2
+}
 ```
 
 Confirm the agent is up in MCP mode with verbose transparency:
@@ -119,6 +128,12 @@ The output should be:
   "tool_mode": "mcp",
   "transparency": "verbose"
 }
+```
+
+If this fails with a connection error, the agent pod was replaced (for example, if you skipped Lab 3), so wait for `kubectl rollout status deployment/ai101-agent` and restart the port-forward (backgrounded; stop it with `pkill -f "port-forward svc/ai101-agent"`):
+
+```bash {run="bastion"}
+kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
 ```
 
 Now open the Chatbot UI (re-run the `echo` command from Lab 3, Step 1 if you need its address) and confirm the **Audit Log** tab is visible on the right. The audit log is a running record of every model call and tool call the agent makes.
@@ -518,3 +533,23 @@ Guard catches the injection in the user message, AI Flow can block
 the LLM request, tool call, and outbound message — giving security teams the
 complete picture across all four attack steps.
 {{% /notice %}}
+
+---
+
+## Reset to a fresh state (optional)
+
+To run the labs again from Lab 1, or to see exactly what each lab added to the cluster, remove everything this workshop installed and start over. The reset script is [`reset_labs.sh`](https://github.com/FortinetCloudCSE/xperts-ai-101/blob/main/lab-app/scripts/reset_labs.sh). It was added after some environments were provisioned, so first pull the latest changes to the repo:
+
+```bash {run="bastion"}
+git -C ~/xperts-ai-101 pull
+```
+
+Then run the script. It stops the port-forwards and runs `helm uninstall ai101`, which removes the agent, MCP server, UI and Ollama along with the storage that holds the downloaded model (`ai101-ollama-data`). It then runs `kubectl delete pvc ai101-ollama-data --ignore-not-found` as a safety net, which normally has nothing left to delete. You can read the script first to see exactly what it does:
+
+```bash {run="bastion"}
+~/xperts-ai-101/lab-app/scripts/reset_labs.sh
+```
+
+The output ends with a list of remaining `ai101` resources, which should be empty.
+
+To start again, return to [Kubernetes / Helm Setup](../../00Intro/2_lab_setup/) and repeat step 2 (install the chart for Lab 1) and step 3 (verify). The model is downloaded again, so allow about a minute before it is ready.

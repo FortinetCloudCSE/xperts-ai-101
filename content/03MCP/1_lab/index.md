@@ -306,6 +306,8 @@ makes it repeat the `tools/list` request) without touching the agent.
 curl -s -X POST http://localhost:8001/tools/refresh | jq .
 ```
 
+If this returns `Internal Server Error`, wait a few seconds and run it again.
+
 The output is similar to:
 
 ```output {lang="json" collapse="true" hl_lines="3"}
