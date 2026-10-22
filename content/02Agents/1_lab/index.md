@@ -15,6 +15,10 @@ weight: 1
 - You will watch the tool-call loop execute in real time through the Trace panel, trigger both single and chained tool calls, and read the loop code to see exactly what the theory describes.
 
 
+{{% notice style="tip" title="TLDR" %}}
+You will add two things to your cluster: an **agent** (a small program that lets the LLM use tools, such as an employee lookup) and a chat UI. A new port-forward on port 8001 lets the bastion reach the agent. Then you will ask questions in the UI and watch the Trace panel as the agent decides whether to call a tool, runs it, and passes the result back to the model.
+{{% /notice %}}
+
 Confirm the pod is running:
 
 ```bash {run="bastion"}

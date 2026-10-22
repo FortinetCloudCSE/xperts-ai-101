@@ -22,6 +22,10 @@ which backend is active.
 In MCP terms, the **agent is the client** and the **MCP server** is a separate
 service that owns the tools. Both run as pods on your cluster.
 
+{{% notice style="tip" title="TLDR" %}}
+Until now the agent's tools were written inside its own code. In this lab you deploy a separate **MCP server** that owns the tools, and the agent asks it which tools exist. You will confirm the agent now discovers its tools from the server, then switch on a third tool while the system is running and use it, without restarting the agent.
+{{% /notice %}}
+
 ## What is new for the agent in this lab
 
 **System prompt.** Unchanged from Lab 2 — the agent still uses the same
@@ -288,7 +292,13 @@ DESCRIPTION: Upgrade complete
 TEST SUITE: None
 ```
 
-Only the MCP server was restarted. The agent container is still running with
+Only the MCP server is replaced. Wait for the new MCP pod to be ready:
+
+```bash {run="bastion"}
+kubectl rollout status deployment/ai101-mcp-server
+```
+
+The agent container is still running with
 its previous tool list. Ask the agent to run discovery again (`/tools/refresh`
 makes it repeat the `tools/list` request) without touching the agent.
 
