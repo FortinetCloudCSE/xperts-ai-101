@@ -1,8 +1,13 @@
 ---
-title: "Kubernetes / Helm Setup"
-linkTitle: "Kubernetes / Helm"
-weight: 3
+title: "Kubernetes & Helm Setup"
+linkTitle: "Kubernetes & Helm Setup"
+weight: 1
 ---
+
+All tasks for this session are completed from the bastion (the Linux VM provided for your session) and a browser.
+
+This page is **required**. You deploy an Azure Kubernetes Service (AKS) cluster, then use Helm to install the Lab 1 chart and confirm it works. Every later lab builds on this setup. Setup takes roughly 20–30 minutes, about 5 of them waiting for the AKS cluster to deploy.
+
 
 ## Prerequisites
 
@@ -16,7 +21,73 @@ kubectl, Helm and jq are already installed on the bastion (the Linux VM provided
 | Running cluster | — | `kubectl cluster-info` | Get info on an existing cluster|
 | Default StorageClass | — | `kubectl get storageclass` | Get info on cluster storage |
 
-## 1. Verify Kubernetes access {{% badge style="red" %}} REQUIRED {{% /badge %}}
+## 1. AKS Cluster Deployment {{% badge style="red" %}} REQUIRED {{% /badge %}}
+
+We'll start by deploying a Managed Azure Kubernetes Service (AKS). This hands-on approach introduces you to Kubernetes essentials efficiently, with the setup process completing in about 5 minutes.
+
+The script below creates a Managed Azure Kubernetes Service (AKS) with one worker node and updates the local `kubeconfig` for AKS access. The script is pre-installed on the bastion and uses the Azure credentials already configured there, so you don't need to sign in to Azure yourself.
+
+Run the script, then check its output against the expected output below it.
+
+All commands used throughout this session are tailored to your session environment.
+
+```bash {run="bastion"}
+./aks-create.sh
+```
+
+The output is similar to:
+
+```output {collapse="true"}
+{
+  "aadProfile": null,
+  [...]
+  "agentPoolProfiles": [
+    {
+      "count": 1,
+      "name": "worker",
+      "mode": "System",
+      "vmSize": "Standard_D8ads_v5",
+      "osType": "Linux",
+      "provisioningState": "Succeeded",
+      [...]
+    }
+  ],
+  [...]
+  "currentKubernetesVersion": "1.35.7",
+  "disableLocalAccounts": false,
+  "diskEncryptionSetId": null,
+  "dnsPrefix": "aks-aiuser-rg-xperts-ai101--02b500",
+  [...]
+  "fqdn": "aks-aiuser-rg-xperts-ai101--02b500-u76am9is.hcp.eastus.azmk8s.io",
+  [...]
+  "name": "aks-aiuser10",
+  [...]
+  "nodeResourceGroup": "MC_rg-xperts-ai101-aiuser10_aks-aiuser10_eastus",
+  [...]
+  "provisioningState": "Succeeded",
+  "publicNetworkAccess": null,
+  "resourceGroup": "rg-xperts-ai101-aiuser10",
+  [...]
+}
+Merged "aks-aiuser10" as current context in /home/aiuser/.kube/config
+Cluster  Created.
+```
+
+Verify the provisioned AKS cluster:
+
+```bash {run="bastion"}
+az aks list --resource-group ${RESOURCE_GROUP_NAME} --output table
+```
+
+The output is similar to:
+
+```output {collapse="true"}
+Name          Location    ResourceGroup             KubernetesVersion    CurrentKubernetesVersion    ProvisioningState    Fqdn
+------------  ----------  ------------------------  -------------------  --------------------------  -------------------  ----------------------------------------------------------------
+aks-aiuser10  eastus      rg-xperts-ai101-aiuser10  1.35                 1.35.7                      Succeeded            aks-aiuser-rg-xperts-ai101--02b500-u76am9is.hcp.eastus.azmk8s.io
+```
+
+## 2. Verify Kubernetes access {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
 Confirm kubectl is pointed at your cluster:
 
@@ -44,7 +115,7 @@ aks-worker-29780268-vmss000000   Ready    <none>   6m33s   v1.35.8
 
 If `kubectl get nodes` works, you are connected to the cluster and can continue to the next step.  You should see 'kubectl' pointing to the cluster you created on the initial AKS Cluster creation step!
 
-## 2. Install the chart for Lab 1 {{% badge style="red" %}} REQUIRED {{% /badge %}}
+## 3. Install the chart for Lab 1 {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
 The workshop repo is already cloned on the bastion (the Linux VM provided for your session) at `~/xperts-ai-101`. It supplies Helm with the settings for each lab environment, plus the code that runs the AI components of the labs.
 
@@ -116,7 +187,7 @@ Model ready: qwen2.5:3b
     "/"
 ```
 
-## 3. Verify {{% badge style="red" %}} REQUIRED {{% /badge %}}
+## 4. Verify {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
 Ollama listens on a port inside the cluster that the bastion can't reach directly, so a **port-forward** (a temporary tunnel from the bastion into the cluster) is needed. The command below backgrounds the tunnel with `&` so it keeps running while you do other things:
 
@@ -145,7 +216,7 @@ Pong! Your ping request was successfully answered. How can I assist you further?
 
 **What you just saw:** `kubectl port-forward` created a temporary connection from `localhost:11434` to the Ollama service inside the cluster. The `curl` command sent a small test prompt to that local endpoint, Kubernetes forwarded it to Ollama, Ollama ran the model, and the reply came back to the bastion. Every lab builds on this path, so if later commands fail with "connection refused", the port-forward is the first thing to check. The model's wording will differ on each run.
 
-## 4. Reference — upgrade per lab {{% badge style="aqua" %}} Informational {{% /badge %}}
+## 5. Reference — upgrade per lab {{% badge style="aqua" %}} Informational {{% /badge %}}
 
 Each lab tells you which of these to run to set up for its exercises. This is for reference only — run only the command for the lab you're on:
 
@@ -171,7 +242,7 @@ Leave the release running as you work through the labs. Each lab section tells y
 
 ---
 
-## 5. FortiAIGate routing {{% badge style="aqua" %}} Informational {{% /badge %}}
+## 6. FortiAIGate routing {{% badge style="aqua" %}} Informational {{% /badge %}}
 
 FortiAIGate is not set up for this session — this section is informational only.
 

@@ -1,7 +1,7 @@
 ---
 title: "Lab 2 — The Agent Loop"
 linkTitle: "Lab 2"
-weight: 1
+weight: 2
 ---
 
 |      |    |  

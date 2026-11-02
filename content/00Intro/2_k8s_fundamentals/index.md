@@ -1,84 +1,14 @@
 ---
-title: "Kubernetes Fundamentals with AKS"
+title: "Kubernetes Fundamentals (Optional)"
 linkTitle: "Kubernetes Fundamentals"
 weight: 2
 ---
 
-All tasks for this session are completed from the bastion (the Linux VM provided for your session) and a browser.
+{{% notice style="info" title="Optional — for your information only" %}}
+Nothing on this page is required for the labs. Work through it if you are new to Kubernetes, or skip it and go straight to Module 1. The required cluster and Helm setup is on the previous page, [Kubernetes & Helm Setup](../1_k8s_helm_setup/).
+{{% /notice %}}
 
-This session starts with Kubernetes fundamentals using a managed Azure Kubernetes Service (AKS) cluster. Provided credentials give you access to the bastion, from which an AKS cluster is deployed in Azure Cloud. Using a prebuilt script, you deploy the cluster in Azure Cloud without navigating complex installation steps.
-
-The focus areas for the Kubernetes fundamentals include **Pods**, **Labels**, **Deployments**, **Replicas**, and **Namespaces**.
-
-## AKS Cluster Deployment
-
-We'll start by deploying a Managed Azure Kubernetes Service (AKS). This hands-on approach introduces you to Kubernetes essentials efficiently, with the setup process completing in about 5 minutes.
-
-The script below creates a Managed Azure Kubernetes Service (AKS) with one worker node and updates the local `kubeconfig` for AKS access. The script is pre-installed on the bastion and uses the Azure credentials already configured there, so you don't need to sign in to Azure yourself.
-
-Run the script, then check its output against the expected output below it.
-
-All commands used throughout this session are tailored to your session environment.
-
-{{% badge style="red" %}} REQUIRED {{% /badge %}}
-
-```bash {run="bastion"}
-./aks-create.sh
-```
-
-The output is similar to:
-
-```output {collapse="true"}
-{
-  "aadProfile": null,
-  [...]
-  "agentPoolProfiles": [
-    {
-      "count": 1,
-      "name": "worker",
-      "mode": "System",
-      "vmSize": "Standard_D8ads_v5",
-      "osType": "Linux",
-      "provisioningState": "Succeeded",
-      [...]
-    }
-  ],
-  [...]
-  "currentKubernetesVersion": "1.35.7",
-  "disableLocalAccounts": false,
-  "diskEncryptionSetId": null,
-  "dnsPrefix": "aks-aiuser-rg-xperts-ai101--02b500",
-  [...]
-  "fqdn": "aks-aiuser-rg-xperts-ai101--02b500-u76am9is.hcp.eastus.azmk8s.io",
-  [...]
-  "name": "aks-aiuser10",
-  [...]
-  "nodeResourceGroup": "MC_rg-xperts-ai101-aiuser10_aks-aiuser10_eastus",
-  [...]
-  "provisioningState": "Succeeded",
-  "publicNetworkAccess": null,
-  "resourceGroup": "rg-xperts-ai101-aiuser10",
-  [...]
-}
-Merged "aks-aiuser10" as current context in /home/aiuser/.kube/config
-Cluster  Created.
-```
-
-Verify the provisioned AKS cluster:
-
-{{% badge style="red" %}} REQUIRED {{% /badge %}}
-
-```bash {run="bastion"}
-az aks list --resource-group ${RESOURCE_GROUP_NAME} --output table
-```
-
-The output is similar to:
-
-```output {collapse="true"}
-Name          Location    ResourceGroup             KubernetesVersion    CurrentKubernetesVersion    ProvisioningState    Fqdn
-------------  ----------  ------------------------  -------------------  --------------------------  -------------------  ----------------------------------------------------------------
-aks-aiuser10  eastus      rg-xperts-ai101-aiuser10  1.35                 1.35.7                      Succeeded            aks-aiuser-rg-xperts-ai101--02b500-u76am9is.hcp.eastus.azmk8s.io
-```
+This page walks through Kubernetes fundamentals on the AKS cluster you deployed during setup. The focus areas are **Pods**, **Labels**, **Deployments**, **Replicas**, and **Namespaces**. All commands run on the bastion (the Linux VM provided for your session).
 
 ## Manage Kubernetes objects
 
@@ -610,7 +540,7 @@ kubectl delete namespace development
 
 ## How this connects to the AI labs
 
-Everything above — Pods, Deployments, Namespaces — is what you'll see again as soon as you install the `ai101` Helm chart in the next section. Each of Ollama, the agent, the MCP server and the UI runs as its own **Deployment** (which manages a **Pod**), and each is fronted by its own **Service** — a kind of object this section didn't create by hand, but Helm does, one per component. The chart also creates a PersistentVolumeClaim for Ollama's model storage, a ConfigMap for the UI's nginx config, and (if you enable it) an Ingress. All of it lands in the `default` **Namespace** (the same one you already worked in above) unless you override it. Helm itself stores each release's state in a Kubernetes Secret — that's Helm 3's own bookkeeping, not a chart-authored object.
+Everything above — Pods, Deployments, Namespaces — is what you'll see again in the `ai101` Helm chart you installed on the [Kubernetes & Helm Setup](../1_k8s_helm_setup/) page. Each of Ollama, the agent, the MCP server and the UI runs as its own **Deployment** (which manages a **Pod**), and each is fronted by its own **Service** — a kind of object this section didn't create by hand, but Helm does, one per component. The chart also creates a PersistentVolumeClaim for Ollama's model storage, a ConfigMap for the UI's nginx config, and (if you enable it) an Ingress. All of it lands in the `default` **Namespace** (the same one you already worked in above) unless you override it. Helm itself stores each release's state in a Kubernetes Secret — that's Helm 3's own bookkeeping, not a chart-authored object.
 
 ### Review Questions
 

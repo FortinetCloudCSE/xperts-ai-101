@@ -1,7 +1,7 @@
 ---
 title: "Lab 3 — MCP Discovery"
 linkTitle: "Lab 3"
-weight: 1
+weight: 2
 ---
 
 |      |    |  

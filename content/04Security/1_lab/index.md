@@ -1,7 +1,7 @@
 ---
 title: "Lab 4 — The Attack Chain"
 linkTitle: "Lab 4"
-weight: 1
+weight: 2
 ---
 
 |      |    |  
