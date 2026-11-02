@@ -30,8 +30,9 @@ It has three panels:
 - **Chat** — sends messages to `/chat`, displays the agent's final answer.
 - **Trace** — shows each tool call in real time: function name, arguments, and
   result. Populated from the `trace` array in the `/chat` response.
-- **Audit Log** — shows the structured log from `/logs`. Visible only when
-  `TRANSPARENCY=verbose`; empty under `quiet` mode. This is the Lab 4 lesson.
+- **Audit Log** — shows the structured log from `/logs`. It is populated in both
+  modes; `TRANSPARENCY` only controls whether the agent also prints events to its
+  console log. This is the Lab 4 lesson.
 
 The UI is a teaching aid. All the same interactions are available via `curl`
 against the agent API directly — which is how the lab verification steps work.
@@ -56,7 +57,7 @@ flowchart TD
 ```
 
 There is no framework magic here. The agent in `lab-app/images/agent/main.py`
-implements this in about 40 lines of Python. The reason we build it without
+implements this in about 50 lines of Python. The reason we build it without
 LangChain or any similar framework is that frameworks hide the loop — and once
 you understand the loop, you understand both how agents work and exactly where
 they can go wrong.
@@ -392,6 +393,6 @@ START → [LLM call] → finish_reason?
 | Variable | Default | Effect |
 | ---------- | --------- | -------- |
 | `TOOL_MODE` | `hardcoded` | `hardcoded` or `mcp` |
-| `TRANSPARENCY` | `verbose` | Controls whether audit log is surfaced in UI |
+| `TRANSPARENCY` | `verbose` | Controls whether the agent prints audit events to its console log |
 | `OPENAI_BASE_URL` | `http://ollama:11434/v1` | LLM endpoint — change for Day 2 |
 | `MODEL` | `qwen2.5:3b` | Model name passed to the API |

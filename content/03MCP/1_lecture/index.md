@@ -90,13 +90,12 @@ to use during the initialization handshake.
 This workshop uses **streamable HTTP** on port 8000 at path `/mcp`. The agent and
 the MCP server are separate services, so the agent dials the server across the
 deployment's internal network at `http://<mcp-service>:8000/mcp`. The service name
-differs between the two deployment paths, so it is handed to the agent in
+depends on the Helm release name, so it is handed to the agent in
 `MCP_BASE_URL` rather than hard-coded.
 
 {{% notice style="note" title="DNS rebinding protection" %}}
 The MCP SDK's HTTP server includes DNS rebinding protection by default — it
-rejects requests from hostnames other than `localhost` and `127.0.0.1`. On either
-deployment path the agent reaches the MCP server by its service hostname rather
+rejects requests from hostnames other than `localhost` and `127.0.0.1`. The agent reaches the MCP server by its service hostname rather
 than localhost, so every request would be rejected.
 
 The lab's `server.py` disables this check with

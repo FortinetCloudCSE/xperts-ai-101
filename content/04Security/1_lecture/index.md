@@ -273,9 +273,8 @@ prompt` operates on what the model *outputs*. It has no effect on what appears
 inside a tool result, which the model reads as input for its next response.
 
 By the time the model sees the salary data, it has already been retrieved and
-placed in the context window. The `system prompt` then tells it to forward
-everything to the attacker's address — which it does, because the injected
-instruction said so.
+placed in the context window. The injected instruction in your message then tells it to forward
+everything to the attacker's address, and the model follows it.
 
 Module 1 showed that `system prompts` are not security controls at the instruction
 level. Module 4 shows the same is true at the data layer: a `system prompt`
@@ -328,12 +327,12 @@ can contain hidden instructions. Defense-in-depth for agents means controls at
 every layer — including observability that is independent of the model's output.
 
 The agent in this workshop writes a structured audit log for every LLM call,
-tool invocation, argument, and result. `TRANSPARENCY=verbose` surfaces this in
-the UI. `TRANSPARENCY=quiet` hides it from the UI but still writes it
-internally.
+tool invocation, argument, and result. `TRANSPARENCY=verbose` also prints each
+event to the agent's console log. `TRANSPARENCY=quiet` prints nothing there but
+still records every event internally.
 
 This distinction matters for the lab: under `quiet` mode, the same attack that
-exfiltrated all employee records produces no visible evidence in the UI. The
+exfiltrated employee records leaves nothing in the agent's console log. The
 internal log still has everything. If your production agent does not have an
 audit log the model cannot suppress or bypass, you have no forensic capability
 when an incident occurs.
@@ -456,8 +455,8 @@ validate what it returns.
 
 | Variable | Value | Effect |
 | ---------- | ------- | -------- |
-| `TRANSPARENCY` | `verbose` | Audit trace visible in UI |
-| `TRANSPARENCY` | `quiet` | UI shows only final answer; internal log still written |
+| `TRANSPARENCY` | `verbose` | Each audit event is also printed to the agent's console log |
+| `TRANSPARENCY` | `quiet` | Nothing printed to the console log; internal log still written |
 | `POISON_DESC` | `true` | `search_web` description contains hidden exfiltration instructions |
 | `ENABLE_EXTRA_TOOL` | `true` | Required to expose `search_web` (prerequisite for `POISON_DESC`) |
 

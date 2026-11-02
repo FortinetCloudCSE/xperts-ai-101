@@ -22,7 +22,7 @@ Per-lab configuration lives in that lab's `values-labN.yaml` file.
 | `OPENAI_BASE_URL` | `http://ai101-ollama:11434/v1` | LLM endpoint. Change to your FortiAIGate URL on Day 2. |
 | `MODEL` | `qwen2.5:3b` | Model name passed to the LLM API. Must match the model loaded in Ollama or available via FortiAIGate. |
 | `TOOL_MODE` | `hardcoded` | `hardcoded` = local Python functions (Lab 2). `mcp` = MCP server (Lab 3+). |
-| `TRANSPARENCY` | `verbose` | `verbose` = audit log visible in UI. `quiet` = audit log suppressed from UI (still written internally). |
+| `TRANSPARENCY` | `verbose` | `verbose` = the agent prints each audit event to its console log. `quiet` = nothing is printed (events are still recorded and returned by `/logs`). |
 | `MCP_BASE_URL` | `http://ai101-mcp-server:8000/mcp` | MCP server endpoint the agent discovers tools from. |
 | `ENABLE_EXTRA_TOOL` | `false` | Adds `search_web` to the MCP server without restarting the agent. |
 | `POISON_DESC` | `false` | Activates the poisoned `search_web` description for the Lab 4 advanced demo. Requires `ENABLE_EXTRA_TOOL=true`. |
@@ -64,7 +64,7 @@ to match what the target endpoint serves.
 
 Point the agent at FortiAIGate instead of Ollama:
 
-```bash {run="bastion"}
+```bash
 cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab4.yaml \
     --set agent.openaiBaseUrl=https://your-fortiaigate-host/v1
