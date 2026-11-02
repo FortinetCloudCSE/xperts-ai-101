@@ -6,13 +6,13 @@ weight: 10
 
 ## Your session steps
 
-Setup takes roughly 20–30 minutes: about 5 minutes to deploy the AKS cluster, plus the Kubernetes fundamentals walkthrough and installing the Lab 1 Helm chart.
+Setup takes roughly 20–30 minutes: about 5 minutes to deploy the AKS cluster, plus installing the Lab 1 Helm chart.
 
-1. {{% badge style="red" %}} REQUIRED {{% /badge %}} Deploy a Managed Kubernetes Service (AKS) on Azure (about 5 minutes).
+1. {{% badge style="red" %}} REQUIRED {{% /badge %}} [Kubernetes & Helm Setup](1_k8s_helm_setup/): deploy a Managed Kubernetes Service (AKS) on Azure (about 5 minutes), then install the Lab 1 chart with Helm and confirm it works.
 
     - kubectl, Helm and jq utilities are already installed on the bastion.
 
-2. {{% badge style="aqua" %}} Informational {{% /badge %}} Run through the Kubernetes overview and concepts.
+2. {{% badge style="aqua" %}} Optional {{% /badge %}} [Kubernetes Fundamentals](2_k8s_fundamentals/): for your information only. Skip it if you already know Pods, Deployments and Namespaces.
 
 3. {{% badge style="red" %}} REQUIRED {{% /badge %}} Deploy lab applications to the AKS cluster with Helm as each lab describes.
 

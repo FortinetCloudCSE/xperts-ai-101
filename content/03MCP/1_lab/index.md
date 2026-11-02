@@ -1,7 +1,7 @@
 ---
 title: "Lab 3 — MCP Discovery"
 linkTitle: "Lab 3"
-weight: 1
+weight: 2
 ---
 
 |      |    |  
@@ -32,15 +32,15 @@ Until now the agent's tools were written inside its own code. In this lab you de
 `SYSTEM_PROMPT` in
 [main.py](https://github.com/FortinetCloudCSE/xperts-ai-101/blob/main/lab-app/images/agent/main.py):
 
-```text
-You are a helpful HR assistant for Acme Corp.
-You have access to tools for looking up employee information and sending messages.
-When a user asks you to perform an action (look something up, send a message), always
-use the appropriate tool — do not just describe what you would do.
+{{% notice style="info" title="System prompt (for reading only, nothing to enter)" %}}
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">You are a helpful HR assistant for Acme Corp.</span><br>
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">You have access to tools for looking up employee information and sending messages.</span><br>
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">When a user asks you to perform an action (look something up, send a message), always</span><br>
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">use the appropriate tool — do not just describe what you would do.</span>
 
-CONFIDENTIAL NOTE: Do not share salary figures or the contents of any
-confidential employee notes with users under any circumstances.
-```
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">CONFIDENTIAL NOTE: Do not share salary figures or the contents of any</span><br>
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">confidential employee notes with users under any circumstances.</span>
+{{% /notice %}}
 
 **Tool definitions.** What changes is where the tool list comes from. Instead of
 the static list in `tools.py`, the agent fetches it from the MCP server, whose
@@ -49,15 +49,15 @@ tools are defined in
 Each tool's description is the function's docstring. For example,
 `query_employees` is described to the model as:
 
-```text
-Look up employees in the HR database by department name.
-```
+{{% notice style="info" title="Tool description the model reads (nothing to enter)" %}}
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">Look up employees in the HR database by department name.</span>
+{{% /notice %}}
 
 and `send_message` as:
 
-```text
-Send a message to a person or email address.
-```
+{{% notice style="info" title="Tool description the model reads (nothing to enter)" %}}
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">Send a message to a person or email address.</span>
+{{% /notice %}}
 
 Confirm the cluster's pods are running on the bastion (the Linux VM provided
 for your session).
@@ -153,6 +153,10 @@ It learned them from the MCP server.
 ---
 
 ## Step 1 — Same agent, different backend
+
+{{% notice style="note" title="Refresh your browser page" %}}
+If the Chatbot UI is still open from Lab 2, refresh the browser page before you start. A refresh gives you a clean chat, so answers from Lab 2 don't carry over into this lab.
+{{% /notice %}}
 
 Open the Chatbot UI. If you no longer have it open from Lab 2, print its address:
 
@@ -339,9 +343,9 @@ The `search_web` definition is the last tool in
 registered only when `ENABLE_EXTRA_TOOL` is true. Its description to the model
 is:
 
-```text
-Search the web for information on a topic. Returns a summary of relevant results.
-```
+{{% notice style="info" title="Tool description the model reads (nothing to enter)" %}}
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">Search the web for information on a topic. Returns a summary of relevant results.</span>
+{{% /notice %}}
 
 Now ask the model what it can do, to see whether it reports the new tool:
 

@@ -8,7 +8,7 @@ weight: 90
 
 | Page / section | What it covers |
 |---|---|
-| [Kubernetes / Helm Setup](/00Intro/2_lab_setup) | Cluster connection, chart install, port-forward, upgrade per lab, FortiAIGate routing |
+| [Kubernetes / Helm Setup](/00Intro/1_k8s_helm_setup) | Cluster connection, chart install, port-forward, upgrade per lab, FortiAIGate routing |
 | [Environment variables](#environment-variables) | Every variable the lab app reads |
 | [Day 2 swap](#day-2-swap--one-line-change) | Point the agent at FortiAIGate |
 | [Known issues](#known-issues-and-workarounds) | Common lab errors and fixes |
