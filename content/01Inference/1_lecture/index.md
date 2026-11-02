@@ -17,7 +17,7 @@ By the end of this page you should be able to explain:
 - Why a `system prompt` is not a security boundary
 - How prompt injection exploits the structure of the context window
 
-The hands-on part is in [Lab 1](../1_lab/). The theory here will make the attack
+The hands-on part is in [Lab 1](../../01Inference/1_lab/). The theory here will make the attack
 you run there feel inevitable rather than surprising.
 
 ---
@@ -330,7 +330,7 @@ in a single-answer scenario.
 
 We are introducing the `tool` role here because Module 2 depends on
 understanding exactly what the model emits when it wants to call a function,
-and exactly what your code has to return. Seeing it once in the theory page
+and exactly what your code has to return. Seeing it once in the lecture
 means the Module 2 code will not need re-explaining.
 
 When `finish_reason` is `tool_calls`, the response message no longer carries
@@ -413,7 +413,7 @@ do — and where it might be weak.
 conversation starts, so the model copies the pattern. Not used in the lab scripts, but extremely common in
 production where output format must be precise and consistent.
 
-The Lab 1 `system prompt` (shown in full in [Lab 1](../1_lab/#what-the-model-is-protecting)) uses the first three. A persona that makes the model
+The Lab 1 `system prompt` (shown in full in [Lab 1](../../01Inference/1_lab/#what-the-model-is-protecting)) uses the first three. A persona that makes the model
 cooperative, a constraint rule that tells it to refuse certain topics, and context
 injection that puts the secret in the prompt where the model can see it.
 

@@ -29,6 +29,12 @@
     "description": "Command on bastion followed by its expected output",
     "body": ["${1:Sentence saying what the command does.}", "", "```bash {run=\"bastion\"}", "${2:command}", "```", "", "The output is similar to:", "", "```output", "${3:output}", "```", "$0"]
   },
+  "Example text (read only)": {
+    "scope": "markdown",
+    "prefix": "example",
+    "description": "Text shown for reading that the participant must not copy or enter (no copy button): a notice with bold monospace spans; end each line but the last with <br>",
+    "body": ["{{% notice style=\"${1|info,note|}\" title=\"${2:Example prompt (read only)}\" %}}", "<span style=\"font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal\">${3:text}</span>", "{{% /notice %}}", "$0"]
+  },
   "Chatbot prompt": {
     "scope": "markdown",
     "prefix": "chatbot",

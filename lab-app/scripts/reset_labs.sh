@@ -3,7 +3,7 @@
 #
 # Stops the port-forwards, uninstalls the ai101 Helm release (agent, MCP server,
 # UI and Ollama), and deletes the Ollama model volume. Re-install the Lab 1 chart
-# afterwards (Kubernetes / Helm Setup, step 2) to start again.
+# afterwards (Kubernetes & Helm Setup, step 3) to start again.
 #
 # Usage:
 #   ./reset_labs.sh

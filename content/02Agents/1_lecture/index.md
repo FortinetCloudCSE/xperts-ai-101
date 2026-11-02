@@ -8,7 +8,7 @@ weight: 1
 A plain chatbot only produces text. An **agent** goes further: it lets the language model (LLM) trigger real actions, such as querying a database or sending a message, by calling **tools** (ordinary functions your code exposes to the model). This lecture covers the theory behind how an agent works: the tool-call loop,
 how the model signals that it wants to run a function, how tool schemas are
 structured, and why the agent in this workshop is deliberately simple. The
-hands-on portion is in [Lab 2](../1_lab/).
+hands-on portion is in [Lab 2](../../02Agents/1_lab/).
 
 By the end of this page you should be able to explain:
 
@@ -22,7 +22,7 @@ By the end of this page you should be able to explain:
 
 ## The UI
 
-Lab 2 introduces a browser UI. [Lab 2](../1_lab/) shows how to find its URL. It is a single-page vanilla JS application that talks to the agent API
+Lab 2 introduces a browser UI. [Lab 2](../../02Agents/1_lab/) shows how to find its URL. It is a single-page vanilla JS application that talks to the agent API
 (proxied through nginx as `/api/`).
 
 It has three panels:

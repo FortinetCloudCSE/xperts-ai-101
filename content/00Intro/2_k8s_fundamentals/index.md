@@ -1,11 +1,11 @@
 ---
 title: "Kubernetes Fundamentals (Optional)"
-linkTitle: "Kubernetes Fundamentals"
+linkTitle: "Kubernetes Fundamentals (Optional)"
 weight: 2
 ---
 
 {{% notice style="info" title="Optional — for your information only" %}}
-Nothing on this page is required for the labs. Work through it if you are new to Kubernetes, or skip it and go straight to Module 1. The required cluster and Helm setup is on the previous page, [Kubernetes & Helm Setup](../1_k8s_helm_setup/).
+Nothing on this page is required for the labs. Work through it if you are new to Kubernetes, or skip it and go straight to Module 1. The required cluster and Helm setup is on the previous page, [Kubernetes & Helm Setup](../../00Intro/1_k8s_helm_setup/).
 {{% /notice %}}
 
 This page walks through Kubernetes fundamentals on the AKS cluster you deployed during setup. The focus areas are **Pods**, **Labels**, **Deployments**, **Replicas**, and **Namespaces**. All commands run on the bastion (the Linux VM provided for your session).
@@ -540,7 +540,7 @@ kubectl delete namespace development
 
 ## How this connects to the AI labs
 
-Everything above — Pods, Deployments, Namespaces — is what you'll see again in the `ai101` Helm chart you installed on the [Kubernetes & Helm Setup](../1_k8s_helm_setup/) page. Each of Ollama, the agent, the MCP server and the UI runs as its own **Deployment** (which manages a **Pod**), and each is fronted by its own **Service** — a kind of object this section didn't create by hand, but Helm does, one per component. The chart also creates a PersistentVolumeClaim for Ollama's model storage, a ConfigMap for the UI's nginx config, and (if you enable it) an Ingress. All of it lands in the `default` **Namespace** (the same one you already worked in above) unless you override it. Helm itself stores each release's state in a Kubernetes Secret — that's Helm 3's own bookkeeping, not a chart-authored object.
+Everything above — Pods, Deployments, Namespaces — is what you'll see again in the `ai101` Helm chart you installed on the [Kubernetes & Helm Setup](../../00Intro/1_k8s_helm_setup/) page. Each of Ollama, the agent, the MCP server and the UI runs as its own **Deployment** (which manages a **Pod**), and each is fronted by its own **Service** — a kind of object this section didn't create by hand, but Helm does, one per component. The chart also creates a PersistentVolumeClaim for Ollama's model storage, a ConfigMap for the UI's nginx config, and (if you enable it) an Ingress. All of it lands in the `default` **Namespace** (the same one you already worked in above) unless you override it. Helm itself stores each release's state in a Kubernetes Secret — that's Helm 3's own bookkeeping, not a chart-authored object.
 
 ### Review Questions
 

@@ -19,6 +19,7 @@ No test suite; validate by rendering. Built URLs are flat (`01inference/1_lab.ht
 ## Authoring
 - Commands go in ```` ```bash {run="bastion"} ````: no `$` prompt, one command per block, preceded by a sentence. Output goes in ```` ```output ```` (`{lang="json"}` for JSON), introduced by "The output is similar to:". Never fence output as `bash`. Tabs are only for genuine alternatives. `collapse="true"` must be quoted.
 - Code quoted from `lab-app/` must match the file (labs ask readers to find lines). Expected output must come from lab-app code and seed data, never invented.
+- Text shown for reading only (system prompts, tool descriptions, example attack strings) is never fenced: fences get a copy button. Use a `notice` whose lines are wrapped in the bold monospace `<span style=…>` (snippet `example`; blockquotes render italic, bold inline code renders light and highlighted).
 - No `<-- comments` inside copyable fences.
 - When a convention changes, update `.vscode/markdown.code-snippets` to match.
 

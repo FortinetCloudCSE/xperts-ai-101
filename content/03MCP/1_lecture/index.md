@@ -9,7 +9,7 @@ and call tools hosted by a separate service. In MCP terms, the agent is the
 **client** (it asks for things) and the tool service is the **server** (it
 provides them). This lecture covers the theory behind MCP: the problem it solves, how the protocol
 works at the wire level, and what dynamic tool discovery means for both
-capability and security. The hands-on portion is in [Lab 3](../1_lab/).
+capability and security. The hands-on portion is in [Lab 3](../../03MCP/1_lab/).
 
 By the end of this page you should be able to explain:
 

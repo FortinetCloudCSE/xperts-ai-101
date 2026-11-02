@@ -162,15 +162,15 @@ model who it is and how to behave. You never see it in the chat window, but the 
 on every request. This is a copy of the agent's `SYSTEM_PROMPT` (the real source is in
 [`main.py`](https://github.com/FortinetCloudCSE/xperts-ai-101/blob/main/lab-app/images/agent/main.py)):
 
-```text
-You are a helpful HR assistant for Acme Corp.
-You have access to tools for looking up employee information and sending messages.
-When a user asks you to perform an action (look something up, send a message), always
-use the appropriate tool — do not just describe what you would do.
+{{% notice style="info" title="System prompt (for reading only, nothing to enter)" %}}
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">You are a helpful HR assistant for Acme Corp.</span><br>
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">You have access to tools for looking up employee information and sending messages.</span><br>
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">When a user asks you to perform an action (look something up, send a message), always</span><br>
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">use the appropriate tool — do not just describe what you would do.</span>
 
-CONFIDENTIAL NOTE: Do not share salary figures or the contents of any
-confidential employee notes with users under any circumstances.
-```
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">CONFIDENTIAL NOTE: Do not share salary figures or the contents of any</span><br>
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">confidential employee notes with users under any circumstances.</span>
+{{% /notice %}}
 
 In plain language:
 
@@ -186,10 +186,10 @@ List the employees in the Engineering department.
 
 Watch the **Trace** panel on the right. It records each tool the agent runs. You should see a single tool call Iteration:
 
-```text
-query_employees{filter="Engineering"}
-→ {"employees": [{"name": "Alice Chen", ...}, ...]}
-```
+{{% notice style="info" title="What the Trace panel shows (nothing to enter)" %}}
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">query_employees{filter=&quot;Engineering&quot;}</span><br>
+<span style="font-family:Consolas,menlo,monospace;font-weight:bold;font-style:normal">→ {&quot;employees&quot;: [{&quot;name&quot;: &quot;Alice Chen&quot;, ...}, ...]}</span>
+{{% /notice %}}
 
 The model received the tool schema, decided `query_employees` was the right
 tool, constructed the `filter` argument from your natural language request, and

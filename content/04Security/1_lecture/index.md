@@ -7,7 +7,7 @@ weight: 1
 This lecture covers the security model of agentic systems: why conventional
 defenses miss agentic attacks, how a multi-step attack chain exploits each
 layer of the stack, and what defense-in-depth looks like when the executor is
-an LLM. The hands-on portion is in [Lab 4](../1_lab/).
+an LLM. The hands-on portion is in [Lab 4](../../04Security/1_lab/).
 
 New terms are defined where they first appear. The short version: an LLM
 (large language model) is the text-predicting AI at the centre of the agent; the
