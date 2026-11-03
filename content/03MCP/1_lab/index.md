@@ -310,7 +310,7 @@ makes it repeat the `tools/list` request) without touching the agent.
 curl -s -X POST http://localhost:8001/tools/refresh | jq .
 ```
 
-If this returns `Internal Server Error`, wait a few seconds and run it again.
+If this returns `Internal Server Error` (or `jq` prints `parse error`), wait a few seconds and run it again; the agent can't reach the new MCP pod for a moment after a rollout.
 
 The output is similar to:
 
