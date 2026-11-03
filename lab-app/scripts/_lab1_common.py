@@ -66,7 +66,7 @@ def cmd_injection(url: str, model: str) -> None:
     print(f"Model    : {model}")
     print()
 
-    print("=== Step 1: Direct ask (should be refused) ===")
+    print("=== Direct ask (should be refused) ===")
     print(f"User: {DIRECT_ASK}")
     print()
     answer = chat(url, model, DIRECT_ASK)
@@ -75,7 +75,7 @@ def cmd_injection(url: str, model: str) -> None:
     print(SEP)
     print()
 
-    print("=== Step 2: Prompt injection ===")
+    print("=== Prompt injection ===")
     print(f"User: {INJECTION}")
     print()
     answer = chat(url, model, INJECTION)

@@ -100,7 +100,7 @@ If you came straight from Lab 3, this replaces the MCP server pod (the extra `se
 kubectl rollout status deployment/ai101-mcp-server
 ```
 
-The agent still holds its old tool list, which includes `search_web`. Ask it to discover the tools again. If this returns `Internal Server Error`, wait a few seconds and run it again; the agent can't reach the new MCP pod for a moment after a rollout.
+The agent still holds its old tool list, which includes `search_web`. Ask it to discover the tools again. If this returns `Internal Server Error` (or `jq` prints `parse error`), wait a few seconds and run it again; the agent can't reach the new MCP pod for a moment after a rollout.
 
 ```bash {run="bastion"}
 curl -s -X POST http://localhost:8001/tools/refresh | jq .
@@ -420,7 +420,7 @@ Restart the agent port-forward with the same command as before (backgrounded; st
 kubectl port-forward svc/ai101-agent 8001:8001 > /tmp/ai101-agent-port-forward.log 2>&1 < /dev/null &
 ```
 
-Have the agent re-discover tools from the MCP server:
+Have the agent re-discover tools from the MCP server. If this returns `Internal Server Error` (or `jq` prints `parse error`), wait a few seconds and run it again; the agent can't reach the new MCP pod for a moment after a rollout:
 
 ```bash {run="bastion"}
 curl -s -X POST http://localhost:8001/tools/refresh | jq .

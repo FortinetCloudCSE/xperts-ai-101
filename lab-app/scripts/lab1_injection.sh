@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Lab 1 — Prompt injection against the system instruction
 #
-# Step 1: direct ask is refused.
-# Step 2: the injection bypasses that protection.
+# First, a direct ask is refused.
+# Then the injection bypasses that protection.
 #
 # Save the output — you'll replay this on Day 2 through FortiAIGate.
 #
