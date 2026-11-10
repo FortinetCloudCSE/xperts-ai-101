@@ -8,18 +8,16 @@ All tasks for this session are completed from the bastion (the Linux VM provided
 
 This page is **required**. You deploy an Azure Kubernetes Service (AKS) cluster, then use Helm to install the Lab 1 chart and confirm it works. Every later lab builds on this setup. Setup takes roughly 20–30 minutes, about 5 of them waiting for the AKS cluster to deploy.
 
-
 ## Prerequisites
 
 kubectl, Helm and jq are already installed on the bastion (the Linux VM provided for your session). The table below is for reference — you don't need to install anything.
 
 | Requirement | Version | Check | Purpose
 | ------------- | --------- | ------- | -----
-| kubectl | 1.28+ | `kubectl version --client` | Managing K8S clusters |
-| Helm | 3.14+ | `helm version` | Package manager automating the creation, packaging, configuration, and deployment of application |
-| jq | 1.6+ | `jq --version` | lightweight and flexible command-line JSON processor used to slice, filter, map, and transform the highly detailed JSON data returned by the Kubernetes API |
-| Running cluster | — | `kubectl cluster-info` | Get info on an existing cluster|
-| Default StorageClass | — | `kubectl get storageclass` | Get info on cluster storage |
+| kubectl | 1.28+ | `kubectl version --client` | Managing K8S clusters
+| Helm | 3.14+ | `helm version` | Package manager automating the creation, packaging, configuration, and deployment of application
+| jq | 1.6+ | `jq --version` | lightweight and flexible command-line JSON processor used to slice, filter, map, and transform the highly detailed JSON data returned by the Kubernetes API
+| Running cluster | — | `kubectl cluster-info` | Get info on an existing cluster
 
 ## 1. AKS Cluster Deployment {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
@@ -223,21 +221,27 @@ Pong! Your ping request was successfully answered. How can I assist you further?
 
 Each lab tells you which of these to run to set up for its exercises. This is for reference only — run only the command for the lab you're on:
 
-```bash
+{{% notice style="tip" title="Lab update progression" %}}
+
 cd ~/xperts-ai-101/lab-app/helm
 
-# Lab 1 — Ollama only (already done above)
+### Lab 1 — Ollama only (already done above)
+
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab1.yaml
 
-# Lab 2 — Agent (hardcoded tools) + UI
+### Lab 2 — Agent (hardcoded tools) + UI
+
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab2.yaml
 
-# Lab 3 — Agent (MCP mode) + MCP server + UI
+### Lab 3 — Agent (MCP mode) + MCP server + UI
+
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab3.yaml
 
-# Lab 4 — Same as lab3 (security demo steps use env overrides)
+### Lab 4 — Same as lab3 (security demo steps use env overrides)
+
 helm upgrade --install ai101 ./ai101 -f ai101/values-lab4.yaml
-```
+
+{{% /notice %}}
 
 ### Troubleshooting: check your Helm revision
 
@@ -251,15 +255,15 @@ The last row is what is running now. Its `STATUS` must be `deployed`; every earl
 
 If you ran each Helm command in the labs once, in order, the last revision at each point is:
 
-| After this step | Last revision | Values applied |
-| --- | --- | --- |
-| 3. Install the chart for Lab 1 (this page), and all of Lab 1 | 1 | `values-lab1.yaml` |
-| Lab 2, Deploy | 2 | `values-lab2.yaml` |
-| Lab 3, Deploy | 3 | `values-lab3.yaml` |
-| Lab 3, Step 3 (enable the third tool) | 4 | `values-lab3.yaml` plus `mcpServer.enableExtraTool=true` |
-| Lab 4, Deploy | 5 | `values-lab4.yaml` |
-| Lab 4, Step 2 (quiet transparency) | 6 | `values-lab4.yaml` plus `agent.transparency=quiet` |
-| Lab 4, Step 4 (tool poisoning) | 7 | `values-lab4.yaml` plus `mcpServer.enableExtraTool=true` and `mcpServer.poisonDesc=true` |
+| After this step | Last revision | Values applied
+| --- | --- | ---
+| 3. Install the chart for Lab 1 (this page), and all of Lab 1 | 1 | `values-lab1.yaml`
+| Lab 2, Deploy | 2 | `values-lab2.yaml`
+| Lab 3, Deploy | 3 | `values-lab3.yaml`
+| Lab 3, Step 3 (enable the third tool) | 4 | `values-lab3.yaml` plus `mcpServer.enableExtraTool=true`
+| Lab 4, Deploy | 5 | `values-lab4.yaml`
+| Lab 4, Step 2 (quiet transparency) | 6 | `values-lab4.yaml` plus `agent.transparency=quiet`
+| Lab 4, Step 4 (tool poisoning) | 7 | `values-lab4.yaml` plus `mcpServer.enableExtraTool=true` and `mcpServer.poisonDesc=true`
 
 Higher numbers are fine if you re-ran a command. What matters is that the last row is `deployed` and the most recent upgrade matches the lab you are on. After the last step of Lab 4, the history looks similar to this (the dates will differ):
 
@@ -304,8 +308,9 @@ FortiAIGate is not set up for this session — this section is informational onl
 
 To route the agent through FortiAIGate instead of the local Ollama, you would change a single value:
 
-```bash
+{{% notice style="tip" title="How would FortiAIGate be added" %}}
 cd ~/xperts-ai-101/lab-app/helm
 helm upgrade ai101 ./ai101 -f ai101/values-lab4.yaml \
     --set agent.openaiBaseUrl=https://your-fortiaigate-host/v1
-```
+
+{{% /notice  %}}
