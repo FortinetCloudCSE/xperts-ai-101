@@ -13,9 +13,9 @@
   "disableInlineCopyToClipBoard": true,
   "shortcuts": [
     {
-      "text": "AI101 Presentation (PDF)",
-      "URL": "/ai101.pdf",
-      "icon": "fa-file-pdf",
+      "text": "AI101 Presentation MP4",
+      "URL": "./AI101-XPERTS-26-USA.mp4",
+      "icon": "fa-file-video",
       "weight": 10
     },
     {

@@ -29,7 +29,7 @@ flowchart LR
 ## What you will build across the four labs
 
 | Lab | Topic | Time |
-|-----|-------|------|
+| ----- | ------- | ------ |
 | **Lab 1** — Inference | Direct LLM calls, prompt injection | ~30 min |
 | **Lab 2** — Agents | Explicit tool-call loop, chained actions | ~45 min |
 | **Lab 3** — MCP | Dynamic discovery, hot tool swap | ~30 min |
