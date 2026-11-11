@@ -21,7 +21,16 @@ kubectl, Helm and jq are already installed on the bastion (the Linux VM provided
 
 ## 1. AKS Cluster Deployment {{% badge style="red" %}} REQUIRED {{% /badge %}}
 
-We'll start by deploying a Managed Azure Kubernetes Service (AKS). This hands-on approach introduces you to Kubernetes essentials efficiently, with the setup process completing in about 5 minutes.
+You'll start by logging into you assigned linux VM and deploying a Managed Azure Kubernetes Service (AKS).
+
+{{% notice style="info" title="Login Information" %}}
+
+- Login to your assigned linux VM using the Bastion host link you received from the instructors
+- User the username password combination `aiuser` and `123Password$%^!`
+- While all users have the same login credentials the Bastion host link will connect to your uniquely assigned linux VM
+- Should you require assistance from the instructors, the name of the linux VM will be in the browser tab
+
+{{% /notice %}}
 
 The script below creates a Managed Azure Kubernetes Service (AKS) with one worker node and updates the local `kubeconfig` for AKS access. The script is pre-installed on the bastion and uses the Azure credentials already configured there, so you don't need to sign in to Azure yourself.
 
